@@ -1,0 +1,33 @@
+{
+  "files.associations": {
+    "pages.json": "jsonc",
+    "manifest.json": "jsonc"
+  },
+  "eslint.experimental.useFlatConfig": true,
+  "prettier.enable": false,
+  "editor.formatOnSave": false,
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "never",
+    "source.fixAll.eslint": "explicit",
+    "source.organizeImports": "never"
+  },
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact",
+    "vue",
+    "html",
+    "markdown",
+    "json",
+    "jsonc",
+    "yaml"
+  ],
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.patterns": {
+    "vite.config.*": "pages.config.*, manifest.config.*, uno.config.*, volar.config.*, *.env, .env.*",
+    "env.d.*": "shims.d.*, uni-pages.d.*, components.d.*, auto-imports.d*, manifest.json, pages.json, theme.json",
+    "package.json": "pnpm-lock.yaml, .gitignore, .npmrc"
+  },
+  "typescript.tsdk": "node_modules\\typescript\\lib"
+}
