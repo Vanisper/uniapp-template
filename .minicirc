@@ -1,0 +1,15 @@
+{
+  "weixin": {
+    "appid": "wx17284ec2d145a7e6",
+    "privateKeyPath": "key/private.wx17284ec2d145a7e6.key",
+    "projectPath": "dist/build/mp-weixin",
+    "setting": {
+      "minifyJS": true,
+      "minifyWXML": true,
+      "minifyWXSS": true,
+      "minify": true
+    }
+  },
+  "version": "1.0.0",
+  "desc": ""
+}

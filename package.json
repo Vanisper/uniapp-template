@@ -65,7 +65,10 @@
     "release-patch": "standard-version --release-as patch",
     "clean:lib": "rimraf lib",
     "release-tag": "node scripts/build/release.js",
-    "compiler": "npm run clean:lib && node scripts/build/compiler.js"
+    "compiler": "npm run clean:lib && node scripts/build/compiler.js",
+    "upload:mp-weixin": "uni build -p mp-weixin && minici --platform weixin",
+    "upload:mp-alipay": "uni build -p mp-alipay && minici --platform alipay",
+    "upload:mp-dingtalk": "uni build -p mp-dingtalk && minici --platform dd"
   },
   "dependencies": {
     "@dcloudio/uni-app": "3.0.0-alpha-4000120240201002",
@@ -124,6 +127,7 @@
     "sass": "1.64.2",
     "standard-version": "^9.5.0",
     "typescript": "^5.3.3",
+    "uni-mini-ci": "^0.0.11",
     "uni-mini-router": "^0.1.6",
     "uni-parse-pages": "^0.0.1",
     "unocss": "^0.58.5",
