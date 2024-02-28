@@ -27,7 +27,7 @@
   "explorer.fileNesting.patterns": {
     "vite.config.*": "pages.config.*, manifest.config.*, uno.config.*, volar.config.*, *.env, .env.*",
     "env.d.*": "shims.d.*, uni-pages.d.*, components.d.*, auto-imports.d*, manifest.json, pages.json, theme.json",
-    "package.json": "pnpm-lock.yaml, .gitignore, .npmrc"
+    "package.json": "pnpm-lock.yaml, .gitignore, .npmrc, .git-cz.json, commitlint.config.js, eslint.config.js, versionrc.js"
   },
   "typescript.tsdk": "node_modules\\typescript\\lib"
 }

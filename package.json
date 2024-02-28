@@ -55,8 +55,17 @@
     "build:quickapp-webview-huawei": "uni build -p quickapp-webview-huawei",
     "build:quickapp-webview-union": "uni build -p quickapp-webview-union",
     "type-check": "vue-tsc --noEmit",
+    "preinstall": "npx only-allow pnpm",
+    "prepare": "husky install",
     "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
+    "lint:fix": "eslint . --fix",
+    "commit": "git-cz",
+    "release-major": "standard-version --release-as major",
+    "release-minor": "standard-version --release-as minor",
+    "release-patch": "standard-version --release-as patch",
+    "clean:lib": "rimraf lib",
+    "release-tag": "node scripts/build/release.js",
+    "compiler": "npm run clean:lib && node scripts/build/compiler.js"
   },
   "dependencies": {
     "@dcloudio/uni-app": "3.0.0-alpha-4000120240201002",
@@ -79,6 +88,8 @@
     "wot-design-uni": "^1.0.0"
   },
   "devDependencies": {
+    "@commitlint/cli": "^19.0.1",
+    "@commitlint/config-conventional": "^19.0.0",
     "@dcloudio/types": "3.4.7",
     "@dcloudio/uni-automator": "3.0.0-alpha-4000120240201002",
     "@dcloudio/uni-cli-shared": "3.0.0-alpha-4000120240201002",
@@ -103,9 +114,15 @@
     "@vue/tsconfig": "^0.5.1",
     "@vueuse/core": "9.13.0",
     "eslint": "^8.57.0",
+    "git-cz": "^4.9.0",
+    "husky": "^9.0.11",
+    "inquirer": "^9.2.15",
+    "lint-staged": "^15.2.2",
     "mini-types": "^0.1.7",
     "miniprogram-api-typings": "^3.12.2",
+    "rimraf": "^5.0.5",
     "sass": "1.64.2",
+    "standard-version": "^9.5.0",
     "typescript": "^5.3.3",
     "uni-mini-router": "^0.1.6",
     "uni-parse-pages": "^0.0.1",
@@ -114,5 +131,13 @@
     "unplugin-auto-import": "^0.17.5",
     "vite": "4.0.3",
     "vue-tsc": "^1.8.27"
+  },
+  "config": {
+    "commitizen": {
+      "path": "git-cz"
+    }
+  },
+  "lint-staged": {
+    "*.{js,ts,vue}": "eslint --fix --ext .js,.vue,.ts src"
   }
 }
