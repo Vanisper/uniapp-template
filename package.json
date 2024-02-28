@@ -56,7 +56,7 @@
     "build:quickapp-webview-union": "uni build -p quickapp-webview-union",
     "type-check": "vue-tsc --noEmit",
     "preinstall": "npx only-allow pnpm",
-    "prepare": "husky install",
+    "prepare": "husky",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "commit": "git-cz",
@@ -137,7 +137,16 @@
       "path": "git-cz"
     }
   },
+  "standard-version": {
+    "skip": {
+      "tag": true
+    }
+  },
+  "browserslist": [
+    "Android >= 4.4",
+    "ios >= 9"
+  ],
   "lint-staged": {
-    "*.{js,ts,vue}": "eslint --fix --ext .js,.vue,.ts src"
+    "*.{js,ts,vue}": "eslint . --fix"
   }
 }
