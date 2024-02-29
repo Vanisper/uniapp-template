@@ -88,7 +88,7 @@
     "pinia": "2.0.36",
     "vue": "3.3.11",
     "vue-i18n": "9.6.2",
-    "wot-design-uni": "^1.0.0"
+    "wot-design-uni": "^1.1.1"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.0.1",
