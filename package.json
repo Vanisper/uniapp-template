@@ -18,8 +18,8 @@
     "wot-design-uni"
   ],
   "scripts": {
-    "dev": "python scripts/WeChat_DevTools.py --dev",
-    "build": "python scripts/WeChat_DevTools.py --build",
+    "dev": "npm run reset:manifest && python scripts/WeChat_DevTools.py --dev",
+    "build": "npm run reset:manifest && python scripts/WeChat_DevTools.py --build",
     "dev:app": "uni -p app",
     "dev:app-android": "uni -p app-android",
     "dev:app-ios": "uni -p app-ios",
@@ -55,7 +55,8 @@
     "build:quickapp-webview-huawei": "uni build -p quickapp-webview-huawei",
     "build:quickapp-webview-union": "uni build -p quickapp-webview-union",
     "type-check": "vue-tsc --noEmit",
-    "preinstall": "npx only-allow pnpm",
+    "reset:manifest": "echo {}> src/manifest.json",
+    "preinstall": "npx only-allow pnpm && npm run reset:manifest",
     "prepare": "husky",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
