@@ -19,3 +19,8 @@ dist
 *.njsproj
 *.sln
 *.sw?
+
+# 忽略自动生成的类型定义文件
+auto-imports.d.*
+components.d.*
+uni-pages.d.*
