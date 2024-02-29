@@ -24,3 +24,7 @@ dist
 auto-imports.d.*
 components.d.*
 uni-pages.d.*
+
+# 忽略自动生成的小程序所需的json文件
+manifest.json
+pages.json
