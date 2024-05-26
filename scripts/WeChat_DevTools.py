@@ -40,7 +40,7 @@ class WeChatDevTools:
     def __repr__(self):
         return f"WeChatDevTools(install_location={self.install_location}, cli_path={self.cli_path})"
 
-    def get_install_location(self) -> str | None:
+    def get_install_location(self):
         """
         获取微信开发者工具安装路径
         return: 安装路径
@@ -67,7 +67,7 @@ class WeChatDevTools:
                             continue
         return None
 
-    def get_cli_path(self) -> str | None:
+    def get_cli_path(self):
         """
         获取微信开发者工具 cli 路径
         return: cli 路径
