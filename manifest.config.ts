@@ -19,11 +19,15 @@ export default defineManifestConfig({
       delay: 0,
     },
     /* 模块配置 */
-    modules: {},
+    modules: {
+      /** 相机模块 */
+      Camera: {},
+    },
     /* 应用发布信息 */
     distribute: {
       /* android打包配置 */
       android: {
+        minSdkVersion: 21,
         permissions: [
           "<uses-permission android:name=\"android.permission.CHANGE_NETWORK_STATE\"/>",
           "<uses-permission android:name=\"android.permission.MOUNT_UNMOUNT_FILESYSTEMS\"/>",
@@ -52,7 +56,9 @@ export default defineManifestConfig({
   "quickapp": {},
   /* 小程序特有相关 */
   "mp-weixin": {
-    appid: "wx17284ec2d145a7e6",
+    appid: "",
+    darkmode: true,
+    themeLocation: "theme.json",
     setting: {
       urlCheck: true,
       minified: true,
@@ -83,8 +89,6 @@ export default defineManifestConfig({
     optimization: {
       subPackages: true,
     },
-    darkmode: true,
-    themeLocation: "theme.json",
   },
   "mp-alipay": {
     usingComponents: true,

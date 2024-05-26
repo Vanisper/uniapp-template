@@ -5,6 +5,13 @@ import type KV from "@/model/KV"
 
 const { show: showToast, loading: showLoading, close: hideLoading } = useToast()
 
+const toast = useToast()
+const themeStore = useThemeStore()
+const pageStyle = reactive({
+  swiperHeight: 135,
+  pageSidePadding: 12,
+})
+
 // #region tab配置
 const tabList = ref<KV<string>[]>([])
 const currentTab = ref<number>(0)
@@ -31,6 +38,11 @@ function init() {
     hideLoading()
     loadGoodsList(true)
   })
+}
+
+// TODO 点击轮播图
+function handleClick({ index }: { index: number }) {
+  toast.info(`点击了第${index + 1}张轮播图`)
 }
 
 // TODO 加载商品列表
@@ -85,16 +97,22 @@ function onReTry() {
       </view>
       <view v-if="imgSrcs.length" class="swiper">
         <wd-swiper
-          height="130"
-          :autoplay="autoplay"
-          :duration="duration"
-          :interval="interval"
-          image-mode="scaleToFill"
-          :current="current"
-          :indicator="{ type: 'dots' }"
-          :list="imgSrcs"
+          v-if="imgSrcs.length" :current="current" :duration="duration" :interval="interval" :autoplay="autoplay"
+          :height="pageStyle.swiperHeight" custom-class="swiper"
+          :indicator="false" :list="imgSrcs" @click="handleClick"
         />
       </view>
+      <!-- 公告 -->
+      <notice-bar
+        :theme="themeStore.currentTheme"
+        :custom-style="{
+          'marginTop': '10px',
+          'marginBottom': '5px',
+          'backgroundColor': '#f5f5f5',
+          '--notice-bar-text-color': 'var(--wot-text-color)',
+          '--notice-bar-text-opacity': '0.6',
+        }"
+      />
     </view>
     <view class="home-main p3 pt-0 pb-0">
       <view v-if="tabList.length" class="tabs">
@@ -110,7 +128,10 @@ function onReTry() {
 
 <style lang="scss" scoped>
 .home {
-  width: 100vw;
+  overflow: auto;
+  flex-grow: 1;
+  padding: 12px 0;
+
   box-sizing: border-box;
   background: #fff;
 

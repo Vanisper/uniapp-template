@@ -5,6 +5,8 @@ import "core-js/actual/object/assign"
 import "core-js/actual/promise/finally"
 import "uno.css"
 
+import "@/services/interceptor"
+
 import App from "./App.vue"
 import router from "./router"
 import { persistPlugin } from "./stores/persist"

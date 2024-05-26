@@ -1,15 +1,30 @@
-/*
- * @Author: weisheng
- * @Date: 2023-11-08 23:45:45
- * @LastEditTime: 2023-11-09 10:31:56
- * @LastEditors: weisheng
- * @Description:
- * @FilePath: \wot-starter-retail\src\utils\util.ts
- * 记得注释
- */
 import dayjs from "dayjs"
 
 const formatTime = (date: dayjs.ConfigType, template?: string) => dayjs(date).format(template)
+
+function getDayRange(date: dayjs.ConfigType = dayjs()) {
+  const start = dayjs(date).startOf("day")
+  const end = dayjs(date).endOf("day")
+  return [start, end]
+}
+
+function getWeekRange(date: dayjs.ConfigType = dayjs()) {
+  const start = dayjs(date).startOf("week")
+  const end = dayjs(date).endOf("week")
+  return [start, end]
+}
+
+function getMonthRange(date: dayjs.ConfigType = dayjs()) {
+  const start = dayjs(date).startOf("month")
+  const end = dayjs(date).endOf("month")
+  return [start, end]
+}
+
+function getYearRange(date: dayjs.ConfigType = dayjs()) {
+  const start = dayjs(date).startOf("year")
+  const end = dayjs(date).endOf("year")
+  return [start, end]
+}
 
 /**
  * 格式化价格数额为字符串
@@ -120,4 +135,18 @@ function phoneRegCheck(phone: string) {
   return phoneRegExp.test(phone)
 }
 
-export { formatTime, priceFormat, cosThumb, get, rpx2px, phoneEncryption, phoneRegCheck }
+// 生成当前时间 2021-10-25 23:34:22
+function getNowTime(format = "YYYY-MM-DD HH:mm:ss") {
+  return dayjs().format(format)
+}
+
+// uuid
+function uuid() {
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
+    const r = (Math.random() * 16) | 0
+    const v = c === "x" ? r : (r & 0x3) | 0x8
+    return v.toString(16)
+  })
+}
+
+export { formatTime, getDayRange, getWeekRange, getMonthRange, getYearRange, priceFormat, cosThumb, get, rpx2px, phoneEncryption, phoneRegCheck, getNowTime, uuid }

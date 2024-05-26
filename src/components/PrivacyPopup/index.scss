@@ -1,10 +1,17 @@
 @import 'wot-design-uni/components/wd-button/index.scss';
 :deep(.wd-privacy-popup) {
-  width: 600rpx;
+  // width: 600rpx;
   padding: 0 24rpx;
   box-sizing: border-box;
   border-radius: 32rpx;
+  border-bottom-left-radius: unset;
+  border-bottom-right-radius: unset;
   overflow: hidden;
+  z-index: 100 !important;
+}
+
+:deep(.wd-overlay) {
+  z-index: 100 !important;
 }
 
 .wd-privacy-popup {
@@ -28,7 +35,8 @@
     line-height: 1.8;
     color: #3e3e3e;
     text-align: left;
-    font-weight: 550;
+    // font-weight: lighter;
+
     &-protocol {
       color: #4d80f0;
     }
@@ -38,6 +46,10 @@
     display: flex;
     justify-content: space-between;
     padding-bottom: 36rpx;
+
+    &-disagree {
+      border: 0.5px solid #d9d9d9;
+    }
 
     &-agree {
       border: none;
