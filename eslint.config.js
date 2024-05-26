@@ -32,13 +32,13 @@ module.exports = uni(
     // 禁用 json 和 yaml 支持
     // jsonc: false,
     // yaml: false,
-
+  },
+  {
     // 在 Flat 配置中不再支持 `.eslintignore`，请使用 `ignores` 代替
     ignores: [
       // './fixtures',
       // ...globs
+      "src/uni_modules/**",
     ],
-  },
-  {
   },
 )
