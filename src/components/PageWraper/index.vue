@@ -59,7 +59,7 @@ onShow(() => {
     resetTheme()
     tabbarStore.setTabbarItemActive(route.name)
     windowRectStore.updateWindowRect()
-    uni.hideTabBar() // 隐藏原生tabbar
+    props.useTabbar && uni.hideTabBar() // 隐藏原生tabbar
   })
 })
 onMounted(() => {
