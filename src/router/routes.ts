@@ -6,9 +6,9 @@ import type { AppPageMetaDatum, AppSubPackage } from "./types"
 import homeRoute from "./modules/main/home.route"
 import userCenterRoute from "./modules/main/user-center.route"
 import addressBookRoute from "./modules/main/address-book.route"
-import aboutRoute from "./modules/main/about.route"
 
 // 子包
+import aboutRoute from "./modules/sub/about.route"
 
 // TODO: 通过import.meta.glob动态导入 此处由于项目特殊性暂时无法使用，但是其他项目可以参考使用
 // const routeModules = import.meta.glob<AppPageMetaDatum>("./modules/**.main.route.ts", { eager: true, import: "default" })
@@ -20,11 +20,10 @@ export const pagesList: AppPageMetaDatum[] = [
   homeRoute,
   addressBookRoute,
   ...userCenterRoute,
-  aboutRoute,
 ]
 
 export const subPackages: AppSubPackage[] = [
-
+  aboutRoute,
 ]
 
 // 根据name查询text || navigationBarTitleText

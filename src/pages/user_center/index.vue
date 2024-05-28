@@ -5,6 +5,7 @@ import userCenterHeader from "./components/user-center-header/index.vue"
 import orderGroup from "./components/order-group/index.vue"
 
 const { show: showToast } = useToast()
+const router = useRouter()
 
 const menuData = [
   [
@@ -101,6 +102,8 @@ function onClickCell(type: string) {
   showToast({
     msg: `你点击了${type}`,
   })
+
+  router.push({ name: "about" })
 }
 </script>
 
