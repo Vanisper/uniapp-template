@@ -1,5 +1,5 @@
 import { delay } from "../_utils/delay"
-import { genSwiperImageList } from "@/model/swiper"
+import { genSwiperImageList } from "@/mock/swiper"
 import { cdnBase, config } from "@/config/index"
 
 /** 获取首页数据 - mock数据 */

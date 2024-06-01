@@ -98,12 +98,16 @@ const state = reactive({
   versionNo: "",
 })
 
+const linkList = ["about", "customer"]
 function onClickCell(type: string) {
-  showToast({
-    msg: `你点击了${type}`,
-  })
-
-  router.push({ name: "about" })
+  if (linkList.includes(type)) {
+    router.push({ name: type })
+  }
+  else {
+    showToast({
+      msg: `你点击了${type}`,
+    })
+  }
 }
 </script>
 
@@ -120,6 +124,14 @@ function onClickCell(type: string) {
             <wd-icon :name="xitem.icon" />
           </template>
         </wd-cell>
+      </wd-cell-group>
+    </view>
+    <view class="rounded-2 overflow-hidden mb-3">
+      <wd-cell-group :border="false">
+        <wd-cell title="关于我们" value="about" is-link @click="onClickCell('about')" />
+      </wd-cell-group>
+      <wd-cell-group :border="false">
+        <wd-cell title="客户管理" value="customer" is-link @click="onClickCell('customer')" />
       </wd-cell-group>
     </view>
   </view>

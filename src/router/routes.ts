@@ -9,6 +9,7 @@ import addressBookRoute from "./modules/main/address-book.route"
 
 // 子包
 import aboutRoute from "./modules/sub/about.route"
+import customerRoute from "./modules/sub/customer.route"
 
 // TODO: 通过import.meta.glob动态导入 此处由于项目特殊性暂时无法使用，但是其他项目可以参考使用
 // const routeModules = import.meta.glob<AppPageMetaDatum>("./modules/**.main.route.ts", { eager: true, import: "default" })
@@ -23,6 +24,7 @@ export const pagesList: AppPageMetaDatum[] = [
 ]
 
 export const subPackages: AppSubPackage[] = [
+  customerRoute,
   aboutRoute,
 ]
 
