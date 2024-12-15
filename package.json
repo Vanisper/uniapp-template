@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev:comp": "pnpm --filter components dev",
+    "build:comp": "pnpm --filter components build",
     "lint:comp": "pnpm --filter components lint:fix"
   },
   "keywords": [
