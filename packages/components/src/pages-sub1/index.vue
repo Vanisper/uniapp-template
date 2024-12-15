@@ -1,8 +1,10 @@
 <script lang="ts" setup>
+import GlobalToolsBox from '@/uni_modules/_/components/global-tools-box/index.vue'
 import { navigateTo } from '@/utils'
 </script>
 
 <template>
+  <GlobalToolsBox />
   <view class="page-container">
     <text class="block h1 text-center">
       子包1

@@ -1,0 +1,26 @@
+# global-tools-box
+
+> 实现于uniapp平台的全局悬浮工具箱组件
+
+- 小球尺寸样式可自定义
+- 可按需自实现工具列表
+- 工具悬浮球位置有定位缓存逻辑，可实现跨页面位置保持
+
+## 使用
+
+可以参考本项目中的页面使用示例
+
+``` vue
+<script setup>
+    import GlobalToolsBox from '@/uni_modules/_/components/global-tools-box/index.vue'
+</script>
+
+<template>
+    <global-tools-box :tools="tools" @click="handleClick" />
+</template>
+```
+
+> 由于本组件有定位缓存逻辑，所以可以在所有需要的页面中均引入使用，不会因为页面切换而导致位置重置
+>
+> 手动各个页面引入比较繁琐，可以在页面layout中引入，这样可以实现该layout下的“全局”效果
+>

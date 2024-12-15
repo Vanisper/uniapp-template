@@ -1,0 +1,64 @@
+{
+    "id": "@uniapp-template/components",
+    "displayName": "一些组件库封装",
+    "license": "MIT",
+    "description": "一些基于Vue3+TS开发的uni-app组件的封装实现",
+    "keywords": [
+        "uniapp",
+        "vue3",
+        "typescript"
+    ],
+    "main": "index.ts",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/vanisper/uniapp-template.git"
+    },
+    "engines": {
+        "HBuilderX": "^3.8.7"
+    },
+    "dcloudext": {
+        "type": "component-vue",
+        "sale": {
+            "regular": {
+                "price": "0.00"
+            },
+            "sourcecode": {
+                "price": "0.00"
+            }
+        },
+        "contact": {
+            "qq": ""
+        },
+        "declaration": {
+            "ads": "无",
+            "data": "插件不采集任何数据",
+            "permissions": "无"
+        },
+        "npmurl": ""
+    },
+    "uni_modules": {
+        "dependencies": [],
+        "encrypt": [],
+        "platforms": {
+            "cloud": {
+                "tcb": "y",
+                "aliyun": "y"
+            },
+            "client": {
+                "Vue": {
+                    "vue2": "n",
+                    "vue3": "y"
+                },
+                "H5-mobile": {
+                    "Safari": "y",
+                    "Android Browser": "y",
+                    "微信浏览器(Android)": "y",
+                    "QQ浏览器(Android)": "y"
+                }
+            }
+        }
+    },
+    "peerDependencies": {
+        "vue": ">=3.2.47"
+    }
+}

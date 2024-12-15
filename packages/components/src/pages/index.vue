@@ -2,6 +2,7 @@
 import AppFooter from '@/components/AppFooter.vue'
 import AppLogos from '@/components/AppLogos.vue'
 import InputEntry from '@/components/InputEntry.vue'
+import GlobalToolsBox from '@/uni_modules/_/components/global-tools-box/index.vue'
 </script>
 
 <template>
@@ -10,6 +11,7 @@ import InputEntry from '@/components/InputEntry.vue'
     <InputEntry />
     <AppFooter />
   </view>
+  <GlobalToolsBox />
 </template>
 
 <style scoped>
