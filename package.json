@@ -1,0 +1,17 @@
+{
+  "name": "uniapp-template",
+  "version": "0.0.0",
+  "description": "uniapp-template",
+  "main": "index.js",
+  "scripts": {},
+  "keywords": [
+    "uniapp",
+    "vue3",
+    "typescript"
+  ],
+  "author": "Vanisper",
+  "license": "MIT",
+  "dependencies": {
+    "@test/logger": "link:packages\\logger"
+  }
+}
