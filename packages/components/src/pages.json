@@ -20,7 +20,10 @@
       "root": "pages-sub1",
       "pages": [
         {
-          "path": "index"
+          "path": "index",
+          "style": {
+            "navigationStyle": "custom"
+          }
         }
       ]
     }

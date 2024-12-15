@@ -75,9 +75,13 @@ const bounding = reactive({
 const tabbarHeight = 50
 /** TODO: titlebar 高度 | 原生为 44 */
 const titleBarHeight = 44
+/** TODO: statusBar 高度 | 原生 20 */
+const statusBarHeight = ref(20)
 
 function getBounding() {
   const sysInfo = uni.getSystemInfoSync()
+  statusBarHeight.value = sysInfo.statusBarHeight || 0
+
   const { top, left, right, bottom } = props.gap
   const bottomFix = sysInfo.safeAreaInsets?.bottom ?? 0 + tabbarHeight
   screen.width = sysInfo.windowWidth
@@ -239,6 +243,13 @@ interface ITool {
     '--button-size': `${fabSize}px`,
     '--shrink-width': `${shrinkWidth}px`,
     '--aside-expand-width': `${asideExpandWidth}px`,
+    // TODO: 这里暂且写死为 状态栏高度
+    // 如果其他项目需要考虑进入的页面具体情况：
+    // 0. 在mac、windows小程序下，由于原生存在标题栏，建议不使用自定义标题栏，此处应为 0；如果使用自定义标题栏，此处应为 titleBarHeight；
+    // 1. 页面 navigationStyle 为 custom（不适用原生标题栏），并自定义了标题栏，且在非mac、windows小程序下 => statusBarHeight + titleBarHeight；
+    // 2. 页面 navigationStyle 为 custom（不适用原生标题栏），未自定义标题栏，此处应为状态栏高度 => statusBarHeight；
+    // 3. 页面 navigationStyle 为 default（使用原生标题栏），则此处应为 0。
+    '--window-top': `${statusBarHeight}px`,
     'pointer-events': isActive ? 'all' : 'none',
   }" @click="ballClick">
     <movable-view ref="MovableViewRef" class="movable-view ball-wrap" :animation="isAnimation" :x="mainBallPostion.left"
@@ -312,8 +323,8 @@ interface ITool {
   top: calc(var(--aside-expand-width) * -1);
   left: calc(var(--aside-expand-width) * -1);
   /* #ifndef H5 */
-  height: calc(var(--area-expand-width) + 100% - var(--wot-window-top));
-  top: calc(var(--aside-expand-width) * -1 + var(--wot-window-top));
+  height: calc(var(--area-expand-width) + 100% - var(--window-top));
+  top: calc(var(--aside-expand-width) * -1 + var(--window-top));
   /* #endif */
 
   .ball-wrap {
