@@ -1,6 +1,8 @@
 # monorepo 学习
 
 > form: <https://fazalerabbi.medium.com/monorepo-using-pnpm-workspaces-cb23ed332127>
+>
+> <https://wtto00.github.io/posts/pnpm-workspace-command/>
 
 ## pnpm-workspace.yaml
 
