@@ -16,7 +16,7 @@
 </script>
 
 <template>
-    <global-tools-box :tools="tools" @click="handleClick" />
+    <global-tools-box />
 </template>
 ```
 
