@@ -89,7 +89,7 @@ declare global {
   const unref: typeof import('vue')['unref']
   const useAttrs: typeof import('vue')['useAttrs']
   const useCount: typeof import('../composables/useCount')['useCount']
-  const useCounterStore: typeof import('../stores/counter')['useCounterStore']
+  const useCounterStore: typeof import('../stores/modules/counter')['useCounterStore']
   const useCssModule: typeof import('vue')['useCssModule']
   const useCssVars: typeof import('vue')['useCssVars']
   const useId: typeof import('vue')['useId']
@@ -197,7 +197,7 @@ declare module 'vue' {
     readonly unref: UnwrapRef<typeof import('vue')['unref']>
     readonly useAttrs: UnwrapRef<typeof import('vue')['useAttrs']>
     readonly useCount: UnwrapRef<typeof import('../composables/useCount')['useCount']>
-    readonly useCounterStore: UnwrapRef<typeof import('../stores/counter')['useCounterStore']>
+    readonly useCounterStore: UnwrapRef<typeof import('../stores/modules/counter')['useCounterStore']>
     readonly useCssModule: UnwrapRef<typeof import('vue')['useCssModule']>
     readonly useCssVars: UnwrapRef<typeof import('vue')['useCssVars']>
     readonly useId: UnwrapRef<typeof import('vue')['useId']>

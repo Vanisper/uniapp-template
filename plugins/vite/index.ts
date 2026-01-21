@@ -63,7 +63,7 @@ export default async function createPlugins(mode: string, isBuild = false) {
         // },
       ],
       dts: 'src/typings/auto-imports.d.ts',
-      dirs: ['src/composables', 'src/stores', 'src/utils'],
+      dirs: ['src/composables', 'src/stores/modules', 'src/utils'],
       vueTemplate: true,
     }),
   ]
