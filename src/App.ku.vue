@@ -16,13 +16,13 @@ function handleClickGithub() {
   <div>
     <KuRootView />
     <div class="root-bar">
-      Root component By
+      <span>Root component By</span>
       <span class="color-blue" @click="handleClickGithub">uni-ku/root</span>
     </div>
   </div>
 </template>
 
-<style>
+<style scoped>
 .root-bar {
   position: fixed;
   bottom: 0;
@@ -30,9 +30,11 @@ function handleClickGithub() {
   width: 100%;
   height: 40px;
   background-color: #f5f5f5;
+  opacity: 0.5;
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 4px;
   color: #999;
   font-size: 14px;
   line-height: 40px;

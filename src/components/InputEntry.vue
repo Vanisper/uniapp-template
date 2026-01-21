@@ -10,6 +10,14 @@ function handleClick() {
     show.value = false
   }, 3000)
 }
+
+function go() {
+  if (name.value) {
+    uni.navigateTo({
+      url: `/pages/hi?name=${name.value}`,
+    })
+  }
+}
 </script>
 
 <template>
@@ -22,6 +30,22 @@ function handleClick() {
   <view>
     <button :disabled="!name" @click="handleClick">
       Hello
+    </button>
+    <button
+      :disabled="!name"
+      m="t-3 auto"
+      m-auto
+      w-120rpx
+      rounded
+      bg-teal-600
+      px-4
+      py-1
+      text-sm
+      text-white
+      hover-class="bg-teal-700"
+      @click="go"
+    >
+      GO
     </button>
   </view>
 
