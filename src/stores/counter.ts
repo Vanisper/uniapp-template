@@ -3,5 +3,9 @@ export const useCounterStore = defineStore('counter', () => {
   function increment() {
     count.value++
   }
-  return { count, increment }
-})
+  function decrement() {
+    count.value--
+  }
+  return { count, increment, decrement }
+  // 持久化
+}, { persist: true })
