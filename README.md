@@ -12,7 +12,7 @@
 ### 开发优化
 - [x] [unplugin-auto-import/vite](https://github.com/antfu/unplugin-auto-import): 按需自动导入API
 - [x] [@uni-helper/unh](https://github.com/uni-helper/unh): uniapp cli 启动命令二次封装，简化运行脚本指令，增强开发体验
-- [x] [@uni-helper/plugin-uni](https://github.com/uni-helper/plugin-uni): uni插件的ESM导出，于实现 uni-app 构建体系中实现 ESM-First
+- [x] [@uni-helper/plugin-uni](https://github.com/uni-helper/plugin-uni): uni插件的ESM导出，于 uni-app 构建体系中实现 ESM-First
 - [x] [@uni-helper/vite-plugin-uni-components](https://uni-helper.js.org/vite-plugin-uni-components): 实现组件库的按需引用及类型生成
 - [x] [@uni-helper/vite-plugin-uni-pages](https://github.com/uni-helper/vite-plugin-uni-pages): 实现文件路由
 - [x] [@uni-helper/vite-plugin-uni-layouts](https://github.com/uni-helper/vite-plugin-uni-layouts): 实现 layout 系统
