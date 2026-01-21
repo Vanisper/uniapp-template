@@ -12,6 +12,7 @@ import UniRoot from '@uni-ku/root'
 import { UniEchartsResolver } from 'uni-echarts/resolver'
 import { UniEcharts } from 'uni-echarts/vite'
 import UnoCSS from 'unocss/vite'
+import AutoImport from 'unplugin-auto-import/vite'
 
 export default async function createPlugins(mode: string, isBuild = false) {
   const Plugins: (PluginOption | PluginOption[])[] = [
@@ -49,22 +50,22 @@ export default async function createPlugins(mode: string, isBuild = false) {
       },
     }),
     UnoCSS(),
-    // // https://github.com/antfu/unplugin-auto-import
-    // AutoImport({
-    //   imports: [
-    //     'vue',
-    //     '@vueuse/core',
-    //     'uni-app',
-    //     'pinia',
-    //     {
-    //       from: 'uni-mini-router',
-    //       imports: ['createRouter', 'useRouter', 'useRoute'],
-    //     },
-    //   ],
-    //   dts: 'src/typings/auto-imports.d.ts',
-    //   dirs: ['src/composables', 'src/stores', 'src/utils'],
-    //   vueTemplate: true,
-    // }),
+    // https://github.com/antfu/unplugin-auto-import
+    AutoImport({
+      imports: [
+        'vue',
+        'uni-app',
+        'pinia',
+        // '@vueuse/core',
+        // {
+        //   from: 'uni-mini-router',
+        //   imports: ['createRouter', 'useRouter', 'useRoute'],
+        // },
+      ],
+      dts: 'src/typings/auto-imports.d.ts',
+      dirs: ['src/composables', 'src/stores', 'src/utils'],
+      vueTemplate: true,
+    }),
   ]
 
   return Plugins
