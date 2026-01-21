@@ -5,7 +5,9 @@
   "private": true,
   "scripts": {
     "dev": "unh dev",
+    "dev:test": "unh dev --mode test",
     "build": "unh build",
+    "build:test": "unh build --mode test",
     "about": "unh info",
     "type-check": "vue-tsc --noEmit",
     "lint": "eslint .",

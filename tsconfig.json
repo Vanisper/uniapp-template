@@ -30,7 +30,6 @@
     "skipLibCheck": true
   },
   "include": [
-    "**/*.d.ts",
     "src/**/*.ts",
     "src/**/*.tsx",
     "src/**/*.jsx",
