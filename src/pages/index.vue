@@ -1,19 +1,13 @@
 <script setup lang="ts">
-definePage({
-  type: 'home',
-})
-
-const appVersion = __APP_VERSION__
-const nodeEnv = __NODE_ENV__
+function goDemo() {
+  uni.navigateTo({
+    url: '/pages-demo/index',
+  })
+}
 </script>
 
 <template>
-  <AppLogos />
-  <InputEntry />
-  <view c-coolgray>
-    v{{ appVersion }}
-  </view>
-  <view c-indigo>
-    mode: {{ nodeEnv }}
-  </view>
+  <button @click="goDemo">
+    goDemo
+  </button>
 </template>

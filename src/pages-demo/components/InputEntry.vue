@@ -14,7 +14,7 @@ function handleClick() {
 function go() {
   if (name.value) {
     uni.navigateTo({
-      url: `/pages/hi?name=${name.value}`,
+      url: `./hi?name=${name.value}`,
     })
   }
 }

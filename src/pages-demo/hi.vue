@@ -1,6 +1,9 @@
 <script lang="ts" setup>
+import AppFooter from './components/AppFooter.vue'
+import HiCounter from './components/HiCounter.vue'
+
 definePage({
-  layout: 'home',
+  layout: 'demo',
 })
 
 const { value: name } = useQuery('name')
@@ -16,4 +19,5 @@ function goBack() {
   <button @click="goBack">
     goBack
   </button>
+  <AppFooter />
 </template>

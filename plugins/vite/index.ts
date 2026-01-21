@@ -26,6 +26,9 @@ export default async function createPlugins(mode: string, isBuild = false) {
     UniPages({
       dts: 'src/typings/uni-pages.d.ts',
       exclude: ['_*.*', '**/components/**/*.*', '**/_components/**/*.*'],
+      subPackages: [
+        'src/pages-demo',
+      ],
     }),
     // https://github.com/uni-helper/vite-plugin-uni-layouts
     UniLayouts(),
