@@ -78,9 +78,12 @@ export function usePages() {
 
   /** 前往首页 */
   function goHome() {
-    const homePath = pages?.find(i => i.type === 'home')?.path
+    let homePath = pages?.find(i => i.type === 'home')?.path
     if (!homePath) {
       return console.warn('找不到首页')
+    }
+    if (!homePath.startsWith('/')) {
+      homePath = `/${homePath}`
     }
     uni.switchTab({ url: homePath })
   }

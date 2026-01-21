@@ -7,10 +7,7 @@ definePage({
 })
 
 const { value: name } = useQuery('name')
-
-function goBack() {
-  uni.navigateBack()
-}
+const { goBack } = usePages()
 </script>
 
 <template>
