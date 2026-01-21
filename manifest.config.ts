@@ -1,11 +1,12 @@
 import { defineManifestConfig } from '@uni-helper/vite-plugin-uni-manifest'
+import { version, versionCode } from './package.json'
 
 export default defineManifestConfig({
   'name': '',
   'appid': '',
   'description': '',
-  'versionName': '1.0.0',
-  'versionCode': '100',
+  'versionName': version,
+  'versionCode': versionCode,
   'transformPx': false,
   /* 5+App特有相关 */
   'app-plus': {

@@ -1,6 +1,7 @@
 {
   "type": "module",
   "version": "0.0.0",
+  "versionCode": 0,
   "private": true,
   "scripts": {
     "dev": "unh dev",
