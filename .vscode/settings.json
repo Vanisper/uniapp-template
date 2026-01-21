@@ -1,0 +1,50 @@
+{
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "files.associations": {
+    "pages.json": "jsonc",
+    "manifest.json": "jsonc"
+  },
+
+  "editor.suggest.snippetsPreventQuickSuggestions": false,
+  "editor.acceptSuggestionOnEnter": "smart",
+  "editor.suggestSelection": "recentlyUsedByPrefix",
+  "editor.suggest.insertMode": "replace",
+  "editor.quickSuggestions": {
+    "other": true,
+    "comments": true,
+    "strings": true
+  },
+
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit",
+    "source.organizeImports": "never"
+  },
+  "prettier.enable": false,
+  "editor.formatOnSave": false,
+  "eslint.useFlatConfig": true,
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact",
+    "vue",
+    "nvue",
+    "uvue",
+    "html",
+    "markdown",
+    "json",
+    "jsonc",
+    "yaml",
+    "toml",
+    "xml",
+    "gql",
+    "graphql",
+    "astro",
+    "svelte",
+    "css",
+    "less",
+    "scss",
+    "pcss",
+    "postcss"
+  ]
+}

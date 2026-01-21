@@ -1,0 +1,86 @@
+{
+  "type": "module",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "unh dev",
+    "build": "unh build",
+    "about": "unh info",
+    "type-check": "vue-tsc --noEmit",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
+  },
+  "dependencies": {
+    "@dcloudio/uni-app": "3.0.0-4080720251210001",
+    "@dcloudio/uni-app-harmony": "3.0.0-4080720251210001",
+    "@dcloudio/uni-app-plus": "3.0.0-4080720251210001",
+    "@dcloudio/uni-components": "3.0.0-4080720251210001",
+    "@dcloudio/uni-h5": "3.0.0-4080720251210001",
+    "@dcloudio/uni-mp-alipay": "3.0.0-4080720251210001",
+    "@dcloudio/uni-mp-baidu": "3.0.0-4080720251210001",
+    "@dcloudio/uni-mp-harmony": "3.0.0-4080720251210001",
+    "@dcloudio/uni-mp-jd": "3.0.0-4080720251210001",
+    "@dcloudio/uni-mp-kuaishou": "3.0.0-4080720251210001",
+    "@dcloudio/uni-mp-lark": "3.0.0-4080720251210001",
+    "@dcloudio/uni-mp-qq": "3.0.0-4080720251210001",
+    "@dcloudio/uni-mp-toutiao": "3.0.0-4080720251210001",
+    "@dcloudio/uni-mp-weixin": "3.0.0-4080720251210001",
+    "@dcloudio/uni-mp-xhs": "3.0.0-4080720251210001",
+    "@dcloudio/uni-quickapp-webview": "3.0.0-4080720251210001",
+    "echarts": "^6.0.0",
+    "pinia": "2.2.4",
+    "uni-echarts": "^2.4.1",
+    "vue": "3.4.21",
+    "vue-i18n": "9.6.2",
+    "z-paging": "^2.8.8"
+  },
+  "devDependencies": {
+    "@dcloudio/types": "3.4.19",
+    "@dcloudio/uni-automator": "3.0.0-4080720251210001",
+    "@dcloudio/uni-cli-shared": "3.0.0-4080720251210001",
+    "@dcloudio/uni-stacktracey": "3.0.0-4080720251210001",
+    "@dcloudio/vite-plugin-uni": "3.0.0-4080720251210001",
+    "@iconify-json/carbon": "^1.2.15",
+    "@mini-types/alipay": "^3.0.14",
+    "@types/node": "^25.0.3",
+    "@uni-helper/eslint-config": "^0.6.1",
+    "@uni-helper/plugin-uni": "0.1.0",
+    "@uni-helper/unh": "^0.2.10",
+    "@uni-helper/uni-types": "^1.0.0-alpha.7",
+    "@uni-helper/unocss-preset-uni": "^0.2.11",
+    "@uni-helper/vite-plugin-uni-components": "^0.2.6",
+    "@uni-helper/vite-plugin-uni-layouts": "^0.1.11",
+    "@uni-helper/vite-plugin-uni-manifest": "^0.2.12",
+    "@uni-helper/vite-plugin-uni-pages": "^0.3.22",
+    "@uni-helper/vite-plugin-uni-platform": "^0.0.5",
+    "@uni-ku/root": "^1.4.1",
+    "@vue/runtime-core": "3.4.21",
+    "@vue/tsconfig": "^0.8.1",
+    "eslint": "^9.39.2",
+    "miniprogram-api-typings": "^4.1.2",
+    "sass": "1.64.2",
+    "typescript": "^5.9.3",
+    "unocss": "66.0.0",
+    "vite": "5.2.8",
+    "vue-tsc": "^3.2.1"
+  },
+  "pnpm": {
+    "overrides": {
+      "unconfig": "7.3.2"
+    },
+    "onlyBuiltDependencies": [
+      "@uni-helper/unocss-preset-uni",
+      "bufferutil",
+      "core-js",
+      "esbuild",
+      "minidev",
+      "vue-demi"
+    ]
+  },
+  "overrides": {
+    "unconfig": "7.3.2"
+  },
+  "resolutions": {
+    "unconfig": "7.3.2"
+  }
+}
