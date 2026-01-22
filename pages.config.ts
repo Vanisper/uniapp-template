@@ -25,11 +25,11 @@ export default defineUniPages({
     // navigationStyle: 'custom',
   },
   tabBar: {
-    custom: true,
-    // #ifdef MP-ALIPAY
-    customize: true,
-    overlay: true,
-    // #endif
+    // custom: true,
+    // // #ifdef MP-ALIPAY
+    // customize: true,
+    // overlay: true,
+    // // #endif
     // height: '0',
     color: '@tabColor',
     selectedColor: '@tabSelectedColor',
