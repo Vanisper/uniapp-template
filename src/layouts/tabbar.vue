@@ -1,6 +1,3 @@
-<script lang="ts">
-</script>
-
 <script lang="ts" setup>
 import { THEME_CONFIG } from '@/configs/theme'
 
