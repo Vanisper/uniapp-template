@@ -76,6 +76,35 @@ export function usePages() {
     })
   }
 
+  const currentPage = computed(() => getCurrentPage())
+
+  function go(pagePath: string, switchTab = false) {
+    if (switchTab === true) {
+      uni.switchTab({
+        url: pagePath,
+        fail(error) {
+          if (pagePath.startsWith('/')) {
+            // todo: try navigateTo
+            throw error
+          }
+          uni.switchTab({ url: `/${pagePath}` })
+        },
+      })
+    }
+    else {
+      uni.navigateTo({
+        url: pagePath,
+        fail(error) {
+          if (pagePath.startsWith('/')) {
+            // todo: try switchTab
+            throw error
+          }
+          uni.navigateTo({ url: `/${pagePath}` })
+        },
+      })
+    }
+  }
+
   /** 前往首页 */
   function goHome() {
     let homePath = pages?.find(i => i.type === 'home')?.path
@@ -99,9 +128,11 @@ export function usePages() {
 
   return {
     pagesJson,
+    currentPage,
     isTabBarPage,
     isCustomNavigationStyle,
     getCurrentPage,
+    go,
     goHome,
     goBack,
   }
