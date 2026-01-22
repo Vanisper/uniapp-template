@@ -13,18 +13,18 @@ function handleClickGithub() {
 </script>
 
 <template>
-  <div>
-    <KuRootView />
+  <LayoutPageWrapper>
+    <ku-root-view />
     <div class="root-bar">
       <span>Root component By</span>
       <span class="color-blue" @click="handleClickGithub">uni-ku/root</span>
     </div>
-  </div>
+  </LayoutPageWrapper>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
 .root-bar {
-  position: fixed;
+  position: absolute;
   bottom: 0;
   left: 0;
   width: 100%;
@@ -41,9 +41,10 @@ function handleClickGithub() {
   text-align: center;
   box-sizing: border-box;
   padding: 0 20px;
-}
-.color-blue {
-  color: #409eff;
-  cursor: pointer;
+
+  .color-blue {
+    color: #409eff;
+    cursor: pointer;
+  }
 }
 </style>

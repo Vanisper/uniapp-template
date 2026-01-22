@@ -1,8 +1,16 @@
+<script lang="ts" setup>
+</script>
+
+<script lang="ts">
+export default {
+  options: {
+    addGlobalClass: true,
+    virtualHost: true,
+    styleIsolation: 'shared',
+  },
+}
+</script>
+
 <template>
-  <view px-10 py-20 text-center>
-    <slot />
-    <view mx-auto mt-5 text-center text-sm opacity-25>
-      [Default Layout]
-    </view>
-  </view>
+  <slot />
 </template>

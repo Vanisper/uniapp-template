@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 definePage({
+  layout: 'tabbar',
   tabBar: {
     text: '关于',
   },
