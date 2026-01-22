@@ -1,5 +1,6 @@
 <script setup lang="ts">
 definePage({
+  layout: 'tabbar',
   tabBar: {
     text: '首页',
     index: -1,
