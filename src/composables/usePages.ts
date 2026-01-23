@@ -57,23 +57,28 @@ export function usePages() {
     return navigationBarTitleText ?? globalNavigationBarTitleText
   }
 
+  function getPageOptions(pagePath: PagePath) {
+    return {
+      /** 是否自定义导航栏 */
+      customNavigation: isCustomNavigationStyle(pagePath),
+      /** 是否是 tabbar 页面 */
+      tabbarPage: isTabBarPage(pagePath),
+      navigationBarTitleText: getNavigationBarTitleText(pagePath),
+    }
+  }
+
   const _getCurrentPages = getCurrentPages<{
     /** 路由所带的参数 */
     options: any
   }>
+  const currentPages = computed(() => _getCurrentPages())
 
   function getCurrentPage() {
-    const pages = _getCurrentPages() // 获取页面堆栈
+    const pages = currentPages.value // 获取页面堆栈
     const currentPage = pages[pages.length - 1] // 获取当前页面的对象
     const route = currentPage.route as PagePath // 获取当前页面的路由
 
-    return Object.assign(currentPage, {
-      /** 是否自定义导航栏 */
-      customNavigation: isCustomNavigationStyle(route),
-      /** 是否是 tabbar 页面 */
-      tabbarPage: isTabBarPage(route),
-      navigationBarTitleText: getNavigationBarTitleText(route),
-    })
+    return Object.assign(currentPage, getPageOptions(route))
   }
 
   const currentPage = computed(() => getCurrentPage())
@@ -107,14 +112,11 @@ export function usePages() {
 
   /** 前往首页 */
   function goHome() {
-    let homePath = pages?.find(i => i.type === 'home')?.path
+    const homePath = pages?.find(i => i.type === 'home')?.path
     if (!homePath) {
       return console.warn('找不到首页')
     }
-    if (!homePath.startsWith('/')) {
-      homePath = `/${homePath}`
-    }
-    uni.switchTab({ url: homePath })
+    go(homePath, true)
   }
 
   /**
@@ -123,12 +125,26 @@ export function usePages() {
    * @param [home] 在页面栈只有一个的情况下，前往首页兜底
    */
   function goBack(home = false) {
-    uni.navigateBack({}).catch(() => home && goHome())
+    if (typeof home !== 'boolean') {
+      home = false
+    }
+    if (home && currentPages.value.length <= 1) {
+      console.warn('[usePages]', '页面栈不大于1，goHome 兜底')
+      return goHome()
+    }
+    uni.navigateBack({}).catch(() => {
+      if (!home) {
+        return
+      }
+      console.warn('[usePages]', 'navigateBack 错误，goHome 兜底')
+      goHome()
+    })
   }
 
   return {
     pagesJson,
     currentPage,
+    currentPages,
     isTabBarPage,
     isCustomNavigationStyle,
     getCurrentPage,

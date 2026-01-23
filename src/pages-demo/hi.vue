@@ -13,7 +13,7 @@ const { goBack } = usePages()
 <template>
   <view>{{ name }}</view>
   <HiCounter />
-  <button @click="goBack">
+  <button @click="goBack(true)">
     goBack
   </button>
   <AppFooter />

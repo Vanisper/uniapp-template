@@ -9,7 +9,7 @@ defineOptions({
   },
 })
 
-const { pagesJson, go, currentPage } = usePages()
+const { go, pagesJson, currentPage } = usePages()
 const tabbarList = pagesJson.tabBar?.list
 </script>
 
