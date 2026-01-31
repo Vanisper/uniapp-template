@@ -8,5 +8,6 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     LayoutPageWrapper: typeof import('./../components/layout/PageWrapper.vue')['default']
+    Tabbar: typeof import('./../components/tabbar/index.vue')['default']
   }
 }
