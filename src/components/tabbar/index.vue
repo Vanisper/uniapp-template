@@ -36,13 +36,11 @@ const emit = defineEmits<{
   change: [{ value?: any, text?: any }, I]
 }>()
 
-const value = defineModel<string | number>('value')
-
 const current = computed(() => {
-  const _value = value.value ?? props.defaultValue ?? 0
+  const _value = props.defaultValue ?? 0
   const _list = props.list
   if (typeof _value === 'string') {
-    return _list?.find(i => i[props.valueField] === value.value)
+    return _list?.find(i => i[props.valueField] === props.defaultValue)
   }
   return _list?.[_value] ?? _list?.[0]
 })
@@ -53,7 +51,6 @@ function isActive(params: I) {
 }
 
 function handler(params: I) {
-  value.value = params[props.valueField]
   emit('change', { value: params[props.valueField], text: params[props.textField] }, params)
 }
 </script>
