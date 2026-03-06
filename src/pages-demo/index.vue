@@ -5,6 +5,10 @@ import InputEntry from './components/InputEntry.vue'
 
 const appVersion = __APP_VERSION__
 const nodeEnv = __NODE_ENV__
+
+definePage({
+  layout: 'demo',
+})
 </script>
 
 <template>
