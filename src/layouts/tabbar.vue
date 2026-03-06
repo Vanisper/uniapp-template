@@ -12,6 +12,10 @@ defineOptions({
 
 const { go, pagesJson, currentPage } = usePages()
 const tabbarList = pagesJson.tabBar?.list
+
+onMounted(() => {
+  uni.hideTabBar()
+})
 </script>
 
 <template>

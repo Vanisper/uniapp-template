@@ -25,7 +25,7 @@ function handleClickGithub() {
 <style lang="scss" scoped>
 .root-bar {
   position: absolute;
-  bottom: 0;
+  bottom: 50px;
   left: 0;
   width: 100%;
   height: 40px;
@@ -41,6 +41,8 @@ function handleClickGithub() {
   text-align: center;
   box-sizing: border-box;
   padding: 0 20px;
+  z-index: 1;
+  pointer-events: none;
 
   .color-blue {
     color: #409eff;

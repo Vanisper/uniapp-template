@@ -25,12 +25,16 @@ export default defineUniPages({
     // navigationStyle: 'custom',
   },
   tabBar: {
-    // custom: true,
-    // // #ifdef MP-ALIPAY
-    // customize: true,
-    // overlay: true,
-    // // #endif
-    // height: '0',
+    // #region 自定义tabbar 时，启用此部分配置
+    // 小程序端此部分配置足够隐藏原生 tabbar，其他端不能完全隐藏
+    // TODO: 故相关部分需要调用 `uni.hideTabBar()`
+    custom: true,
+    // #ifdef MP-ALIPAY
+    customize: true,
+    overlay: true,
+    // #endif
+    height: '0',
+    // #endregion
     color: '@tabColor',
     selectedColor: '@tabSelectedColor',
     backgroundColor: '@tabBgColor',
