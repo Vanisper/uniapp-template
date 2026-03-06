@@ -19,6 +19,26 @@ export const useManualThemeStore = defineStore('manualTheme', {
 
   getters: {
     isDark: state => state.theme === 'dark',
+    /**
+     * 导航栏颜色配置
+     */
+    navigationBarColor: (state) => {
+      // 颜色修正，setNavigationBarColor 对颜色字符串格式有严格要求
+      const colorFixMap = {
+        'black': '#000000',
+        'white': '#ffffff',
+        '#000': '#000000',
+        '#FFF': '#ffffff',
+        '#fff': '#ffffff',
+      } as Record<string, string>
+
+      const navTxtStyle = themeData[state.theme].navTxtStyle
+      const navBgColor = themeData[state.theme].navBgColor
+
+      const frontColor = colorFixMap[navTxtStyle] ?? navTxtStyle
+      const backgroundColor = colorFixMap[navBgColor] ?? navBgColor
+      return { frontColor, backgroundColor }
+    },
   },
 
   actions: {
@@ -53,29 +73,7 @@ export const useManualThemeStore = defineStore('manualTheme', {
      * 设置导航栏颜色
      */
     setNavigationBarColor() {
-      // 颜色修正，setNavigationBarColor 对颜色字符串格式有严格要求
-      const colorFixMap = {
-        'black': '#000000',
-        'white': '#ffffff',
-        '#000': '#000000',
-        '#FFF': '#ffffff',
-        '#fff': '#ffffff',
-      } as Record<string, string>
-
-      const navTxtStyle = themeData[this.theme].navTxtStyle
-      const navBgColor = themeData[this.theme].navBgColor
-
-      const frontColor = colorFixMap[navTxtStyle] ?? navTxtStyle
-      const backgroundColor = colorFixMap[navBgColor] ?? navBgColor
-
-      uni.setNavigationBarColor({
-        frontColor,
-        backgroundColor,
-      })
-      // uni.setNavigationBarColor({
-      //   frontColor: this.theme === 'light' ? '#000000' : '#ffffff',
-      //   backgroundColor: this.theme === 'light' ? '#ffffff' : '#000000',
-      // })
+      uni.setNavigationBarColor(this.navigationBarColor)
     },
 
     /**

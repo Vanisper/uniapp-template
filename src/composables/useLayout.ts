@@ -5,10 +5,15 @@ export function useLayout() {
 
   const customTabbar = THEME_CONFIG.tabbar.mode === 'custom'
 
+  // 获取系统信息
+  const systemInfo = uni.getSystemInfoSync()
+  // 获取状态栏高度，某些平台（如H5）可能为0
+  const statusBarHeight = systemInfo.statusBarHeight || 0
+
   /** 是否显示 navbar */
   const hasNavbar = computed(() => {
     const route = currentPage.value?.route
-    return route && isCustomNavigationStyle(route)
+    return !!route && isCustomNavigationStyle(route)
   })
 
   /** 是否显示 tabbar */
@@ -33,6 +38,7 @@ export function useLayout() {
    * @description 用于 PageWrapper 等组件
    */
   const pageWrapperStyle = computed(() => ({
+    '--status-bar-height': `${statusBarHeight}px`,
     '--navbar-height': `${navbarHeight.value}px`,
     '--tabbar-height': `${tabbarHeight.value}px`,
   }))
@@ -51,6 +57,7 @@ export function useLayout() {
 
   return {
     customTabbar,
+    statusBarHeight,
     hasNavbar,
     hasTabbar,
     navbarHeight,

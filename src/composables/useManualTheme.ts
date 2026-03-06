@@ -123,6 +123,7 @@ export function useManualTheme() {
     hasUserSet: computed(() => store.hasUserSet),
     currentThemeColor: computed(() => store.currentThemeColor),
     themeVars: computed(() => store.themeVars),
+    navigationBarColor: computed(() => store.navigationBarColor),
     showThemeColorSheet,
 
     // 常量

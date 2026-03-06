@@ -9,6 +9,7 @@ declare module 'vue' {
   export interface GlobalComponents {
     AppPageWrapper: typeof import('./../components/App/PageWrapper.vue')['default']
     Navbar: typeof import('./../components/Navbar/index.vue')['default']
+    StatusBar: typeof import('./../components/StatusBar/index.vue')['default']
     Tabbar: typeof import('./../components/Tabbar/index.vue')['default']
   }
 }

@@ -12,6 +12,7 @@ const props = withDefaults(defineProps<NavbarProps>(), {
   bgColor: '#ffffff',
   textColor: '#333333',
   bordered: true,
+  top: 0,
 })
 
 const emit = defineEmits<{
@@ -22,6 +23,8 @@ const emit = defineEmits<{
 interface NavbarProps {
   /** 标题 */
   title?: string
+  /** top */
+  top?: number
   /** 高度 */
   height: number
   /** 背景色 */
@@ -37,6 +40,7 @@ const navbarStyle = computed(() => ({
   color: props.textColor,
   height: `${props.height}px`,
   borderBottom: props.bordered ? '1px solid #e5e5e5' : 'none',
+  top: `${props.top}px`,
 }))
 </script>
 
@@ -45,7 +49,7 @@ const navbarStyle = computed(() => ({
     :style="{ height: `${height}px`, flexShrink: 0 }"
   />
   <view
-    pos-absolute top-0 left-0 z-999 w-full
+    pos-absolute left-0 z-999 w-full
     :style="navbarStyle"
   >
     <view flex items-center justify-between h-full px-3>
