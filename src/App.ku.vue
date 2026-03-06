@@ -13,13 +13,13 @@ function handleClickGithub() {
 </script>
 
 <template>
-  <LayoutPageWrapper>
+  <app-page-wrapper>
     <ku-root-view />
     <div class="root-bar">
       <span>Root component By</span>
       <span class="color-blue" @click="handleClickGithub">uni-ku/root</span>
     </div>
-  </LayoutPageWrapper>
+  </app-page-wrapper>
 </template>
 
 <style lang="scss" scoped>

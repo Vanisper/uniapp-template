@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-import Tabbar from '@/components/tabbar/index.vue'
 import { THEME_CONFIG } from '@/configs/theme'
 
 defineOptions({
+  name: 'TabbarLayout',
   options: {
     addGlobalClass: true,
     virtualHost: true,

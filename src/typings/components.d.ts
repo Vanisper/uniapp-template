@@ -7,7 +7,7 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
-    LayoutPageWrapper: typeof import('./../components/layout/PageWrapper.vue')['default']
-    Tabbar: typeof import('./../components/tabbar/index.vue')['default']
+    AppPageWrapper: typeof import('./../components/App/PageWrapper.vue')['default']
+    Tabbar: typeof import('./../components/Tabbar/index.vue')['default']
   }
 }
