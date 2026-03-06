@@ -1,4 +1,23 @@
+import type { TabBar } from '@uni-helper/vite-plugin-uni-pages'
 import { defineUniPages } from '@uni-helper/vite-plugin-uni-pages'
+import { THEME_CONFIG } from './src/configs/theme'
+
+let tabBarExpand: TabBar | undefined
+
+if (THEME_CONFIG.tabbar.mode === 'custom') {
+  tabBarExpand = {
+    // #region 自定义tabbar 时，启用此部分配置
+    // 小程序端此部分配置足够隐藏原生 tabbar，其他端不能完全隐藏
+    // TODO: 故相关部分需要调用 `uni.hideTabBar()`
+    custom: true,
+    // #ifdef MP-ALIPAY
+    customize: true,
+    overlay: true,
+    // #endif
+    height: '0',
+    // #endregion
+  }
+}
 
 export default defineUniPages({
   pages: [],
@@ -25,16 +44,7 @@ export default defineUniPages({
     // navigationStyle: 'custom',
   },
   tabBar: {
-    // #region 自定义tabbar 时，启用此部分配置
-    // 小程序端此部分配置足够隐藏原生 tabbar，其他端不能完全隐藏
-    // TODO: 故相关部分需要调用 `uni.hideTabBar()`
-    custom: true,
-    // #ifdef MP-ALIPAY
-    customize: true,
-    overlay: true,
-    // #endif
-    height: '0',
-    // #endregion
+    ...tabBarExpand,
     color: '@tabColor',
     selectedColor: '@tabSelectedColor',
     backgroundColor: '@tabBgColor',

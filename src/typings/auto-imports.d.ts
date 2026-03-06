@@ -94,6 +94,7 @@ declare global {
   const useCssModule: typeof import('vue')['useCssModule']
   const useCssVars: typeof import('vue')['useCssVars']
   const useId: typeof import('vue')['useId']
+  const useLayout: typeof import('../composables/useLayout')['default']
   const useManualTheme: typeof import('../composables/useManualTheme')['useManualTheme']
   const useManualThemeStore: typeof import('../stores/modules/manualTheme')['useManualThemeStore']
   const useModel: typeof import('vue')['useModel']
@@ -214,6 +215,7 @@ declare module 'vue' {
     readonly useCssModule: UnwrapRef<typeof import('vue')['useCssModule']>
     readonly useCssVars: UnwrapRef<typeof import('vue')['useCssVars']>
     readonly useId: UnwrapRef<typeof import('vue')['useId']>
+    readonly useLayout: UnwrapRef<typeof import('../composables/useLayout')['default']>
     readonly useManualTheme: UnwrapRef<typeof import('../composables/useManualTheme')['useManualTheme']>
     readonly useManualThemeStore: UnwrapRef<typeof import('../stores/modules/manualTheme')['useManualThemeStore']>
     readonly useModel: UnwrapRef<typeof import('vue')['useModel']>

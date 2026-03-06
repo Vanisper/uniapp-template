@@ -18,14 +18,14 @@ export function usePages() {
   const globalNavigationBarTitleText = globalStyle?.navigationBarTitleText ?? 'uniapp'
 
   /** 查询是否是 tabbar 页面 */
-  function isTabBarPage(pathUrl: PagePath) {
+  function isTabBarPage(pathUrl: string) {
     const page = tabBar?.list?.find((tabBar) => {
       return tabBar?.pagePath === pathUrl
     })
     return !!page
   }
 
-  function findPage(pagePath: PagePath) {
+  function findPage(pagePath: string) {
     const find = (pageMeta: PageMetaDatum) => pageMeta.path === pagePath
 
     const page = pages?.find(find)
@@ -41,23 +41,23 @@ export function usePages() {
     return page
   }
 
-  function getPageStyle<K extends ActualKeys<GlobalStyle>>(pagePath: PagePath, style: K) {
+  function getPageStyle<K extends ActualKeys<GlobalStyle>>(pagePath: string, style: K) {
     const page = findPage(pagePath)
     return page?.style?.[style] as undefined | GlobalStyle[K]
   }
 
   /** 查询是否是 custom 导航栏 */
-  function isCustomNavigationStyle(pagePath: PagePath) {
+  function isCustomNavigationStyle(pagePath: string) {
     const navigationStyle = getPageStyle(pagePath, 'navigationStyle')
     return (navigationStyle ?? globalNavigationStyle) === 'custom'
   }
 
-  function getNavigationBarTitleText(pagePath: PagePath) {
+  function getNavigationBarTitleText(pagePath: string) {
     const navigationBarTitleText = getPageStyle(pagePath, 'navigationBarTitleText')
     return navigationBarTitleText ?? globalNavigationBarTitleText
   }
 
-  function getPageOptions(pagePath: PagePath) {
+  function getPageOptions(pagePath: string) {
     return {
       /** 是否自定义导航栏 */
       customNavigation: isCustomNavigationStyle(pagePath),
@@ -76,7 +76,7 @@ export function usePages() {
   function getCurrentPage() {
     const pages = currentPages.value // 获取页面堆栈
     const currentPage = pages[pages.length - 1] // 获取当前页面的对象
-    const route = currentPage.route as PagePath // 获取当前页面的路由
+    const route = currentPage.route! // 获取当前页面的路由
 
     return Object.assign(currentPage, getPageOptions(route))
   }

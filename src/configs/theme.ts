@@ -61,7 +61,7 @@ export const THEME_CONFIG = Object.freeze<IThemeConfig>({
     colorTheme: currentThemeColor.primary,
   },
   tabbar: {
-    mode: 'default',
+    mode: 'custom',
     height: 50,
   },
   navbar: {

@@ -17,15 +17,14 @@
     {
       "path": "pages/index",
       "type": "home",
-      "layout": "tabbar",
       "style": {
-        "navigationBarTitleText": "首页"
+        "navigationBarTitleText": "首页",
+        "navigationStyle": "custom"
       }
     },
     {
       "path": "pages/about",
       "type": "page",
-      "layout": "tabbar",
       "style": {
         "navigationBarTitleText": "关于"
       }

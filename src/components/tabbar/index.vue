@@ -56,7 +56,7 @@ function handler(params: I) {
 </script>
 
 <template>
-  <view :style="{ height: `${height}px` }" />
+  <view :style="{ height: `${height}px`, flexShrink: 0 }" />
   <view pos-absolute bottom-0 left-0 z-1 w-full flex bg-white :style="{ height: `${height}px` }">
     <view
       v-for="(item, index) in list" :key="index"
