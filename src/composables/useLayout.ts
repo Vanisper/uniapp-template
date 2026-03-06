@@ -5,10 +5,14 @@ export function useLayout() {
 
   const customTabbar = THEME_CONFIG.tabbar.mode === 'custom'
 
-  // 获取系统信息
-  const systemInfo = uni.getSystemInfoSync()
   // 获取状态栏高度，某些平台（如H5）可能为0
-  const statusBarHeight = systemInfo.statusBarHeight || 0
+  let statusBarHeight = 0
+  // #ifdef MP-WEIXIN
+  statusBarHeight = uni.getWindowInfo().statusBarHeight
+  // #endif
+  // #ifndef MP-WEIXIN
+  statusBarHeight = uni.getSystemInfoSync().statusBarHeight ?? 0
+  // #endif
 
   /** 是否显示 navbar */
   const hasNavbar = computed(() => {
