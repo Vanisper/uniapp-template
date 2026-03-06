@@ -12,14 +12,19 @@ defineOptions({
 
 const { go, pagesJson, currentPage } = usePages()
 const tabbarList = pagesJson.tabBar?.list
+
+const currentTab = computed({
+  get: () => currentPage.value.route,
+  set: val => typeof val === 'string' && go(val, true),
+})
 </script>
 
 <template>
   <slot />
   <tabbar
-    v-model:value="currentPage.route"
+    v-model:value="currentTab"
+    :default-value="0"
     :list="tabbarList" value-field="pagePath"
     :height="THEME_CONFIG.tabbar.height"
-    @go="(i) => go(i.pagePath, true)"
   />
 </template>

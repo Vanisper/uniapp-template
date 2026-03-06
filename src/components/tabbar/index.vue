@@ -33,7 +33,7 @@ const props = withDefaults(defineProps<{
 })
 
 const emit = defineEmits<{
-  go: [I]
+  change: [{ value?: any, text?: any }, I]
 }>()
 
 const value = defineModel<string | number>('value')
@@ -46,6 +46,16 @@ const current = computed(() => {
   }
   return _list?.[_value] ?? _list?.[0]
 })
+
+function isActive(params: I) {
+  const valueField = props.valueField
+  return current.value?.[valueField] === params[valueField]
+}
+
+function handler(params: I) {
+  value.value = params[props.valueField]
+  emit('change', { value: params[props.valueField], text: params[props.textField] }, params)
+}
 </script>
 
 <template>
@@ -54,8 +64,8 @@ const current = computed(() => {
     <view
       v-for="(item, index) in list" :key="index"
       flex-grow-1 flex items-center justify-center text-10px
-      :style="{ color: current?.[valueField] === item[valueField] ? activeColor : color }"
-      @click="emit('go', item)"
+      :style="{ color: isActive(item) ? activeColor : color }"
+      @click="handler(item)"
     >
       <text>{{ item[textField] }}</text>
     </view>
