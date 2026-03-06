@@ -1,8 +1,8 @@
 <script lang="ts" setup>
+import Tabbar from '@/components/Tabbar/index.vue'
 import { THEME_CONFIG } from '@/configs/theme'
 
 defineOptions({
-  name: 'TabbarLayout',
   options: {
     addGlobalClass: true,
     virtualHost: true,
@@ -14,7 +14,9 @@ const { go, pagesJson, currentPage } = usePages()
 const tabbarList = pagesJson.tabBar?.list
 
 onMounted(() => {
+  // #ifndef MP-WEIXIN
   uni.hideTabBar()
+  // #endif
 })
 </script>
 
