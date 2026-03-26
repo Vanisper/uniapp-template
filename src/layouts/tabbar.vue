@@ -22,7 +22,7 @@ onMounted(() => {
 
 <template>
   <slot />
-  <tabbar
+  <Tabbar
     :default-value="currentPage.route"
     :list="tabbarList" value-field="pagePath"
     :height="THEME_CONFIG.tabbar.height"
