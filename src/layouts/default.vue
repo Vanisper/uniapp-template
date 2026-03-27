@@ -29,6 +29,7 @@ onMounted(() => {
   <StatusBar v-if="hasNavbar" :height="statusBarHeight" :bg-color="navigationBarColor.backgroundColor" />
   <Navbar
     v-if="hasNavbar"
+    :left-arrow="!currentPage.tabbarPage"
     :title="navbarTitle"
     :height="navbarHeight"
     :top="statusBarHeight"

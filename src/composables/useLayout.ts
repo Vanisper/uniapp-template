@@ -1,7 +1,7 @@
 import { THEME_CONFIG } from '@/configs/theme'
 
 export function useLayout() {
-  const { currentPage, isCustomNavigationStyle, pagesJson } = usePages()
+  const { currentPage, isCustomNavigationStyle } = usePages()
 
   const customTabbar = THEME_CONFIG.tabbar.mode === 'custom'
 
@@ -14,18 +14,22 @@ export function useLayout() {
   statusBarHeight = uni.getSystemInfoSync().statusBarHeight ?? 0
   // #endif
 
-  /** 是否显示 navbar */
+  /**
+   * 是否显示 navbar
+   * @description 自定义 navbar
+   */
   const hasNavbar = computed(() => {
     const route = currentPage.value?.route
     return !!route && isCustomNavigationStyle(route)
   })
 
-  /** 是否显示 tabbar */
-  const hasTabbar = computed(() => {
-    const route = currentPage.value?.route
-    const tabbarList = pagesJson.tabBar?.list
-    return customTabbar && route && tabbarList?.some(tab => tab.pagePath === route)
-  })
+  /**
+   * 是否显示 tabbar
+   * @description 自定义 tabbar
+   */
+  const hasTabbar = computed(() =>
+    customTabbar && currentPage.value.tabbarPage,
+  )
 
   /** navbar 高度 */
   const navbarHeight = computed(() =>

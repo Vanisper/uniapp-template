@@ -21,6 +21,16 @@ const emit = defineEmits<{
 }>()
 
 interface NavbarProps {
+  /** 是否显示左侧箭头 */
+  leftArrow?: boolean
+  /** 左侧文案 */
+  leftText?: string
+  /** 是否禁用左侧 */
+  leftDisabled?: boolean
+  /** 右侧文案 */
+  rightText?: string
+  /** 是否禁用右侧 */
+  rightDisabled?: boolean
   /** 标题 */
   title?: string
   /** top */
@@ -54,11 +64,10 @@ const navbarStyle = computed(() => ({
   >
     <view flex items-center justify-between h-full px-3>
       <!-- 左侧插槽 -->
-      <view flex items-center flex-shrink-0 @click="emit('clickLeft')">
+      <view flex items-center flex-shrink-0 @click="!leftDisabled && emit('clickLeft')">
         <slot name="left">
-          <text text-20px>
-            ‹
-          </text>
+          <view v-if="leftArrow" text-17px i-line-md:chevron-left />
+          <view v-if="leftText" text-14px>{{ leftText }}</view>
         </slot>
       </view>
 
@@ -70,8 +79,10 @@ const navbarStyle = computed(() => ({
       </view>
 
       <!-- 右侧插槽 -->
-      <view flex items-center flex-shrink-0 @click="emit('clickRight')">
-        <slot name="right" />
+      <view flex items-center flex-shrink-0 @click="!rightDisabled && emit('clickRight')">
+        <slot name="right">
+          <view v-if="rightText" text-14px>{{ rightText }}</view>
+        </slot>
       </view>
     </view>
   </view>
