@@ -99,6 +99,9 @@ importers:
       '@iconify-json/carbon':
         specifier: ^1.2.15
         version: 1.2.18
+      '@iconify-json/line-md':
+        specifier: ^1.2.16
+        version: 1.2.16
       '@mini-types/alipay':
         specifier: ^3.0.14
         version: 3.0.14
@@ -1210,6 +1213,9 @@ packages:
 
   '@iconify-json/carbon@1.2.18':
     resolution: {integrity: sha512-Grb13E6r/RqTEV4Sqd/BQR2FUt57U2WLuticJ5H8JbTdHLop1LmdePu3EJJA3Xi8DcWRbD6OnC133hKfOwlgtg==}
+
+  '@iconify-json/line-md@1.2.16':
+    resolution: {integrity: sha512-esHPUQUp30NyqJWa7MNu6ExdG8z/aEFC5r56rVyRGhtJ7acOme6YtYPnDOgVu6p+kk24rM8602xkFuBC6g6x+w==}
 
   '@iconify/types@2.0.0':
     resolution: {integrity: sha512-+wluvCrRhXrhyOmRDJ3q8mux9JkKy5SJ/v8ol2tu4FVjyYvtEzkc/3pK15ET6RKg4b4w4BmTk1+gsCUhf21Ykg==}
@@ -7966,6 +7972,10 @@ snapshots:
   '@humanwhocodes/retry@0.4.3': {}
 
   '@iconify-json/carbon@1.2.18':
+    dependencies:
+      '@iconify/types': 2.0.0
+
+  '@iconify-json/line-md@1.2.16':
     dependencies:
       '@iconify/types': 2.0.0
 

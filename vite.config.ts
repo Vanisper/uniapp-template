@@ -14,6 +14,9 @@ export default defineConfig(async ({ mode, command }) => {
       __APP_VERSION__: JSON.stringify(version),
       __APP_VERSION_CODE__: Number(versionCode),
     },
+    server: {
+      port: 13000,
+    },
     resolve: {
       alias: {
         '@': fileURLToPath(new URL('./src', import.meta.url)),

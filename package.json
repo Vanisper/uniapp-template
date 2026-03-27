@@ -46,6 +46,7 @@
     "@dcloudio/uni-stacktracey": "3.0.0-4080720251210001",
     "@dcloudio/vite-plugin-uni": "3.0.0-4080720251210001",
     "@iconify-json/carbon": "^1.2.15",
+    "@iconify-json/line-md": "^1.2.16",
     "@mini-types/alipay": "^3.0.14",
     "@types/node": "^25.0.3",
     "@uni-helper/eslint-config": "^0.6.1",
