@@ -4,7 +4,7 @@ declare global {
 // #region 由 vite-define 注入
   /**
    * uni-app 运行平台
-   * @description 如：`app`、`mp-weixin`、`web`
+   * @description 如：`app`、`mp-weixin`、`h5`
    */
   const __UNI_PLATFORM__: string
   /**
