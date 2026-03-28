@@ -20,6 +20,8 @@ const emit = defineEmits<{
   clickRight: []
 }>()
 
+const slots = useSlots()
+
 interface NavbarProps {
   /** 是否显示左侧箭头 */
   leftArrow?: boolean
@@ -52,6 +54,26 @@ const navbarStyle = computed(() => ({
   borderBottom: props.bordered ? '1px solid #e5e5e5' : 'none',
   top: `${props.top}px`,
 }))
+
+const hasLeftContent = computed(() =>
+  !!slots.left || props.leftArrow || !!props.leftText,
+)
+
+const hasRightContent = computed(() =>
+  !!slots.right || !!props.rightText,
+)
+
+const leftSlotStyle = {
+  left: '12px',
+  top: '50%',
+  transform: 'translateY(-50%)',
+}
+
+const rightSlotStyle = {
+  right: '12px',
+  top: '50%',
+  transform: 'translateY(-50%)',
+}
 </script>
 
 <template>
@@ -62,9 +84,14 @@ const navbarStyle = computed(() => ({
     pos-absolute left-0 z-999 w-full
     :style="navbarStyle"
   >
-    <view flex items-center justify-between h-full px-3>
+    <view relative h-full>
       <!-- 左侧插槽 -->
-      <view flex items-center flex-shrink-0 @click="!leftDisabled && emit('clickLeft')">
+      <view
+        v-if="hasLeftContent"
+        pos-absolute flex items-center flex-shrink-0
+        :style="leftSlotStyle"
+        @click="!leftDisabled && emit('clickLeft')"
+      >
         <slot name="left">
           <view v-if="leftArrow" text-17px i-line-md:chevron-left />
           <view v-if="leftText" text-14px>{{ leftText }}</view>
@@ -72,14 +99,19 @@ const navbarStyle = computed(() => ({
       </view>
 
       <!-- 中间标题 -->
-      <view flex-1 flex items-center justify-center px-3 overflow-hidden>
+      <view h-full mx-a flex items-center justify-center overflow-hidden max-w-60%>
         <text text-17px font-500 text-center truncate>
           {{ title }}
         </text>
       </view>
 
       <!-- 右侧插槽 -->
-      <view flex items-center flex-shrink-0 @click="!rightDisabled && emit('clickRight')">
+      <view
+        v-if="hasRightContent"
+        pos-absolute flex items-center flex-shrink-0
+        :style="rightSlotStyle"
+        @click="!rightDisabled && emit('clickRight')"
+      >
         <slot name="right">
           <view v-if="rightText" text-14px>{{ rightText }}</view>
         </slot>
