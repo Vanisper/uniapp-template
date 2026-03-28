@@ -16,7 +16,7 @@ defineOptions({
 const { go, goBack, goHome, pagesJson, currentPage } = usePages()
 const { hasNavbar, hasTabbar, navbarHeight, tabbarHeight, statusBarHeight, hideNativeTabbar } = useLayout()
 
-const { navigationBarColor } = useManualTheme()
+const { navigationBarColor } = useTheme()
 
 const tabbarList = pagesJson.tabBar?.list
 const navbarTitle = computed(() => currentPage.value?.navigationBarTitleText || '')

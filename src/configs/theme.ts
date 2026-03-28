@@ -51,20 +51,24 @@ export const themeColorOptions: ThemeColorOption[] = [
   { name: '朱砂红', value: 'red', primary: '#FF4757' },
 ]
 
-const currentThemeColor = themeColorOptions[0]
+export function createThemeConfig(): IThemeConfig {
+  const currentThemeColor = { ...themeColorOptions[0] }
+
+  return {
+    theme: 'dark',
+    currentThemeColor,
+    themeVars: {
+      colorTheme: currentThemeColor.primary,
+    },
+    tabbar: {
+      mode: 'custom',
+      height: 50,
+    },
+    navbar: {
+      height: 56,
+    },
+  }
+}
 
 /** 主题配置 */
-export const THEME_CONFIG = Object.freeze<IThemeConfig>({
-  theme: 'light',
-  currentThemeColor,
-  themeVars: {
-    colorTheme: currentThemeColor.primary,
-  },
-  tabbar: {
-    mode: 'custom',
-    height: 50,
-  },
-  navbar: {
-    height: 56,
-  },
-})
+export const THEME_CONFIG = Object.freeze(createThemeConfig())

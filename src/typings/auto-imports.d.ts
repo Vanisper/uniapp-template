@@ -81,7 +81,7 @@ declare global {
   const shallowReadonly: typeof import('vue')['shallowReadonly']
   const shallowRef: typeof import('vue')['shallowRef']
   const storeToRefs: typeof import('pinia')['storeToRefs']
-  const themeColorOptions: typeof import('../composables/useManualTheme')['themeColorOptions']
+  const themeColorOptions: typeof import('../composables/useTheme')['themeColorOptions']
   const toRaw: typeof import('vue')['toRaw']
   const toRef: typeof import('vue')['toRef']
   const toRefs: typeof import('vue')['toRefs']
@@ -95,8 +95,6 @@ declare global {
   const useCssVars: typeof import('vue')['useCssVars']
   const useId: typeof import('vue')['useId']
   const useLayout: typeof import('../composables/useLayout')['default']
-  const useManualTheme: typeof import('../composables/useManualTheme')['useManualTheme']
-  const useManualThemeStore: typeof import('../stores/modules/manualTheme')['useManualThemeStore']
   const useModel: typeof import('vue')['useModel']
   const usePages: typeof import('../composables/usePages')['default']
   const useQuery: typeof import('../composables/useQuery')['useQuery']
@@ -115,9 +113,6 @@ declare global {
   // @ts-ignore
   export type { Component, ComponentPublicInstance, ComputedRef, DirectiveBinding, ExtractDefaultPropTypes, ExtractPropTypes, ExtractPublicPropTypes, InjectionKey, PropType, Ref, MaybeRef, MaybeRefOrGetter, VNode, WritableComputedRef } from 'vue'
   import('vue')
-  // @ts-ignore
-  export type { ThemeColorOption, ThemeMode } from '../composables/useManualTheme'
-  import('../composables/useManualTheme')
   // @ts-ignore
   export type { NavigateToOptions, PagePath, ActualKeys } from '../composables/usePages'
   import('../composables/usePages')
@@ -203,7 +198,6 @@ declare module 'vue' {
     readonly shallowReadonly: UnwrapRef<typeof import('vue')['shallowReadonly']>
     readonly shallowRef: UnwrapRef<typeof import('vue')['shallowRef']>
     readonly storeToRefs: UnwrapRef<typeof import('pinia')['storeToRefs']>
-    readonly themeColorOptions: UnwrapRef<typeof import('../composables/useManualTheme')['themeColorOptions']>
     readonly toRaw: UnwrapRef<typeof import('vue')['toRaw']>
     readonly toRef: UnwrapRef<typeof import('vue')['toRef']>
     readonly toRefs: UnwrapRef<typeof import('vue')['toRefs']>
@@ -217,8 +211,6 @@ declare module 'vue' {
     readonly useCssVars: UnwrapRef<typeof import('vue')['useCssVars']>
     readonly useId: UnwrapRef<typeof import('vue')['useId']>
     readonly useLayout: UnwrapRef<typeof import('../composables/useLayout')['default']>
-    readonly useManualTheme: UnwrapRef<typeof import('../composables/useManualTheme')['useManualTheme']>
-    readonly useManualThemeStore: UnwrapRef<typeof import('../stores/modules/manualTheme')['useManualThemeStore']>
     readonly useModel: UnwrapRef<typeof import('vue')['useModel']>
     readonly usePages: UnwrapRef<typeof import('../composables/usePages')['default']>
     readonly useQuery: UnwrapRef<typeof import('../composables/useQuery')['useQuery']>
