@@ -58,6 +58,9 @@ export default defineManifestConfig({
       urlCheck: false,
     },
     usingComponents: true,
+    // ! 开启后 pc 端小程序窗口能够监听到大小变化，并且将不会呈现双页共存视图模式
+    // ! 同时控制 ipad 是否允许旋转
+    resizable: true,
     darkmode: true,
     themeLocation: 'theme.json',
   },

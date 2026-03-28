@@ -1,35 +1,28 @@
-/* eslint-disable unused-imports/no-unused-vars */
 import { THEME_CONFIG } from '@/configs/theme'
 
 /**
  * 获取默认 navbar 高度
  */
-function getNavbarHeight() {
-  const { statusBarHeight } = uni.getWindowInfo()
+function getNavbarHeight(statusBarHeight: number) {
   try {
     const rectRes = uni.getMenuButtonBoundingClientRect()
     const padding = rectRes.top - statusBarHeight
     return rectRes.height + padding * 2
   }
-  catch (error) {
+  catch {
     return 44
   }
 }
 
-/**
- * 默认 navbar 高度
- */
-const defaultNavbarHeight = getNavbarHeight()
-
 export function useLayout() {
   const { currentPage, isCustomNavigationStyle } = usePages()
+  const { safeBottom, statusBarHeight } = useWindowInfo()
 
   /**
    * 是否自定义 tabbar
    */
   const customTabbar = THEME_CONFIG.tabbar.mode === 'custom'
-
-  const { safeArea: { bottom: safeBottom }, statusBarHeight } = uni.getWindowInfo()
+  const defaultNavbarHeight = computed(() => getNavbarHeight(statusBarHeight.value))
 
   /**
    * 是否显示 navbar
@@ -50,7 +43,7 @@ export function useLayout() {
 
   /** navbar 高度 */
   const navbarHeight = computed(() =>
-    hasNavbar.value ? THEME_CONFIG.navbar.height : defaultNavbarHeight,
+    hasNavbar.value ? THEME_CONFIG.navbar.height : defaultNavbarHeight.value,
   )
 
   /** tabbar 高度 */
@@ -64,7 +57,7 @@ export function useLayout() {
    * @description
    */
   const pageHeight = computed(() =>
-    safeBottom - statusBarHeight - navbarHeight.value - tabbarHeight.value,
+    safeBottom.value - statusBarHeight.value - navbarHeight.value - tabbarHeight.value,
   )
 
   /**
@@ -72,7 +65,7 @@ export function useLayout() {
    * @description 用于 PageWrapper 等组件
    */
   const pageWrapperStyle = computed(() => ({
-    '--status-bar-height': `${statusBarHeight}px`,
+    '--status-bar-height': `${statusBarHeight.value}px`,
     '--navbar-height': `${navbarHeight.value}px`,
     '--tabbar-height': `${tabbarHeight.value}px`,
   }))

@@ -53,6 +53,7 @@
       "urlCheck": false
     },
     "usingComponents": true,
+    "resizable": true,
     "darkmode": true,
     "themeLocation": "theme.json"
   },
