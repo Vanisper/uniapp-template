@@ -10,6 +10,7 @@
     "build": "unh build",
     "build:test": "unh build --mode test",
     "about": "unh info",
+    "test": "vitest run",
     "type-check": "vue-tsc --noEmit",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
@@ -60,14 +61,19 @@
     "@uni-helper/vite-plugin-uni-pages": "^0.3.22",
     "@uni-helper/vite-plugin-uni-platform": "^0.0.5",
     "@uni-ku/root": "^1.4.1",
+    "@vitejs/plugin-vue": "^5.2.4",
     "@vue/runtime-core": "3.4.21",
+    "@vue/test-utils": "^2.4.11",
     "@vue/tsconfig": "^0.8.1",
     "eslint": "^9.39.2",
+    "happy-dom": "^15.11.7",
     "miniprogram-api-typings": "^4.1.2",
     "sass": "1.64.2",
     "typescript": "^5.9.3",
     "unocss": "66.0.0",
+    "unplugin-auto-import": "^19.1.0",
     "vite": "5.2.8",
+    "vitest": "^2.1.9",
     "vue-tsc": "^3.2.1"
   },
   "pnpm": {
