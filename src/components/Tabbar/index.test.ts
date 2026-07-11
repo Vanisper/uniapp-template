@@ -85,6 +85,51 @@ describe('tabbar', () => {
     }
   })
 
+  it('连续点击同一目标只发出一次 change 事件', async () => {
+    vi.useFakeTimers()
+
+    try {
+      const wrapper = mountTabbar('pages/index')
+      const target = wrapper.findAll('.tabbar__item')[1]
+
+      for (let index = 0; index < 10; index += 1) {
+        await target.trigger('click')
+      }
+      vi.advanceTimersByTime(260)
+
+      expect(wrapper.emitted('change')).toEqual([[
+        { text: '关于', value: 'pages/about' },
+        list[1],
+      ]])
+    }
+    finally {
+      vi.useRealTimers()
+    }
+  })
+
+  it('快速交替点击只导航到最后一个目标', async () => {
+    vi.useFakeTimers()
+
+    try {
+      const wrapper = mountTabbar('pages/index')
+      const items = wrapper.findAll('.tabbar__item')
+
+      for (let index = 0; index < 9; index += 1) {
+        await items[index % 2 === 0 ? 1 : 0].trigger('click')
+      }
+      vi.advanceTimersByTime(260)
+
+      expect(wrapper.find('.tabbar__indicator').attributes('style')).toContain('translateX(100%)')
+      expect(wrapper.emitted('change')).toEqual([[
+        { text: '关于', value: 'pages/about' },
+        list[1],
+      ]])
+    }
+    finally {
+      vi.useRealTimers()
+    }
+  })
+
   it('空列表不渲染活动指示器', () => {
     const wrapper = mountTabbar(undefined, [])
 
