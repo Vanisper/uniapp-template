@@ -15,7 +15,7 @@ function getNavbarHeight(statusBarHeight: number) {
 }
 
 export function useLayout() {
-  const { currentPage, isCustomNavigationStyle } = usePages()
+  const { currentRoute, isCustomNavigationStyle, isTabBarPage } = usePages()
   const { safeBottom, statusBarHeight } = useWindowInfo()
 
   /**
@@ -29,7 +29,7 @@ export function useLayout() {
    * @description 自定义 navbar
    */
   const hasNavbar = computed(() => {
-    const route = currentPage.value?.route
+    const route = currentRoute.value
     return !!route && isCustomNavigationStyle(route)
   })
 
@@ -38,7 +38,7 @@ export function useLayout() {
    * @description 自定义 tabbar
    */
   const hasTabbar = computed(() =>
-    customTabbar && currentPage.value.tabbarPage,
+    customTabbar && isTabBarPage(currentRoute.value),
   )
 
   /** navbar 高度 */

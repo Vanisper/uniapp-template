@@ -13,15 +13,26 @@ defineOptions({
   },
 })
 
-const { go, goBack, goHome, pagesJson, currentPage } = usePages()
+const {
+  go,
+  goBack,
+  goHome,
+  pagesJson,
+  currentRoute,
+  currentTabbarPath,
+  syncPageStack,
+  isTabBarPage,
+  getNavigationBarTitleText,
+} = usePages()
 const { hasNavbar, hasTabbar, navbarHeight, tabbarHeight, statusBarHeight, hideNativeTabbar } = useLayout()
 
 const { navigationBarColor } = useTheme()
 
 const tabbarList = pagesJson.tabBar?.list
-const navbarTitle = computed(() => currentPage.value?.navigationBarTitleText || '')
+const navbarTitle = computed(() => getNavigationBarTitleText(currentRoute.value))
 
 onMounted(() => {
+  syncPageStack()
   hideNativeTabbar()
 })
 </script>
@@ -30,7 +41,7 @@ onMounted(() => {
   <StatusBar v-if="hasNavbar" :height="statusBarHeight" :bg-color="navigationBarColor.backgroundColor" />
   <Navbar
     v-if="hasNavbar"
-    :left-arrow="!currentPage.tabbarPage"
+    :left-arrow="!isTabBarPage(currentRoute)"
     :title="navbarTitle"
     :height="navbarHeight"
     :top="statusBarHeight"
@@ -50,7 +61,7 @@ onMounted(() => {
   </view>
   <Tabbar
     v-if="hasTabbar"
-    :default-value="currentPage.route"
+    :default-value="currentTabbarPath"
     :list="tabbarList"
     value-field="pagePath"
     :height="tabbarHeight"
