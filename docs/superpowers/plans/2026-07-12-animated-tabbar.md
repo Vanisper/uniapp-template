@@ -425,4 +425,3 @@ git status --short --branch
 ```
 
 Expected: 无空白错误；差异只包含规格、计划、测试配置、依赖和 TabBar 实现；工作区干净。
-
