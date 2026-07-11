@@ -53,10 +53,10 @@ Expected: 构建成功，`rg` 至少输出一个以 `/assets/` 开头的 `href` 
 
 在 `vite.config.ts` 返回的配置对象顶部加入：
 
-```ts
-return {
-  base: './',
-  define: {
+```diff
+ return {
++  base: './',
+   define: {
 ```
 
 - [ ] **Step 3: Rebuild and verify the generated URLs**
