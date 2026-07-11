@@ -10,10 +10,11 @@ defineOptions({
   },
 })
 
-const { go, pagesJson, currentPage } = usePages()
+const { go, pagesJson, currentPage, syncPageStack } = usePages()
 const tabbarList = pagesJson.tabBar?.list
 
 onMounted(() => {
+  syncPageStack()
   // #ifndef MP-WEIXIN
   uni.hideTabBar()
   // #endif

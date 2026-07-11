@@ -37,17 +37,21 @@
 Run:
 
 ```bash
-pnpm add -D vitest@^2.1.9 @vue/test-utils@^2.4.6 happy-dom@^15.11.7 @vitejs/plugin-vue@^5.2.4
+pnpm add -D vitest@^2.1.9 @vue/test-utils@^2.4.6 happy-dom@^15.11.7 @vitejs/plugin-vue@^5.2.4 unplugin-auto-import@^19.1.0
 ```
 
-Expected: `package.json` 新增四个 devDependencies，`pnpm-lock.yaml` 更新且安装成功。
+Expected: `package.json` 新增五个 devDependencies，`pnpm-lock.yaml` 更新且安装成功。
 
 - [ ] **Step 2: 增加单次测试脚本和独立 Vitest 配置**
 
 在 `package.json` 的 `scripts` 中加入：
 
 ```json
-"test": "vitest run"
+{
+  "scripts": {
+    "test": "vitest run"
+  }
+}
 ```
 
 创建 `vitest.config.ts`：
@@ -425,3 +429,9 @@ git status --short --branch
 ```
 
 Expected: 无空白错误；差异只包含规格、计划、测试配置、依赖和 TabBar 实现；工作区干净。
+
+## 执行记录
+
+- 独立 Vitest 配置复用 `unplugin-auto-import` 的 Vue 自动导入，并关闭额外 dts 生成，确保测试转换行为与生产构建一致
+- 浏览器验证发现 tab 页面切换会重建布局，组件改为先更新局部视觉索引，等待 260ms 动画完成后再发出导航事件
+- 浏览器验证发现新布局首帧可能缓存旧页面栈，`usePages` 增加显式页面栈同步信号，两个 TabBar 布局在挂载时触发同步

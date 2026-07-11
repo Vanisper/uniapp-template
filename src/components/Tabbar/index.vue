@@ -1,5 +1,5 @@
 <script lang="ts" setup generic="I extends Record<string, any>, T extends Array<I>">
-import { computed } from 'vue'
+import { computed, onBeforeUnmount, shallowRef, watch } from 'vue'
 
 defineOptions({
   options: {
@@ -57,23 +57,40 @@ const currentIndex = computed(() => {
   return 0
 })
 
+const visualIndex = shallowRef(currentIndex.value)
+
+watch(currentIndex, (index) => {
+  visualIndex.value = index
+})
+
 const current = computed(() => {
-  const index = currentIndex.value
+  const index = visualIndex.value
   return index >= 0 ? props.list?.[index] : undefined
 })
 
 const indicatorStyle = computed(() => {
   const count = props.list?.length ?? 0
-  if (!count || currentIndex.value < 0) {
+  if (!count || visualIndex.value < 0) {
     return {}
   }
 
   return {
     opacity: '1',
-    transform: `translateX(${currentIndex.value * 100}%)`,
+    transform: `translateX(${visualIndex.value * 100}%)`,
     width: `${100 / count}%`,
   }
 })
+
+let changeTimer: ReturnType<typeof setTimeout> | undefined
+
+function clearChangeTimer() {
+  if (changeTimer !== undefined) {
+    clearTimeout(changeTimer)
+    changeTimer = undefined
+  }
+}
+
+onBeforeUnmount(clearChangeTimer)
 
 function isActive(params: I) {
   const valueField = props.valueField
@@ -81,11 +98,22 @@ function isActive(params: I) {
 }
 
 function handler(params: I) {
-  if (isActive(params)) {
+  const targetIndex = props.list?.findIndex(item => item[props.valueField] === params[props.valueField]) ?? -1
+  if (targetIndex < 0 || targetIndex === visualIndex.value) {
     return
   }
 
-  emit('change', { value: params[props.valueField], text: params[props.textField] }, params)
+  clearChangeTimer()
+  visualIndex.value = targetIndex
+
+  if (targetIndex === currentIndex.value) {
+    return
+  }
+
+  changeTimer = setTimeout(() => {
+    changeTimer = undefined
+    emit('change', { value: params[props.valueField], text: params[props.textField] }, params)
+  }, 260)
 }
 </script>
 

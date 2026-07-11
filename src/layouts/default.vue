@@ -13,7 +13,7 @@ defineOptions({
   },
 })
 
-const { go, goBack, goHome, pagesJson, currentPage } = usePages()
+const { go, goBack, goHome, pagesJson, currentPage, syncPageStack } = usePages()
 const { hasNavbar, hasTabbar, navbarHeight, tabbarHeight, statusBarHeight, hideNativeTabbar } = useLayout()
 
 const { navigationBarColor } = useTheme()
@@ -22,6 +22,7 @@ const tabbarList = pagesJson.tabBar?.list
 const navbarTitle = computed(() => currentPage.value?.navigationBarTitleText || '')
 
 onMounted(() => {
+  syncPageStack()
   hideNativeTabbar()
 })
 </script>

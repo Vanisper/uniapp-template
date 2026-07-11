@@ -1,4 +1,5 @@
 import type { GlobalStyle, PageMetaDatum, UserPagesConfig } from '@uni-helper/vite-plugin-uni-pages'
+import { computed, shallowRef } from 'vue'
 import pagesData from '@/pages.json'
 // import { pages, subPackages } from 'virtual:uni-pages'
 
@@ -11,6 +12,7 @@ export type ActualKeys<T> = keyof {
 
 const pagesJson = pagesData as unknown as UserPagesConfig
 const { pages, subPackages, tabBar, globalStyle } = pagesJson
+const pageStackVersion = shallowRef(0)
 
 export function usePages() {
   /** 全局标题栏配置 */
@@ -71,7 +73,16 @@ export function usePages() {
     /** 路由所带的参数 */
     options: any
   }>
-  const currentPages = computed(() => _getCurrentPages())
+  const currentPages = computed(() => {
+    // 建立页面栈刷新信号的响应式依赖
+    void pageStackVersion.value
+    return [..._getCurrentPages()]
+  })
+
+  /** 重新读取当前页面栈 */
+  function syncPageStack() {
+    pageStackVersion.value += 1
+  }
 
   function getCurrentPage() {
     const pages = currentPages.value // 获取页面堆栈
@@ -145,6 +156,7 @@ export function usePages() {
     pagesJson,
     currentPage,
     currentPages,
+    syncPageStack,
     isTabBarPage,
     isCustomNavigationStyle,
     getCurrentPage,
