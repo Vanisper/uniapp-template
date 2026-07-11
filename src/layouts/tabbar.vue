@@ -10,7 +10,7 @@ defineOptions({
   },
 })
 
-const { go, pagesJson, currentPage, syncPageStack } = usePages()
+const { go, pagesJson, currentTabbarPath, syncPageStack } = usePages()
 const tabbarList = pagesJson.tabBar?.list
 
 onMounted(() => {
@@ -24,7 +24,7 @@ onMounted(() => {
 <template>
   <slot />
   <Tabbar
-    :default-value="currentPage.route"
+    :default-value="currentTabbarPath"
     :list="tabbarList" value-field="pagePath"
     :height="THEME_CONFIG.tabbar.height"
     @change="({ value }) => {

@@ -13,6 +13,7 @@ export type ActualKeys<T> = keyof {
 const pagesJson = pagesData as unknown as UserPagesConfig
 const { pages, subPackages, tabBar, globalStyle } = pagesJson
 const pageStackVersion = shallowRef(0)
+const activeTabbarPath = shallowRef<string>()
 
 export function usePages() {
   /** 全局标题栏配置 */
@@ -93,17 +94,32 @@ export function usePages() {
   }
 
   const currentPage = computed(() => getCurrentPage())
+  const currentTabbarPath = computed(() => activeTabbarPath.value ?? currentPage.value.route ?? '')
+  const currentRoute = computed(() => {
+    const route = currentPage.value.route ?? ''
+    return isTabBarPage(route) ? currentTabbarPath.value : route
+  })
 
   function go(pagePath: string, switchTab = false) {
     if (switchTab === true) {
+      const previousTabbarPath = activeTabbarPath.value
+      activeTabbarPath.value = pagePath.replace(/^\/+/, '')
+
       uni.switchTab({
         url: pagePath,
         fail(error) {
           if (pagePath.startsWith('/')) {
+            activeTabbarPath.value = previousTabbarPath
             // todo: try navigateTo
             throw error
           }
-          uni.switchTab({ url: `/${pagePath}` })
+          uni.switchTab({
+            url: `/${pagePath}`,
+            fail(retryError) {
+              activeTabbarPath.value = previousTabbarPath
+              throw retryError
+            },
+          })
         },
       })
     }
@@ -156,9 +172,12 @@ export function usePages() {
     pagesJson,
     currentPage,
     currentPages,
+    currentRoute,
+    currentTabbarPath,
     syncPageStack,
     isTabBarPage,
     isCustomNavigationStyle,
+    getNavigationBarTitleText,
     getCurrentPage,
     go,
     goHome,
