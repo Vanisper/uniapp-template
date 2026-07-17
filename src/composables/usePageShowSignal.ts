@@ -71,7 +71,7 @@ export function usePageShowSignalEffect(
     () => {
       void flushPageShowSignal()
     },
-    { immediate: true, once },
+    { immediate: true },
   )
 
   return stop
