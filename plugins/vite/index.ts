@@ -29,6 +29,7 @@ export default async function createPlugins(mode: string, isBuild = false) {
       exclude: ['_*.*', '**/components/**/*.*', '**/_components/**/*.*'],
       subPackages: [
         'src/pages-demo',
+        'src/pages-lib',
       ],
     }),
     // https://github.com/uni-helper/vite-plugin-uni-layouts
