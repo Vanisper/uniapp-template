@@ -20,7 +20,8 @@
       "@uni-helper/vite-plugin-uni-pages",
       "uni-echarts/global",
       "z-paging/types",
-      "@uni-helper/uni-types"
+      "@uni-helper/uni-types",
+      "@uni-ku/bundle-optimizer/client"
     ],
     "strict": true,
     "noImplicitThis": true,
