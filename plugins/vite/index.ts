@@ -8,6 +8,7 @@ import UniLayouts from '@uni-helper/vite-plugin-uni-layouts'
 import UniManifest from '@uni-helper/vite-plugin-uni-manifest'
 import UniPages from '@uni-helper/vite-plugin-uni-pages'
 import UniPlatform from '@uni-helper/vite-plugin-uni-platform'
+import Optimization from '@uni-ku/bundle-optimizer'
 import UniRoot from '@uni-ku/root'
 import { UniEchartsResolver } from 'uni-echarts/resolver'
 import { UniEcharts } from 'uni-echarts/vite'
@@ -52,6 +53,7 @@ export default async function createPlugins(mode: string, isBuild = false) {
         },
       },
     }),
+    Optimization(),
     UnoCSS(),
     // https://github.com/antfu/unplugin-auto-import
     AutoImport({

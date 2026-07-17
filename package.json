@@ -60,6 +60,7 @@
     "@uni-helper/vite-plugin-uni-manifest": "^0.2.12",
     "@uni-helper/vite-plugin-uni-pages": "^0.3.22",
     "@uni-helper/vite-plugin-uni-platform": "^0.0.5",
+    "@uni-ku/bundle-optimizer": "^2.2.0",
     "@uni-ku/root": "^1.4.1",
     "@vitejs/plugin-vue": "^5.2.4",
     "@vue/runtime-core": "3.4.21",
