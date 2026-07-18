@@ -95,7 +95,7 @@ export function usePageShowProvider() {
   if (import.meta.env.DEV) {
     console.warn('[usePageShowProvider] 创建根 signal，请确保在 Page/Layout 中调用')
   }
-  // ! 此处依赖组件环节的 onShow 生命周期，故需要保证组件环节为非异步环节
+  // ! 此处依赖组件环境的 onShow 生命周期，故需要保证组件环境为非异步环境
   // ! onBeforeMount 也能满足部分需求，但是无法实现 onShow 的反复进入的效果
   // ? 后续可以尝试 onBeforeMount 与 onShow 配合实现效果，因为异步组件成功渲染完成之后，onShow 就正常了（一般切换页面再回来就可以了）
   const { pageShowSignal } = usePageShowSignal(onShow)
