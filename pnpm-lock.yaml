@@ -138,6 +138,9 @@ importers:
       '@uni-helper/vite-plugin-uni-platform':
         specifier: ^0.0.5
         version: 0.0.5
+      '@uni-ku/bundle-optimizer':
+        specifier: ^2.2.0
+        version: 2.2.0(chokidar@3.6.0)(vite@5.2.8(@types/node@25.0.9)(sass@1.64.2)(terser@5.46.0))(vue@3.4.21(typescript@5.9.3))
       '@uni-ku/root':
         specifier: ^1.4.1
         version: 1.4.1(vite@5.2.8(@types/node@25.0.9)(sass@1.64.2)(terser@5.46.0))
@@ -2103,6 +2106,12 @@ packages:
   '@uni-helper/vite-plugin-uni-platform@0.0.5':
     resolution: {integrity: sha512-T0lUwM3bGtGTcig3TBWP3VyRUQAY39/TMGL0064YMv8mt3F55S3KfpW7HIKEzV+EPF41TBX1ahhspuN8MJrpew==}
 
+  '@uni-ku/bundle-optimizer@2.2.0':
+    resolution: {integrity: sha512-yM8WfEisQifoXZU16/Fagy6lO+KF2d9ZxXQJf7bxviQmUN9c+jC231IyiXILIWC40TjttKRTyAp7kJpB2WbHmQ==}
+    peerDependencies:
+      vite: ^4.0.0 || ^5.0.0
+      vue: ^3.0.0
+
   '@uni-ku/root@1.4.1':
     resolution: {integrity: sha512-DI9LLbWmPXjqJVwZTC84GuvSz9vzOgSUjbFrOE1y3kivttEReNVqwWM3n/kzFoNuS3KKm/DissOph4rFs912Zw==}
     peerDependencies:
@@ -2385,6 +2394,9 @@ packages:
       vue:
         optional: true
 
+  a-sync-waterfall@1.0.1:
+    resolution: {integrity: sha512-RYTOHHdWipFUliRFMCS4X2Yn2X8M87V/OpSqWzKKOGhzqyUxzyVmhHDH9sAvG+ZuQf/TAOFsLCpMw09I1ufUnA==}
+
   abab@2.0.6:
     resolution: {integrity: sha512-j2afSsaIENvHZN2B8GOpF566vZ5WVk5opAiMTvWgaQT8DkbOqsTfvNAvHoRGU2zzP8cPoqys+xHTRDWW8L+/BA==}
     deprecated: Use your platform's native atob() and btoa() methods instead
@@ -2512,6 +2524,9 @@ packages:
   array-timsort@1.0.3:
     resolution: {integrity: sha512-/+3GRL7dDAGEfM6TseQk/U+mi18TU2Ms9I3UlLdUMhz2hbvGNTKdj9xniwXfUqgYhHxRx0+8UnKkvlNwVU+cWQ==}
 
+  asap@2.0.6:
+    resolution: {integrity: sha512-BSHWgDSAiKs50o2Re8ppvp3seVHXSRM44cdSsT9FfNEUUZLOGWVCsiWaRPWM1Znn+mqZ1OfVZ3z3DWEzSp7hRA==}
+
   asn1@0.2.6:
     resolution: {integrity: sha512-ix/FxPn0MDjeyJ7i/yoHGFt/EX6LyNbxSEhPPXODPL+KB0VPk86UYfL0lMdy+KCnv+fmvIzySwaK5COwqVbWTQ==}
 
@@ -2530,6 +2545,10 @@ packages:
   ast-kit@1.4.3:
     resolution: {integrity: sha512-MdJqjpodkS5J149zN0Po+HPshkTdUyrvF7CKTafUgv69vBSPtncrj+3IiUgqdd7ElIEkbeXCsEouBUwLrw9Ilg==}
     engines: {node: '>=16.14.0'}
+
+  ast-kit@2.2.0:
+    resolution: {integrity: sha512-m1Q/RaVOnTp9JxPX+F+Zn7IcLYMzM8kZofDImfsKZd8MbR+ikdOzTeztStWqfrqIxZnYWryyI9ePm3NGjnZgGw==}
+    engines: {node: '>=20.19.0'}
 
   ast-types@0.13.4:
     resolution: {integrity: sha512-x1FCFnFifvYDDzTaLII71vG5uvDwgtmDTEVWAxrgeiR8VjMONcCXJx7E+USjDtHlwFmt9MysbqgF9b9Vjr6w+w==}
@@ -2881,6 +2900,10 @@ packages:
 
   commander@2.20.3:
     resolution: {integrity: sha512-GpVkmM8vF2vQUkj2LvZmD35JxeJOLCwJ9cUkugyk2nuhbv3+mJvpLYYt+0+USMxE+oj+ey/lJEnhZw75x/OMcQ==}
+
+  commander@5.1.0:
+    resolution: {integrity: sha512-P0CysNDQ7rtVw4QIQtm+MRxV66vKFSvlsQvGYXZWR3qFU0jlMKHZZZgw8e+8DSah4UDKMqnknRDQz+xuQXQ/Zg==}
+    engines: {node: '>= 6'}
 
   commander@8.3.0:
     resolution: {integrity: sha512-OkTL9umf+He2DZkUq8f8J9of7yL6RJKI24dVITBmNfZBmri9zYZQrKkuXiKhyfPSu8tUhnVBB1iKXevvnlR4Ww==}
@@ -4913,6 +4936,16 @@ packages:
 
   nth-check@2.1.1:
     resolution: {integrity: sha512-lqjrjmaOoAnWfMmBPL+XNnynZh2+swxiX3WUE0s4yEHI6m+AwrK2UZOimIRl3X/4QctVqS8AiZjFqyOGrMXb/w==}
+
+  nunjucks@3.2.4:
+    resolution: {integrity: sha512-26XRV6BhkgK0VOxfbU5cQI+ICFUtMLixv1noZn1tGU38kQH5A5nmmbk/O45xdyBhD1esk47nKrY0mvQpZIhRjQ==}
+    engines: {node: '>= 6.9.0'}
+    hasBin: true
+    peerDependencies:
+      chokidar: ^3.3.0
+    peerDependenciesMeta:
+      chokidar:
+        optional: true
 
   nwsapi@2.2.23:
     resolution: {integrity: sha512-7wfH4sLbt4M0gCDzGE6vzQBo0bfTKjU7Sfpqy/7gs1qBfYz2vEJH6vXcBKpO3+6Yu1telwd0t9HpyOoLEQQbIQ==}
@@ -9302,6 +9335,17 @@ snapshots:
     dependencies:
       '@uni-helper/uni-env': 0.1.8
 
+  '@uni-ku/bundle-optimizer@2.2.0(chokidar@3.6.0)(vite@5.2.8(@types/node@25.0.9)(sass@1.64.2)(terser@5.46.0))(vue@3.4.21(typescript@5.9.3))':
+    dependencies:
+      '@vue/compiler-sfc': 3.4.21
+      ast-kit: 2.2.0
+      chalk: 4.1.2
+      nunjucks: 3.2.4(chokidar@3.6.0)
+      vite: 5.2.8(@types/node@25.0.9)(sass@1.64.2)(terser@5.46.0)
+      vue: 3.4.21(typescript@5.9.3)
+    transitivePeerDependencies:
+      - chokidar
+
   '@uni-ku/root@1.4.1(vite@5.2.8(@types/node@25.0.9)(sass@1.64.2)(terser@5.46.0))':
     dependencies:
       '@vue/compiler-sfc': 3.4.21
@@ -9653,13 +9697,13 @@ snapshots:
 
   '@vue/compiler-sfc@3.4.21':
     dependencies:
-      '@babel/parser': 7.25.6
+      '@babel/parser': 7.28.6
       '@vue/compiler-core': 3.4.21
       '@vue/compiler-dom': 3.4.21
       '@vue/compiler-ssr': 3.4.21
       '@vue/shared': 3.4.21
       estree-walker: 2.0.2
-      magic-string: 0.30.11
+      magic-string: 0.30.21
       postcss: 8.5.6
       source-map-js: 1.2.1
 
@@ -9737,6 +9781,8 @@ snapshots:
     optionalDependencies:
       typescript: 5.9.3
       vue: 3.4.21(typescript@5.9.3)
+
+  a-sync-waterfall@1.0.1: {}
 
   abab@2.0.6: {}
 
@@ -9866,6 +9912,8 @@ snapshots:
 
   array-timsort@1.0.3: {}
 
+  asap@2.0.6: {}
+
   asn1@0.2.6:
     dependencies:
       safer-buffer: 2.1.2
@@ -9883,6 +9931,11 @@ snapshots:
       - rollup
 
   ast-kit@1.4.3:
+    dependencies:
+      '@babel/parser': 7.28.6
+      pathe: 2.0.3
+
+  ast-kit@2.2.0:
     dependencies:
       '@babel/parser': 7.28.6
       pathe: 2.0.3
@@ -10312,6 +10365,8 @@ snapshots:
   commander@10.0.1: {}
 
   commander@2.20.3: {}
+
+  commander@5.1.0: {}
 
   commander@8.3.0: {}
 
@@ -12833,6 +12888,14 @@ snapshots:
   nth-check@2.1.1:
     dependencies:
       boolbase: 1.0.0
+
+  nunjucks@3.2.4(chokidar@3.6.0):
+    dependencies:
+      a-sync-waterfall: 1.0.1
+      asap: 2.0.6
+      commander: 5.1.0
+    optionalDependencies:
+      chokidar: 3.6.0
 
   nwsapi@2.2.23: {}
 
