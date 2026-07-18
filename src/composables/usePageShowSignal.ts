@@ -110,13 +110,33 @@ export function useMixedOnShow(handler: () => void, options?: { once?: boolean }
     return
   }
 
-  // 非 once：onShow 每次都执行（顺带标记首次已完成）
+  // 非 once
+  let skipNextShow = false
+
+  // onShow 每次都执行（顺带标记首次已完成）
   onShow(() => {
+    if (skipNextShow) {
+      // onBeforeMount 已代为执行过首次，这个 onShow 属于同一挂载周期
+      // ? 解决 onBeforeMount 执行早于 onShow 的情况
+      skipNextShow = false
+      return
+    }
     executed = true
     handler()
   })
-  // onBeforeMount 仅作首次保底
-  onBeforeMount(runOnce)
+
+  onBeforeMount(() => {
+    if (executed)
+      return
+    executed = true
+    skipNextShow = true
+    handler()
+
+    // 当前渲染周期结束后关闭跳过窗口
+    void nextTick(() => {
+      skipNextShow = false
+    })
+  })
 }
 
 /**
