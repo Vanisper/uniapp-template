@@ -4,11 +4,11 @@ const props = defineProps<{
   expose?: ExposeReceiver<any>
 }>()
 
-useOnPageShow(async () => {
+useMixedOnShow(async () => {
   console.log('[sub] 页面显示了，子组件此消息响应一次')
 }, { once: true })
 
-useOnPageShow(() => {
+useMixedOnShow(() => {
   console.log('[sub] 页面显示了，子组件做点什么')
 })
 
@@ -22,5 +22,5 @@ defineExpose(exposed)
 </script>
 
 <template>
-  <view>demo</view>
+  <view text-center m-3 p-3 b b-solid b-blue>demo</view>
 </template>
