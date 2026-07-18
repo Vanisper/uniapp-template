@@ -85,53 +85,38 @@ const PAGE_SHOW_SIGNAL_KEY: InjectionKey<ShallowRef<PageShowSignal>> = Symbol('p
 /**
  * 混合实现的 onShow Hook（兼容异步组件）
  *
- * @param handler 要执行的函数
- * @param options 拓展参数
- * @param options.once 是否只执行一次（类似 onLoad）
+ * - 不依赖生命周期触发顺序
+ * - 首次只执行一次（onShow 或 onBeforeMount，谁先触发谁执行）
+ * - once: false 时，后续每次 onShow 都执行
+ * - 只用两个生命周期 hook，无需其他
  *
- * 执行逻辑：
- * - onShow 优先触发（正常情况）
- * - onBeforeMount 保底（异步组件首次 onShow 不触发时）
- * - once: true 时，只执行一次（首次 onShow 或 onBeforeMount）
- * - once: false 时，每次页面显示都执行
+ * @link https://uniapp.dcloud.net.cn/tutorial/page.html#vue3-lifecycle-flow
  */
 export function useMixedOnShow(handler: () => void, options?: { once?: boolean }) {
   const { once = false } = options ?? {}
 
+  let executed = false
+  const runOnce = () => {
+    if (executed)
+      return
+    executed = true
+    handler()
+  }
+
   if (once) {
-    // 只执行一次
-    let executed = false
-
-    onShow(() => {
-      if (!executed) {
-        executed = true
-        handler()
-      }
-    })
-
-    onBeforeMount(() => {
-      if (!executed) {
-        executed = true
-        handler()
-      }
-    })
+    // once：两个 hook 互斥，只有先到者执行
+    onShow(runOnce)
+    onBeforeMount(runOnce)
+    return
   }
-  else {
-    // 每次页面显示都执行
-    let hasOnShowFired = false
 
-    onShow(() => {
-      hasOnShowFired = true
-      handler()
-    })
-
-    onBeforeMount(() => {
-      if (!hasOnShowFired) {
-        // onShow 没触发（异步组件首次），这里保底
-        handler()
-      }
-    })
-  }
+  // 非 once：onShow 每次都执行（顺带标记首次已完成）
+  onShow(() => {
+    executed = true
+    handler()
+  })
+  // onBeforeMount 仅作首次保底
+  onBeforeMount(runOnce)
 }
 
 /**
