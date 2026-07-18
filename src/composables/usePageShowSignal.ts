@@ -1,3 +1,7 @@
+// -------------------------------------------
+// 为了解决异步子组件 onShow 、 onLoad 生命周期于小程序端，首次访问时无法触发的问题
+// 同时衍生了解决此问题的需求：uniapp 小程序端异步子组件首次访问时，父组件获取到的异步子组件 ref 实例为 null 的情况（需要切页面再回来 ref 才正常）
+// -------------------------------------------
 import type { MaybeRefOrGetter, WatchStopHandle } from 'vue'
 import { shallowRef, toValue, watch } from 'vue'
 

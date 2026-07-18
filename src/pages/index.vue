@@ -1,4 +1,13 @@
+<!-- eslint-disable no-console -->
 <script setup lang="ts">
+import Demo from '@/pages-lib/components/Demo.vue'
+
+defineOptions({
+  componentPlaceholder: {
+    Demo: 'view',
+  },
+})
+
 definePage({
   tabBar: {
     text: '首页',
@@ -10,6 +19,8 @@ definePage({
   },
 })
 
+const { pageShowSignal } = usePageShowSignal(onShow)
+
 function goDemo() {
   uni.navigateTo({
     url: '/pages-demo/index',
@@ -18,6 +29,7 @@ function goDemo() {
 </script>
 
 <template>
+  <Demo :signal="pageShowSignal" />
   <view h-60vh bg-amber>
     11
   </view>

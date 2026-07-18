@@ -96,6 +96,8 @@ declare global {
   const useId: typeof import('vue')['useId']
   const useLayout: typeof import('../composables/useLayout')['default']
   const useModel: typeof import('vue')['useModel']
+  const usePageShowSignal: typeof import('../composables/usePageShowSignal')['usePageShowSignal']
+  const usePageShowSignalEffect: typeof import('../composables/usePageShowSignal')['usePageShowSignalEffect']
   const usePages: typeof import('../composables/usePages')['default']
   const useQuery: typeof import('../composables/useQuery')['useQuery']
   const useSlots: typeof import('vue')['useSlots']
@@ -113,6 +115,9 @@ declare global {
   // @ts-ignore
   export type { Component, ComponentPublicInstance, ComputedRef, DirectiveBinding, ExtractDefaultPropTypes, ExtractPropTypes, ExtractPublicPropTypes, InjectionKey, PropType, Ref, MaybeRef, MaybeRefOrGetter, VNode, WritableComputedRef } from 'vue'
   import('vue')
+  // @ts-ignore
+  export type { PageShowSignal, PageShowHook, PageShowSignalHandler, PageShowSignalEffectOptions } from '../composables/usePageShowSignal'
+  import('../composables/usePageShowSignal')
   // @ts-ignore
   export type { NavigateToOptions, PagePath, ActualKeys } from '../composables/usePages'
   import('../composables/usePages')
@@ -212,6 +217,8 @@ declare module 'vue' {
     readonly useId: UnwrapRef<typeof import('vue')['useId']>
     readonly useLayout: UnwrapRef<typeof import('../composables/useLayout')['default']>
     readonly useModel: UnwrapRef<typeof import('vue')['useModel']>
+    readonly usePageShowSignal: UnwrapRef<typeof import('../composables/usePageShowSignal')['usePageShowSignal']>
+    readonly usePageShowSignalEffect: UnwrapRef<typeof import('../composables/usePageShowSignal')['usePageShowSignalEffect']>
     readonly usePages: UnwrapRef<typeof import('../composables/usePages')['default']>
     readonly useQuery: UnwrapRef<typeof import('../composables/useQuery')['useQuery']>
     readonly useSlots: UnwrapRef<typeof import('vue')['useSlots']>
