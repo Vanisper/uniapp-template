@@ -72,9 +72,7 @@ export function usePageShowSignalEffect(
 
   stop = watch(
     () => toValue(pageShowSignal),
-    () => {
-      void flushPageShowSignal()
-    },
+    () => void flushPageShowSignal(),
     { immediate: true },
   )
 
@@ -85,20 +83,67 @@ export function usePageShowSignalEffect(
 const PAGE_SHOW_SIGNAL_KEY: InjectionKey<ShallowRef<PageShowSignal>> = Symbol('pageShowSignal')
 
 /**
+ * 混合实现的 onShow Hook（兼容异步组件）
+ *
+ * @param handler 要执行的函数
+ * @param options 拓展参数
+ * @param options.once 是否只执行一次（类似 onLoad）
+ *
+ * 执行逻辑：
+ * - onShow 优先触发（正常情况）
+ * - onBeforeMount 保底（异步组件首次 onShow 不触发时）
+ * - once: true 时，只执行一次（首次 onShow 或 onBeforeMount）
+ * - once: false 时，每次页面显示都执行
+ */
+export function useMixedOnShow(handler: () => void, options?: { once?: boolean }) {
+  const { once = false } = options ?? {}
+
+  if (once) {
+    // 只执行一次
+    let executed = false
+
+    onShow(() => {
+      if (!executed) {
+        executed = true
+        handler()
+      }
+    })
+
+    onBeforeMount(() => {
+      if (!executed) {
+        executed = true
+        handler()
+      }
+    })
+  }
+  else {
+    // 每次页面显示都执行
+    let hasOnShowFired = false
+
+    onShow(() => {
+      hasOnShowFired = true
+      handler()
+    })
+
+    onBeforeMount(() => {
+      if (!hasOnShowFired) {
+        // onShow 没触发（异步组件首次），这里保底
+        handler()
+      }
+    })
+  }
+}
+
+/**
  * @description 在 page setup 中调用，将 pageShowSignal 广播给所有后代
  */
 export function usePageShowProvider() {
   const existingSignal = inject(PAGE_SHOW_SIGNAL_KEY, null)
-  if (existingSignal)
+  if (existingSignal) {
     return existingSignal // ! 复用父级，防止嵌套组件调用 Provider 的情况
-
-  if (import.meta.env.DEV) {
-    console.warn('[usePageShowProvider] 创建根 signal，请确保在 Page/Layout 中调用')
   }
-  // ! 此处依赖组件环境的 onShow 生命周期，故需要保证组件环境为非异步环境
-  // ! onBeforeMount 也能满足部分需求，但是无法实现 onShow 的反复进入的效果
-  // ? 后续可以尝试 onBeforeMount 与 onShow 配合实现效果，因为异步组件成功渲染完成之后，onShow 就正常了（一般切换页面再回来就可以了）
-  const { pageShowSignal } = usePageShowSignal(onShow)
+
+  const { pageShowSignal } = usePageShowSignal(useMixedOnShow)
   provide(PAGE_SHOW_SIGNAL_KEY, pageShowSignal)
   return pageShowSignal
 }
@@ -120,13 +165,9 @@ export function useOnPageShow(
   // 无 Provider: 降级到原生生命周期（异步组件首次可能不触发）
   try {
     const { once } = options ?? {}
-    if (once) {
-      onBeforeMount(handler)
-    }
-    else {
-      onShow(handler)
-    }
+    useMixedOnShow(handler, { once: !!once })
   }
   catch { /* noop */ }
+
   return () => {}
 }

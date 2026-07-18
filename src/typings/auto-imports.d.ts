@@ -95,6 +95,7 @@ declare global {
   const useCssVars: typeof import('vue')['useCssVars']
   const useId: typeof import('vue')['useId']
   const useLayout: typeof import('../composables/useLayout')['default']
+  const useMixedOnShow: typeof import('../composables/usePageShowSignal')['useMixedOnShow']
   const useModel: typeof import('vue')['useModel']
   const useOnPageShow: typeof import('../composables/usePageShowSignal')['useOnPageShow']
   const usePageShowProvider: typeof import('../composables/usePageShowSignal')['usePageShowProvider']
@@ -218,6 +219,7 @@ declare module 'vue' {
     readonly useCssVars: UnwrapRef<typeof import('vue')['useCssVars']>
     readonly useId: UnwrapRef<typeof import('vue')['useId']>
     readonly useLayout: UnwrapRef<typeof import('../composables/useLayout')['default']>
+    readonly useMixedOnShow: UnwrapRef<typeof import('../composables/usePageShowSignal')['useMixedOnShow']>
     readonly useModel: UnwrapRef<typeof import('vue')['useModel']>
     readonly useOnPageShow: UnwrapRef<typeof import('../composables/usePageShowSignal')['useOnPageShow']>
     readonly usePageShowProvider: UnwrapRef<typeof import('../composables/usePageShowSignal')['usePageShowProvider']>
