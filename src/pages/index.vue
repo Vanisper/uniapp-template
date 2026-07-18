@@ -19,7 +19,7 @@ definePage({
   },
 })
 
-const { pageShowSignal } = usePageShowSignal(onShow)
+usePageShowProvider()
 
 function goDemo() {
   uni.navigateTo({
@@ -29,7 +29,7 @@ function goDemo() {
 </script>
 
 <template>
-  <Demo :signal="pageShowSignal" />
+  <Demo />
   <view h-60vh bg-amber>
     11
   </view>

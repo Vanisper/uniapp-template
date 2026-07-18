@@ -96,6 +96,8 @@ declare global {
   const useId: typeof import('vue')['useId']
   const useLayout: typeof import('../composables/useLayout')['default']
   const useModel: typeof import('vue')['useModel']
+  const useOnPageShow: typeof import('../composables/usePageShowSignal')['useOnPageShow']
+  const usePageShowProvider: typeof import('../composables/usePageShowSignal')['usePageShowProvider']
   const usePageShowSignal: typeof import('../composables/usePageShowSignal')['usePageShowSignal']
   const usePageShowSignalEffect: typeof import('../composables/usePageShowSignal')['usePageShowSignalEffect']
   const usePages: typeof import('../composables/usePages')['default']
@@ -217,6 +219,8 @@ declare module 'vue' {
     readonly useId: UnwrapRef<typeof import('vue')['useId']>
     readonly useLayout: UnwrapRef<typeof import('../composables/useLayout')['default']>
     readonly useModel: UnwrapRef<typeof import('vue')['useModel']>
+    readonly useOnPageShow: UnwrapRef<typeof import('../composables/usePageShowSignal')['useOnPageShow']>
+    readonly usePageShowProvider: UnwrapRef<typeof import('../composables/usePageShowSignal')['usePageShowProvider']>
     readonly usePageShowSignal: UnwrapRef<typeof import('../composables/usePageShowSignal')['usePageShowSignal']>
     readonly usePageShowSignalEffect: UnwrapRef<typeof import('../composables/usePageShowSignal')['usePageShowSignalEffect']>
     readonly usePages: UnwrapRef<typeof import('../composables/usePages')['default']>
