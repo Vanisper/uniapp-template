@@ -93,6 +93,8 @@ declare global {
   const useCounterStore: typeof import('../stores/modules/counter')['useCounterStore']
   const useCssModule: typeof import('vue')['useCssModule']
   const useCssVars: typeof import('vue')['useCssVars']
+  const useExpose: typeof import('../composables/useExpose')['useExpose']
+  const useExposeReceiver: typeof import('../composables/useExpose')['useExposeReceiver']
   const useId: typeof import('vue')['useId']
   const useLayout: typeof import('../composables/useLayout')['default']
   const useMixedOnShow: typeof import('../composables/usePageShowSignal')['useMixedOnShow']
@@ -103,6 +105,7 @@ declare global {
   const usePageShowSignalEffect: typeof import('../composables/usePageShowSignal')['usePageShowSignalEffect']
   const usePages: typeof import('../composables/usePages')['default']
   const useQuery: typeof import('../composables/useQuery')['useQuery']
+  const useRefReady: typeof import('../composables/useRefReady')['useRefReady']
   const useSlots: typeof import('vue')['useSlots']
   const useTemplateRef: typeof import('vue')['useTemplateRef']
   const useTheme: typeof import('../composables/useTheme')['useTheme']
@@ -118,6 +121,9 @@ declare global {
   // @ts-ignore
   export type { Component, ComponentPublicInstance, ComputedRef, DirectiveBinding, ExtractDefaultPropTypes, ExtractPropTypes, ExtractPublicPropTypes, InjectionKey, PropType, Ref, MaybeRef, MaybeRefOrGetter, VNode, WritableComputedRef } from 'vue'
   import('vue')
+  // @ts-ignore
+  export type { ExposeReceiver, ComponentExposed } from '../composables/useExpose'
+  import('../composables/useExpose')
   // @ts-ignore
   export type { PageShowSignal, PageShowHook, PageShowSignalHandler, PageShowSignalEffectOptions } from '../composables/usePageShowSignal'
   import('../composables/usePageShowSignal')
@@ -217,6 +223,8 @@ declare module 'vue' {
     readonly useCounterStore: UnwrapRef<typeof import('../stores/modules/counter')['useCounterStore']>
     readonly useCssModule: UnwrapRef<typeof import('vue')['useCssModule']>
     readonly useCssVars: UnwrapRef<typeof import('vue')['useCssVars']>
+    readonly useExpose: UnwrapRef<typeof import('../composables/useExpose')['useExpose']>
+    readonly useExposeReceiver: UnwrapRef<typeof import('../composables/useExpose')['useExposeReceiver']>
     readonly useId: UnwrapRef<typeof import('vue')['useId']>
     readonly useLayout: UnwrapRef<typeof import('../composables/useLayout')['default']>
     readonly useMixedOnShow: UnwrapRef<typeof import('../composables/usePageShowSignal')['useMixedOnShow']>
@@ -227,6 +235,7 @@ declare module 'vue' {
     readonly usePageShowSignalEffect: UnwrapRef<typeof import('../composables/usePageShowSignal')['usePageShowSignalEffect']>
     readonly usePages: UnwrapRef<typeof import('../composables/usePages')['default']>
     readonly useQuery: UnwrapRef<typeof import('../composables/useQuery')['useQuery']>
+    readonly useRefReady: UnwrapRef<typeof import('../composables/useRefReady')['useRefReady']>
     readonly useSlots: UnwrapRef<typeof import('vue')['useSlots']>
     readonly useTemplateRef: UnwrapRef<typeof import('vue')['useTemplateRef']>
     readonly useTheme: UnwrapRef<typeof import('../composables/useTheme')['useTheme']>

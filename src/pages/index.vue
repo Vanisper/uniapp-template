@@ -21,6 +21,13 @@ definePage({
 
 usePageShowProvider()
 
+const receiver = useExposeReceiver<ComponentExposed<typeof Demo>>()
+
+onShow(async () => {
+  const demo = await useRefReady(() => receiver.ref.value)
+  console.log('[parent] 子组件返回:', demo.test('from parent'))
+})
+
 function goDemo() {
   uni.navigateTo({
     url: '/pages-demo/index',
@@ -29,7 +36,7 @@ function goDemo() {
 </script>
 
 <template>
-  <Demo />
+  <Demo :expose="receiver" />
   <view h-60vh bg-amber>
     11
   </view>
