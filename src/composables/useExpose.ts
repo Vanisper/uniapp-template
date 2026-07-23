@@ -8,6 +8,7 @@ import { onUnmounted, shallowRef } from 'vue'
  */
 export interface ExposeReceiver<T> {
   ref: ShallowRef<T | null>
+  getRef: GetPromise<T>
 }
 
 /**
@@ -33,8 +34,10 @@ export interface ExposeReceiver<T> {
  * ```
  */
 export function useExposeReceiver<T>(): ExposeReceiver<T> {
+  const ref = shallowRef<T | null>(null)
   return {
-    ref: shallowRef<T | null>(null),
+    ref,
+    getRef: async () => await useRefReady<T>(() => ref.value),
   }
 }
 
@@ -79,3 +82,5 @@ export type ComponentExposed<T>
     : T extends (props: any, ctx: any, expose: (exposed: infer E) => any, ...args: any) => any
       ? NonNullable<E>
       : object
+
+export type GetPromise<T> = () => Promise<T>
