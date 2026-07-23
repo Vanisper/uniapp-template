@@ -1,5 +1,5 @@
-import { effectScope, nextTick, shallowRef } from 'vue'
 import { describe, expect, it, vi } from 'vitest'
+import { effectScope, nextTick, shallowRef } from 'vue'
 import { useRefReady } from './useRefReady'
 
 describe('useRefReady', () => {

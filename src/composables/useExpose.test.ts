@@ -1,5 +1,5 @@
-import { effectScope } from 'vue'
 import { describe, expect, it, vi } from 'vitest'
+import { effectScope } from 'vue'
 import { useExposeReceiver } from './useExpose'
 
 describe('useExposeReceiver', () => {
