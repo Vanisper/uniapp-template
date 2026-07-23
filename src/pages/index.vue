@@ -19,29 +19,35 @@ definePage({
   },
 })
 
-const receiver = useExposeReceiver<ComponentExposed<typeof Demo>>()
+type DemoCompExposed = ComponentExposed<typeof Demo>
+
+const receiver = useExposeReceiver<DemoCompExposed>()
+const { getRef: getDemoRef } = receiver
 
 onShow(async () => {
-  const demo = await useRefReady(() => receiver.ref.value)
+  const demo = await getDemoRef()
   console.log('[parent] 子组件返回:', demo.test('from parent'))
 })
 
 // #region 异步子组件模版 ref 循环示例
 const items = ref([{ id: 'a' }, { id: 'b' }])
 // 每个实例一个容器，用业务 id 索引
-const receivers = new Map<string, ExposeReceiver<ComponentExposed<typeof Demo>>>()
+const receivers = new Map<string, ExposeReceiver<DemoCompExposed>>()
+for (const item of items.value) {
+  receivers.set(item.id, useExposeReceiver<DemoCompExposed>())
+}
+
 function receiverOf(id: string) {
-  let r = receivers.get(id)
-  if (!r) {
-    r = useExposeReceiver<ComponentExposed<typeof Demo>>()
-    receivers.set(id, r)
+  const receiver = receivers.get(id)
+  if (!receiver) {
+    throw new Error(`未找到 id 为 ${id} 的 expose 容器`)
   }
-  return r
+  return receiver
 }
 // #endregion
 
-async function callItem(receiver: ComponentExposed<typeof Demo> | null | undefined, msg = '') {
-  const inst = await useRefReady(() => receiver)
+async function callItem(getRef: RefReadyGetter<DemoCompExposed>, msg = '') {
+  const inst = await getRef()
   uni.showToast({ title: inst.test(msg) })
 }
 
@@ -54,12 +60,12 @@ function goDemo() {
 
 <template>
   <view bg-blue-gray>异步子组件模版 ref 示例（可点击）</view>
-  <view @click="callItem(receiver.ref.value, '你好')">
+  <view @click="callItem(receiver.getRef, '你好')">
     <Demo :expose="receiver" />
   </view>
 
   <view bg-blue-gray>异步子组件模版 ref 循环示例（可点击）</view>
-  <view v-for="item in items" :key="item.id" @click="callItem(receiverOf(item.id).ref.value, item.id)">
+  <view v-for="item in items" :key="item.id" @click="callItem(receiverOf(item.id).getRef, item.id)">
     <Demo :expose="receiverOf(item.id)" />
   </view>
 

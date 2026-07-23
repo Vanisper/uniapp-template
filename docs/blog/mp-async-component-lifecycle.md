@@ -169,7 +169,7 @@ sequenceDiagram
     P->>C: 容器通过 prop 传入
     Note over C: setup 同步执行（异步组件也可靠）
     C->>P: useExpose() 将 API 写入容器
-    P->>P: useRefReady(() => receiver.ref.value)<br/>等到实例，调用方法
+    P->>P: receiver.getRef()<br/>等到实例，调用方法
 ```
 
 ```vue
@@ -187,7 +187,7 @@ defineExpose(exposed) // 保留，H5 模板 ref 依然可用
 const receiver = useExposeReceiver<ComponentExposed<typeof Demo>>()
 
 onShow(async () => {
-  const demo = await useRefReady(() => receiver.ref.value)
+  const demo = await receiver.getRef()
   demo.test('from parent')
 })
 </script>
@@ -201,10 +201,11 @@ onShow(async () => {
 
 1. **多实例 / 重名问题**。曾用字符串 name + 全局注册表实现（provide/inject 反向注册），但只要存在共享命名空间就永远有碰撞可能（v-for、同组件用两次、恰好同名）。最终改为**每实例一个专属容器对象**——容器本身就是身份，碰撞在结构上不可能发生；
 2. **模板 ref 自动解包的坑**。setup 顶层的 ref 在模板表达式中会被自动解包，`:expose="demoRef"` 传下去的是解包后的当前值（`null`）而不是 ref 本身，整条链路静默失效。因此容器包了一层普通对象 `{ ref: shallowRef }`，且约定**传递整个容器对象**——普通对象永远不会被解包，连解构误用都防住了；
-3. **类型不需要子组件显式导出**。`ComponentExposed<typeof Demo>`（实现取自 vue-component-type-helpers）直接从组件类型中提取 `defineExpose` 的类型；子组件用**同一个 `exposed` 对象**传入`useExpose` 和 `defineExpose`，运行时与类型永远同步；
-4. **卸载清理**。`onUnmounted` 时仅当容器还指向自己才清空，多实例下 A 卸载不会误清 B 刚写入的值。
+3. **类型不需要子组件显式导出**。`ComponentExposed<typeof Demo>`（实现取自 vue-component-type-helpers）直接从组件类型中提取 `defineExpose` 的类型；子组件用**同一个 `exposed` 对象**传入 `useExpose` 和 `defineExpose`，`useExpose` 同样只解包对象的顶层 ref，因此运行时与类型保持一致。缓存 receiver 返回的实例后，顶层 ref 仍会读取最新 `.value`；深层行为继续由原始的 `ref`、`shallowRef` 或 `reactive` 决定；
+4. **卸载清理**。`onUnmounted` 时仅当容器还指向自己才清空，多实例下 A 卸载不会误清 B 刚写入的值；
+5. **等待任务归属父作用域**。`useExposeReceiver` 需要在父组件 setup 的活动作用域中创建；`getRef()` 可以在生命周期或事件回调中调用，内部等待仍归父组件作用域管理，父组件卸载时会停止并 reject。
 
-而 `useRefReady` 并没有废弃——它换了监听对象后重新有用了：容器由子组件 setup 主动赋值，`watchEffect` 能正常等到；父组件 setup 先于子组件执行，handler 触发时子组件可能还没 setup 完，`useRefReady` 正好兜住这个时间差。
+而 `useRefReady` 并没有废弃——它成为 `getRef()` 内部的等待原语：容器由子组件 setup 主动赋值，`watchEffect` 能正常等到；父组件 setup 先于子组件执行，handler 触发时子组件可能还没 setup 完，`useRefReady` 正好兜住这个时间差。
 
 > [!TIP]
 > 这个"setup 上报"的思路还有额外收益：它顺带回答了**"异步组件到底什么时候渲染出来了"**——setup 是开发者能接触到的最早执行时机，即使不确定它在整个组件生命周期中的精确位置，"容器被写入"这个事件本身就是异步组件已到达的可靠信号。
@@ -217,7 +218,7 @@ onShow(async () => {
 | `usePageShowSignal` / `usePageShowSignalEffect` | 底层原语 | 信号的生产与串行消费 |
 | `usePageShowProvider` / `useOnPageShow` | 页面级方案 | 信号广播，后代零负担消费（外部驱动），无 Provider 自动降级到 mixed |
 | `useExposeReceiver` / `useExpose` | 父子契约 | 子组件主动上报实例，替代失效的模板 ref |
-| `useRefReady` | 通用原语 | 等待任意 ref 就绪（快速路径 + watchEffect） |
+| `useRefReady` | 通用原语 | 等待任意 ref 就绪（快速路径 + 作用域托管的 watchEffect） |
 | `ComponentExposed<T>` | 类型工具 | 从组件类型提取 defineExpose 类型 |
 
 ```mermaid

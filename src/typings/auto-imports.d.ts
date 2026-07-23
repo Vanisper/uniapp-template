@@ -122,7 +122,7 @@ declare global {
   export type { Component, ComponentPublicInstance, ComputedRef, DirectiveBinding, ExtractDefaultPropTypes, ExtractPropTypes, ExtractPublicPropTypes, InjectionKey, PropType, Ref, MaybeRef, MaybeRefOrGetter, VNode, WritableComputedRef } from 'vue'
   import('vue')
   // @ts-ignore
-  export type { ExposeReceiver, ComponentExposed } from '../composables/useExpose'
+  export type { ExposeReceiver, ComponentExposed, RefReadyGetter } from '../composables/useExpose'
   import('../composables/useExpose')
   // @ts-ignore
   export type { PageShowSignal, PageShowHook, PageShowSignalHandler, PageShowSignalEffectOptions } from '../composables/usePageShowSignal'
