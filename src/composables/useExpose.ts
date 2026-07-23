@@ -1,5 +1,6 @@
 import type { ShallowRef } from 'vue'
-import { onUnmounted, shallowRef } from 'vue'
+import { getCurrentScope, onUnmounted, shallowRef } from 'vue'
+import { useRefReady } from './useRefReady'
 
 /**
  * expose 容器
@@ -7,8 +8,14 @@ import { onUnmounted, shallowRef } from 'vue'
  * @description 包一层普通对象，避免作为 prop 传递时被模板顶层 ref 自动解包
  */
 export interface ExposeReceiver<T> {
+  /** 子组件上报的当前实例 */
   ref: ShallowRef<T | null>
-  getRef: GetPromise<T>
+  /**
+   * 等待当前实例就绪
+   *
+   * @description 父作用域销毁时返回 rejected Promise
+   */
+  getRef: RefReadyGetter<T>
 }
 
 /**
@@ -17,13 +24,17 @@ export interface ExposeReceiver<T> {
  * 替代模板 ref（小程序端异步子组件首次挂载时模板 ref 不赋值，
  * 切页面再回来才正常，被动等待拿不到实例，需要子组件主动上报）
  *
+ * @description
+ * - 必须在活动的 Vue effect scope 中调用
+ * - getRef 可在生命周期或事件回调中调用，等待任务仍归创建时的作用域管理
+ *
  * @example
  * ```vue
  * <script setup lang="ts">
  * const receiver = useExposeReceiver<ComponentExposed<typeof Demo>>()
  *
  * onShow(async () => {
- *   const demo = await useRefReady(() => receiver.ref.value)
+ *   const demo = await receiver.getRef()
  *   demo.test('from parent')
  * })
  * </script>
@@ -34,10 +45,22 @@ export interface ExposeReceiver<T> {
  * ```
  */
 export function useExposeReceiver<T>(): ExposeReceiver<T> {
+  const ownerScope = getCurrentScope()
+  if (!ownerScope) {
+    throw new Error('useExposeReceiver 必须在活动的 Vue effect scope 中调用')
+  }
+
   const ref = shallowRef<T | null>(null)
   return {
     ref,
-    getRef: async () => await useRefReady<T>(() => ref.value),
+    getRef: () => {
+      if (!ownerScope.active) {
+        return Promise.reject(new Error('ExposeReceiver 所属作用域已销毁'))
+      }
+
+      return ownerScope.run(() => useRefReady<T>(() => ref.value))
+        ?? Promise.reject(new Error('ExposeReceiver 所属作用域已销毁'))
+    },
   }
 }
 
@@ -83,4 +106,5 @@ export type ComponentExposed<T>
       ? NonNullable<E>
       : object
 
-export type GetPromise<T> = () => Promise<T>
+/** 等待 ref 就绪的函数 */
+export type RefReadyGetter<T> = () => Promise<T>

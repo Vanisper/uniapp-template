@@ -33,17 +33,20 @@ onShow(async () => {
 const items = ref([{ id: 'a' }, { id: 'b' }])
 // 每个实例一个容器，用业务 id 索引
 const receivers = new Map<string, ExposeReceiver<DemoCompExposed>>()
+for (const item of items.value) {
+  receivers.set(item.id, useExposeReceiver<DemoCompExposed>())
+}
+
 function receiverOf(id: string) {
-  let r = receivers.get(id)
-  if (!r) {
-    r = useExposeReceiver<DemoCompExposed>()
-    receivers.set(id, r)
+  const receiver = receivers.get(id)
+  if (!receiver) {
+    throw new Error(`未找到 id 为 ${id} 的 expose 容器`)
   }
-  return r
+  return receiver
 }
 // #endregion
 
-async function callItem(getRef: GetPromise<DemoCompExposed>, msg = '') {
+async function callItem(getRef: RefReadyGetter<DemoCompExposed>, msg = '') {
   const inst = await getRef()
   uni.showToast({ title: inst.test(msg) })
 }
