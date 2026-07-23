@@ -201,7 +201,7 @@ onShow(async () => {
 
 1. **多实例 / 重名问题**。曾用字符串 name + 全局注册表实现（provide/inject 反向注册），但只要存在共享命名空间就永远有碰撞可能（v-for、同组件用两次、恰好同名）。最终改为**每实例一个专属容器对象**——容器本身就是身份，碰撞在结构上不可能发生；
 2. **模板 ref 自动解包的坑**。setup 顶层的 ref 在模板表达式中会被自动解包，`:expose="demoRef"` 传下去的是解包后的当前值（`null`）而不是 ref 本身，整条链路静默失效。因此容器包了一层普通对象 `{ ref: shallowRef }`，且约定**传递整个容器对象**——普通对象永远不会被解包，连解构误用都防住了；
-3. **类型不需要子组件显式导出**。`ComponentExposed<typeof Demo>`（实现取自 vue-component-type-helpers）直接从组件类型中提取 `defineExpose` 的类型；子组件用**同一个 `exposed` 对象**传入`useExpose` 和 `defineExpose`，运行时与类型永远同步；
+3. **类型不需要子组件显式导出**。`ComponentExposed<typeof Demo>`（实现取自 vue-component-type-helpers）直接从组件类型中提取 `defineExpose` 的类型；子组件用**同一个 `exposed` 对象**传入 `useExpose` 和 `defineExpose`，`useExpose` 同样只解包对象的顶层 ref，因此运行时与类型保持一致。缓存 receiver 返回的实例后，顶层 ref 仍会读取最新 `.value`；深层行为继续由原始的 `ref`、`shallowRef` 或 `reactive` 决定；
 4. **卸载清理**。`onUnmounted` 时仅当容器还指向自己才清空，多实例下 A 卸载不会误清 B 刚写入的值；
 5. **等待任务归属父作用域**。`useExposeReceiver` 需要在父组件 setup 的活动作用域中创建；`getRef()` 可以在生命周期或事件回调中调用，内部等待仍归父组件作用域管理，父组件卸载时会停止并 reject。
 

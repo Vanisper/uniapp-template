@@ -18,13 +18,15 @@
 - getter 首次读取或后续重跑抛错时，返回的 Promise 都会 reject
 - 父作用域销毁时，未完成的等待任务会停止监听并 reject
 - 保留 ref 已就绪时立即 resolve 的快速路径
+- `useExpose` 对 exposed 对象应用与 `defineExpose` 一致的顶层 ref 解包
 - 公开类型和 JSDoc 能说明调用位置、完成条件与失败条件
 
 ## 非目标
 
 - 不增加超时、重试或 `AbortSignal`
 - 不支持同时等待多个 getter
-- 不改变 `useExpose` 上报和卸载清理实例的方式
+- 不递归解包 exposed 对象中的嵌套 ref
+- 不改变 `ref`、`shallowRef` 和 `reactive` 自身的响应式深度
 - 不处理父作用域仍存活时业务永远不再提供 ref 的情况
 
 ## API 设计
@@ -50,6 +52,8 @@ export type RefReadyGetter<T> = () => Promise<T>
 
 `useExposeReceiver` 必须在活动的 Vue effect scope 中创建。它捕获该 scope，之后调用 `getRef()` 时重新进入该 scope，再调用 `useRefReady`。因此，即使 `getRef()` 来自点击事件，内部监听仍会在父 scope 销毁时停止。receiver 创建位置不满足约束时同步抛错；父 scope 已销毁后调用 `getRef()` 时返回 rejected Promise。
 
+`useExpose` 接收原始 exposed 对象，但 receiver 的值类型使用 `ShallowUnwrapRef<T>`。子组件上报时创建一次 `proxyRefs(markRaw(exposed))` 代理，后续 `getRef()` 返回同一个代理。顶层 ref 的读取和赋值分别转发到 `.value`，缓存代理也会持续读取最新值；普通变量仍是上报时的快照。
+
 ## 实现策略
 
 `useRefReady` 继续使用 `watchEffect` 跟踪任意 getter 内部的响应式依赖，并增加统一的 settle/cleanup 流程：
@@ -60,6 +64,8 @@ export type RefReadyGetter<T> = () => Promise<T>
 - resolve、reject 和 scope dispose 共用幂等清理，保证只完成一次
 
 `useExposeReceiver` 使用 `getCurrentScope()` 捕获父 scope，`getRef()` 使用 `scope.run()` 创建等待任务。页面中的循环示例会在 `<script setup>` 执行期间预先创建 receiver，避免从模板渲染期间延迟创建。
+
+`useExpose` 把 `proxyRefs(markRaw(exposed))` 写入 receiver，并在卸载时使用代理身份判断是否仍应清空容器。浅解包代理不改变值本身的深度：`ref(object)` 保留深响应式，`shallowRef(object)` 只在替换 `.value` 时触发，普通嵌套对象中的 ref 保持为 ref。
 
 ## 测试
 
@@ -74,6 +80,11 @@ export type RefReadyGetter<T> = () => Promise<T>
 - `getRef()` 从 scope 外调用，receiver 所属 scope 销毁时仍 reject
 - receiver 所属 scope 销毁后调用 `getRef()` 时立即 reject
 - receiver 在无活动 scope 时创建会抛错
+- 缓存公开实例时，顶层 ref 更新仍能被读取和响应式追踪
+- 同一子组件后续 `getRef()` 返回同一代理和最新值
+- 顶层 `ref(object)` 与 `shallowRef(object)` 保持各自的响应式深度
+- 普通嵌套对象中的 ref 不继续解包，普通变量保持上报时快照
+- 旧子组件卸载不会误清后上报实例
 
 ## 验证
 

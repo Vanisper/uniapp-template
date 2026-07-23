@@ -1,5 +1,11 @@
-import type { ShallowRef } from 'vue'
-import { getCurrentScope, onUnmounted, shallowRef } from 'vue'
+import type { ShallowRef, ShallowUnwrapRef } from 'vue'
+import {
+  getCurrentScope,
+  markRaw,
+  onUnmounted,
+  proxyRefs,
+  shallowRef,
+} from 'vue'
 import { useRefReady } from './useRefReady'
 
 /**
@@ -67,8 +73,10 @@ export function useExposeReceiver<T>(): ExposeReceiver<T> {
 /**
  * 子组件调用：把自己的 API 主动写入父组件传入的容器
  *
- * setup 内同步执行，异步子组件首次挂载也可靠；
- * 与 defineExpose 使用同一个对象，保证运行时与类型一致
+ * @description
+ * - setup 内同步执行，异步子组件首次挂载也可靠
+ * - 与 defineExpose 一致，仅自动解包 exposed 对象的顶层 ref
+ * - 深层响应式行为由原始的 ref、shallowRef 或 reactive 决定
  *
  * @example
  * ```vue
@@ -83,15 +91,19 @@ export function useExposeReceiver<T>(): ExposeReceiver<T> {
  * </script>
  * ```
  */
-export function useExpose<T>(receiver: ExposeReceiver<T> | null | undefined, exposed: T) {
+export function useExpose<T extends object>(
+  receiver: ExposeReceiver<ShallowUnwrapRef<T>> | null | undefined,
+  exposed: T,
+) {
   if (!receiver)
     return
 
-  receiver.ref.value = exposed
+  const exposedProxy = proxyRefs(markRaw(exposed))
+  receiver.ref.value = exposedProxy
 
   onUnmounted(() => {
     // 防止实例泄漏；仅当容器还指向自己时才清空
-    if (receiver.ref.value === exposed)
+    if (receiver.ref.value === exposedProxy)
       receiver.ref.value = null
   })
 }

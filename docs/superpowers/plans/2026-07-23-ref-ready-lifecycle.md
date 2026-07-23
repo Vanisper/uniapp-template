@@ -4,7 +4,7 @@
 
 **Goal:** 让 ref 就绪等待任务具备明确的异常和作用域销毁语义，并确保 `ExposeReceiver.getRef()` 始终归父组件作用域管理。
 
-**Architecture:** `useRefReady` 为每次慢路径等待创建一个嵌套 effect scope，通过 scope 的停止统一清理 watcher，并在父 scope 销毁时 reject。`useExposeReceiver` 捕获创建时的父 scope，之后通过 `scope.run()` 创建等待任务，使事件回调中的 `getRef()` 仍挂到父 scope。
+**Architecture:** `useRefReady` 为每次慢路径等待创建一个嵌套 effect scope，通过 scope 的停止统一清理 watcher，并在父 scope 销毁时 reject。`useExposeReceiver` 捕获创建时的父 scope，之后通过 `scope.run()` 创建等待任务，使事件回调中的 `getRef()` 仍挂到父 scope。`useExpose` 使用 Vue 的浅解包代理上报公开 API，使 receiver 与 `defineExpose` 的顶层 ref 行为一致。
 
 **Tech Stack:** TypeScript 5.9、Vue 3.4 effect scope、Vitest 2.1、pnpm
 
@@ -12,7 +12,8 @@
 
 - 不增加超时、重试或 `AbortSignal`
 - `useRefReady` 只支持单 getter
-- 不改变 `useExpose` 上报和卸载清理实例的方式
+- `useExpose` 只解包 exposed 对象的顶层 ref，不递归解包嵌套 ref
+- 不改变 `ref`、`shallowRef` 和 `reactive` 自身的响应式深度
 - 中文源码注释保持精炼，公开 API JSDoc 说明完成条件和失败条件
 - 保留工作区中与本任务无关的用户改动
 
