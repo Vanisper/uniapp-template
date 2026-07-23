@@ -32,7 +32,7 @@
 `useRefReady` 保持单 getter API：
 
 ```ts
-useRefReady<T>(() => T | null | undefined): Promise<T>
+declare function useRefReady<T>(getter: () => T | null | undefined): Promise<T>
 ```
 
 契约如下：

@@ -31,8 +31,8 @@
 - [ ] **Step 1: 写入正常路径和异常路径测试**
 
 ```ts
-import { effectScope, nextTick, ref } from 'vue'
 import { describe, expect, it, vi } from 'vitest'
+import { effectScope, nextTick, ref } from 'vue'
 import { useRefReady } from './useRefReady'
 
 describe('useRefReady', () => {
@@ -203,8 +203,8 @@ git commit -m "fix(composables): 收敛 ref 就绪等待生命周期"
 - [ ] **Step 1: 写入 receiver 作用域测试**
 
 ```ts
-import { effectScope } from 'vue'
 import { describe, expect, it, vi } from 'vitest'
+import { effectScope } from 'vue'
 import { useExposeReceiver } from './useExpose'
 
 describe('useExposeReceiver', () => {
