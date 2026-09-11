@@ -75,7 +75,7 @@
     "magic-string": "1.2.2",
     "miniprogram-api-typings": "^5.2.3",
     "sass": "1.104.0",
-    "typescript": "~6.0.3",
+    "typescript": "5.9.3",
     "unocss": "66.8.1",
     "unocss-applet": "0.14.0",
     "unplugin-auto-import": "^21.1.0",
