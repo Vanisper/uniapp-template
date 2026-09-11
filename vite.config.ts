@@ -24,10 +24,5 @@ export default defineConfig(async ({ mode, command }) => {
       },
     },
     plugins: await createPlugins(mode, command === 'build'),
-    optimizeDeps: {
-      exclude: [
-        'uni-echarts',
-      ],
-    },
   }
 })
