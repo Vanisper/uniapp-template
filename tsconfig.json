@@ -17,7 +17,7 @@
       "@dcloudio/types",
       "@mini-types/alipay",
       "miniprogram-api-typings",
-      "@uni-helper/vite-plugin-uni-pages",
+      "@uni-helper/vite-plugin-uni-pages/client",
       "uni-echarts/global",
       "z-paging/types",
       "@uni-helper/uni-types",

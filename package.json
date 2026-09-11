@@ -3,6 +3,9 @@
   "version": "0.0.0",
   "versionCode": 0,
   "private": true,
+  "engines": {
+    "node": "^22.22.2 || ^24.15.0 || >=26.0.0"
+  },
   "packageManager": "pnpm@10.32.1+sha512.a706938f0e89ac1456b6563eab4edf1d1faf3368d1191fc5c59790e96dc918e4456ab2e67d613de1043d2e8c81f87303e6b40d4ffeca9df15ef1ad567348f2be",
   "scripts": {
     "dev": "unh dev",
@@ -58,7 +61,7 @@
     "@uni-helper/vite-plugin-uni-components": "^0.2.6",
     "@uni-helper/vite-plugin-uni-layouts": "^0.1.11",
     "@uni-helper/vite-plugin-uni-manifest": "^0.2.12",
-    "@uni-helper/vite-plugin-uni-pages": "^0.3.22",
+    "@uni-helper/vite-plugin-uni-pages": "^0.5.0",
     "@uni-helper/vite-plugin-uni-platform": "^0.0.5",
     "@uni-ku/bundle-optimizer": "^2.2.0",
     "@uni-ku/root": "^1.4.1",
