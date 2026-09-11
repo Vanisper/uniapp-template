@@ -9,6 +9,9 @@ strictPeerDependencies: false
 shamefullyHoist: true
 shellEmulator: true
 
+packages:
+  - tools/testing
+
 overrides:
   giget@1.2.5>tar: 7.5.22
 

@@ -1,0 +1,13 @@
+{
+  "name": "@uniapp-template/testing",
+  "type": "module",
+  "private": true,
+  "devDependencies": {
+    "@vitejs/plugin-vue": "5.2.4",
+    "happy-dom": "20.14.3",
+    "unplugin-auto-import": "21.1.0",
+    "vite": "6.4.3",
+    "vitest": "4.1.11",
+    "vue": "3.4.21"
+  }
+}
