@@ -5,6 +5,14 @@
     "manifest.json": "jsonc"
   },
 
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.expand": false,
+  "explorer.fileNesting.patterns": {
+    "tsconfig.json": "tsconfig.*.json",
+    "package.json": "pnpm-lock.yaml, pnpm-workspace.yaml, .npmrc, .nvmrc, .pnpmfile.mjs",
+    "index.html": "manifest.config.ts, pages.config.ts"
+  },
+
   "editor.suggest.snippetsPreventQuickSuggestions": false,
   "editor.acceptSuggestionOnEnter": "smart",
   "editor.suggestSelection": "recentlyUsedByPrefix",
