@@ -14,7 +14,6 @@ overrides:
 
 patchedDependencies:
   '@uni-helper/unh@0.3.2': patches/@uni-helper__unh@0.3.2.patch
-  '@unocss-applet/transformer-attributify@0.14.0': patches/@unocss-applet__transformer-attributify@0.14.0.patch
 
 allowBuilds:
   '@parcel/watcher': true
