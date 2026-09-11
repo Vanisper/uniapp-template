@@ -24,7 +24,7 @@ pnpm build
 pnpm build mp-weixin
 ```
 
-平台名是 unh 的位置参数；测试环境构建使用 `pnpm build:test`。主要依赖的兼容范围、迁移原因与验证结果见[依赖升级记录](docs/dependency-upgrade-2026-09-12.md)。
+平台名是 unh 的位置参数；测试环境构建使用 `pnpm build:test`。主要依赖的兼容范围、迁移原因与验证结果见[依赖升级记录](docs/dependencies/dependency-upgrade-2026-09-12.md)。
 
 H5 开发时，UnoCSS Inspector 地址为 <http://localhost:13000/__unocss/>，端口以开发服务实际输出为准。当前版本不会自动打印入口地址；未授权浏览器打开该页面后，在运行 `pnpm dev` 的终端查看 `Devframe` 提示框中的 `auth code`，输入页面完成授权。授权按浏览器保存；已授权浏览器可以直接进入。验证码过期时提交或刷新页面，再查看终端中的新码。
 
