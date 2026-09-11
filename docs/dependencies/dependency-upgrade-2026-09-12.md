@@ -58,7 +58,7 @@ DCloud 同批次包具体包括：
 
 | 依赖或工具 | 原声明 | 目标版本 | 决策与理由 |
 | --- | --- | --- | --- |
-| `vitest` | `^2.1.9` | `4.1.11`，测试工作区 | 从停止维护的 3.x 迁出，使用包含公告修复的 4.x；9 个文件、47 项测试通过 |
+| `vitest` | `^2.1.9` | `4.1.11`，测试工作区 | 从停止维护的 3.x 迁出，使用包含公告修复的 4.x；10 个文件、49 项测试通过 |
 | 测试专用 `vite` | 原来与应用共用 `5.2.8` | `6.4.3`，测试工作区 | 与 Vitest 4 实际隔离安装；应用构建仍使用 5.2.8 |
 | `happy-dom` | `^15.11.7` | `20.14.3`，测试工作区 | 保留现有 DOM 测试目的，不改用真实小程序自动化环境 |
 | `@vue/test-utils` | `^2.4.11` | `2.5.0` | 更新 Vue 测试工具，核查组件卸载行为 |
@@ -232,7 +232,15 @@ ESLint 10 移除旧配置和 RuleContext API，并调整推荐规则。项目已
 
 ## 本地补丁与回归维护
 
-首轮维护了两项精确版本补丁。当前 applet 已升级到包含修复的上游版本，旧属性补丁及其 pnpm 映射已移除；仍保留 unh 0.3.2 补丁，由 `patchedDependencies` 自动应用。升级对应包时应检查上游修复与回归结果，不依赖手工修改 `node_modules`。
+首轮维护了两项精确版本补丁。当前 applet 已升级到包含修复的上游版本，旧属性补丁及其 pnpm 映射已移除；现保留 unh 0.3.2、devframe 0.9.18 和 `@unocss/vite` 66.10.1 补丁，由 `patchedDependencies` 自动应用。升级对应包时应检查上游修复与回归结果，不依赖手工修改 `node_modules`。
+
+### UnoCSS 重复解析误报
+
+微信开发编译中，uni-app 对 `src/main.ts` 的同一条 `import 'uno.css'` 解析四次，均得到同一个 `src/__uno.css`。UnoCSS 66.10.1 只检查 layer 是否已登记，因此后三次被误报为跨文件重复导入。[上游判断](https://github.com/unocss/unocss/blob/v66.10.1/packages-integrations/vite/src/modes/global/build.ts#L84-L100)
+
+`patches/@unocss__vite@66.10.1.patch` 在提示前比较已登记入口与本次入口：相同入口重复解析不报警，不同目录的入口冲突仍保留警告及采用首个入口的行为。`plugins/vite/unocss-import.test.ts` 通过应用实际安装的 Vite/UnoCSS 解析钩子覆盖这两种情况；同入口测试在补丁前出现三条警告而失败，补丁后两项均通过。上游修复该判断后，应移除补丁并重新验证两项回归。
+
+独立副本中的微信开发编译在补丁后完成，重复导入警告由三条降为零，七份 WXSS 文件与补丁前逐字节一致。完整测试为 10 个文件、49 项通过，三类类型检查和完整 lint 通过。此次验证仅覆盖编译和样式产物；微信开发者工具打开项目仍需有效的 `mp-weixin.appid`，模板保留自动打开配置。单独运行本机开发者工具 CLI 的 `islogin` 也能复现 `punycode` 弃用提示，该提示不来自应用编译路径。
 
 ### 小程序多行属性转换
 
@@ -264,7 +272,7 @@ pnpm 12.4.1 已正式发布。本次采用官方 10→12 迁移流程，已将 p
 | --- | --- |
 | `package.json.packageManager` | 已固定为 `pnpm@12.4.1` |
 | `package.json.pnpm.onlyBuiltDependencies` | 已改为 `pnpm-workspace.yaml` 的 `allowBuilds` 映射 |
-| `package.json.pnpm.patchedDependencies` | 已迁入工作区 YAML；当前仅保留 unh 精确版本补丁，applet 补丁随上游修复移除 |
+| `package.json.pnpm.patchedDependencies` | 已迁入工作区 YAML；当前保留 unh、devframe 与 UnoCSS Vite 精确版本补丁，applet 补丁随上游修复移除 |
 | `.npmrc` 的 `auto-install-peers` | 已迁为 `autoInstallPeers: true` |
 | `.npmrc` 的 `shamefully-hoist` | 已迁为 `shamefullyHoist: true` |
 | `.npmrc` 的 `strict-peer-dependencies` | 已迁为 `strictPeerDependencies: false`，保留原项目设置；当前 Uno Inspector 的声明差距公开记录 |
@@ -362,7 +370,7 @@ DCloud 发行日志同时包含 uni-app 与 uni-app x，UTS、uvue 和蒸汽模�
 | `pnpm type-check` | 统一入口及 app/node/test 三项检查全部通过 |
 | 编辑器项目归属 | TS server 5.9.3 的 projectInfo 确认 main→app、vite.config→node、Tabbar 测试和测试配置→test |
 | Vue 类型宏与 alias | Vue 3.4 compiler-sfc 对根 references 下的解析通过 |
-| 新测试工作区全量测试 | 实际 Vitest 4.1.11 执行，9 个文件、47 项全部通过 |
+| 新测试工作区全量测试 | 实际 Vitest 4.1.11 执行，10 个文件、49 项全部通过 |
 | 本轮五种构建 | `build:test`、H5、微信、支付宝与 App 均通过；test mode 复制目录 diff 一致 |
 | 本轮路由产物 | 2 个主包页面、2 个分包共 3 个页面，tabBar 正确且无重复路径 |
 | 本轮生产浏览器冒烟 | 首页 → Demo → 中文参数 hi 页面通过；计数器加到 1、刷新仍为 1，warn/error 日志为空 |

@@ -169,6 +169,7 @@ pnpmfileChecksum: sha256-Zny0bPT0FlVpjiBG5MSAquYwe+BovkqEHCCCDwf88n0=
 
 patchedDependencies:
   '@uni-helper/unh@0.3.2': f0a73567ef9ebc07fa664e1ddd173d5b11bf7457ffbd3836f851e27c311453e9
+  '@unocss/vite@66.10.1': b812d1af791f96c838436a8e2481603c70573c5d6fed46402964c49308ad1cc9
   devframe@0.9.18: 52df250c6bcc22917f6d9ebd54fa82efd60c080bb448dd5f470d78190bd33439
 
 importers:
@@ -10151,7 +10152,7 @@ snapshots:
     dependencies:
       '@unocss/core': 66.10.1
 
-  '@unocss/vite@66.10.1(@devframes/hub@0.9.18(crossws@0.4.12(srvx@1.0.4))(devframe@0.9.18(patch_hash=52df250c6bcc22917f6d9ebd54fa82efd60c080bb448dd5f470d78190bd33439)(cac@7.0.0)(srvx@1.0.4)))(cac@7.0.0)(crossws@0.4.12(srvx@1.0.4))(srvx@1.0.4)(vite@5.2.8(@types/node@22.20.2)(sass@1.104.0)(terser@5.51.2))':
+  '@unocss/vite@66.10.1(patch_hash=b812d1af791f96c838436a8e2481603c70573c5d6fed46402964c49308ad1cc9)(@devframes/hub@0.9.18(crossws@0.4.12(srvx@1.0.4))(devframe@0.9.18(patch_hash=52df250c6bcc22917f6d9ebd54fa82efd60c080bb448dd5f470d78190bd33439)(cac@7.0.0)(srvx@1.0.4)))(cac@7.0.0)(crossws@0.4.12(srvx@1.0.4))(srvx@1.0.4)(vite@5.2.8(@types/node@22.20.2)(sass@1.104.0)(terser@5.51.2))':
     dependencies:
       '@jridgewell/remapping': 2.3.5
       '@unocss/config': 66.10.1
@@ -14203,7 +14204,7 @@ snapshots:
       '@unocss/transformer-compile-class': 66.10.1
       '@unocss/transformer-directives': 66.10.1
       '@unocss/transformer-variant-group': 66.10.1
-      '@unocss/vite': 66.10.1(@devframes/hub@0.9.18(crossws@0.4.12(srvx@1.0.4))(devframe@0.9.18(patch_hash=52df250c6bcc22917f6d9ebd54fa82efd60c080bb448dd5f470d78190bd33439)(cac@7.0.0)(srvx@1.0.4)))(cac@7.0.0)(crossws@0.4.12(srvx@1.0.4))(srvx@1.0.4)(vite@5.2.8(@types/node@22.20.2)(sass@1.104.0)(terser@5.51.2))
+      '@unocss/vite': 66.10.1(patch_hash=b812d1af791f96c838436a8e2481603c70573c5d6fed46402964c49308ad1cc9)(@devframes/hub@0.9.18(crossws@0.4.12(srvx@1.0.4))(devframe@0.9.18(patch_hash=52df250c6bcc22917f6d9ebd54fa82efd60c080bb448dd5f470d78190bd33439)(cac@7.0.0)(srvx@1.0.4)))(cac@7.0.0)(crossws@0.4.12(srvx@1.0.4))(srvx@1.0.4)(vite@5.2.8(@types/node@22.20.2)(sass@1.104.0)(terser@5.51.2))
     transitivePeerDependencies:
       - '@devframes/hub'
       - '@devframes/hub-ui'

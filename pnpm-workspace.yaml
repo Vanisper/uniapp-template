@@ -17,6 +17,7 @@ overrides:
 
 patchedDependencies:
   '@uni-helper/unh@0.3.2': patches/@uni-helper__unh@0.3.2.patch
+  '@unocss/vite@66.10.1': patches/@unocss__vite@66.10.1.patch
   devframe@0.9.18: patches/devframe@0.9.18.patch
 
 allowBuilds:

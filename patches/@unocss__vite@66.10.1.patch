@@ -1,0 +1,15 @@
+diff --git a/dist/index.mjs b/dist/index.mjs
+index 492326ce57c109ec95ca813c97fde901f65b4a69..f05ca1da33e558d7f19e4d66610e676bcdc6f2f9 100644
+--- a/dist/index.mjs
++++ b/dist/index.mjs
+@@ -539,7 +539,9 @@ function GlobalModeBuildPlugin(ctx) {
+ 					if (layer) {
+ 						if (importer) unocssImporters.add(importer);
+ 						if (vfsLayers.has(layer)) {
+-							this.warn(`[unocss] ${JSON.stringify(id)} is being imported multiple times in different files, using the first occurrence: ${JSON.stringify(vfsLayers.get(layer))}`);
++							// 同一虚拟入口可能被 uni-app 重复解析，仅提示不同入口间的冲突
++							if (vfsLayers.get(layer) !== entry)
++								this.warn(`[unocss] ${JSON.stringify(id)} is being imported multiple times in different files, using the first occurrence: ${JSON.stringify(vfsLayers.get(layer))}`);
+ 							return vfsLayers.get(layer);
+ 						}
+ 						vfsLayers.set(layer, entry);
