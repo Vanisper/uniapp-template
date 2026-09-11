@@ -52,7 +52,7 @@
     "@iconify-json/carbon": "^1.2.15",
     "@iconify-json/line-md": "^1.2.16",
     "@mini-types/alipay": "^3.0.14",
-    "@types/node": "^25.0.3",
+    "@types/node": "^22.20.2",
     "@uni-helper/eslint-config": "^0.6.1",
     "@uni-helper/plugin-uni": "0.1.0",
     "@uni-helper/unh": "^0.3.2",
