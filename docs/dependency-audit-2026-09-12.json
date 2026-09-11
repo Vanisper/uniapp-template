@@ -1,0 +1,1253 @@
+{
+  "date": "2026-09-12",
+  "command": "pnpm audit --json --registry=https://registry.npmjs.org",
+  "dependencyCommit": "9ce0c66",
+  "note": "精简审计快照，保留全部公告及版本，仅折叠重复传递路径；计数不代表生产环境可利用性。",
+  "baselineCommit": "82b45f5",
+  "baselineVulnerabilities": {
+    "critical": 25,
+    "high": 78,
+    "moderate": 58,
+    "low": 11,
+    "info": 0
+  },
+  "vulnerabilities": {
+    "info": 0,
+    "low": 9,
+    "moderate": 24,
+    "high": 11,
+    "critical": 0
+  },
+  "findings": [
+    {
+      "package": "@intlify/core-base",
+      "severity": "high",
+      "advisory": "GHSA-p2ph-7g93-hw3m",
+      "title": "Vue I18n Allows Prototype Pollution in `handleFlatJson`",
+      "installedVersions": [
+        "9.1.9"
+      ],
+      "patchedVersions": ">=9.1.11",
+      "url": "https://github.com/advisories/GHSA-p2ph-7g93-hw3m",
+      "directAncestors": [
+        "@dcloudio/uni-app",
+        "@dcloudio/uni-app-harmony",
+        "@dcloudio/uni-app-plus",
+        "@dcloudio/uni-automator",
+        "@dcloudio/uni-cli-shared",
+        "@dcloudio/uni-components",
+        "@dcloudio/uni-h5",
+        "@dcloudio/uni-mp-alipay",
+        "@dcloudio/uni-mp-baidu",
+        "@dcloudio/uni-mp-harmony",
+        "@dcloudio/uni-mp-jd",
+        "@dcloudio/uni-mp-kuaishou",
+        "@dcloudio/uni-mp-lark",
+        "@dcloudio/uni-mp-qq",
+        "@dcloudio/uni-mp-toutiao",
+        "@dcloudio/uni-mp-weixin",
+        "@dcloudio/uni-mp-xhs",
+        "@dcloudio/uni-quickapp-webview",
+        "@dcloudio/vite-plugin-uni",
+        "@uni-helper/plugin-uni"
+      ],
+      "shortestPath": ".>@dcloudio/uni-cli-shared>@intlify/core-base"
+    },
+    {
+      "package": "@intlify/message-resolver",
+      "severity": "high",
+      "advisory": "GHSA-p2ph-7g93-hw3m",
+      "title": "Vue I18n Allows Prototype Pollution in `handleFlatJson`",
+      "installedVersions": [
+        "9.1.9"
+      ],
+      "patchedVersions": ">=9.1.11",
+      "url": "https://github.com/advisories/GHSA-p2ph-7g93-hw3m",
+      "directAncestors": [
+        "@dcloudio/uni-mp-baidu"
+      ],
+      "shortestPath": ".>@dcloudio/uni-mp-baidu>@dcloudio/uni-mp-compiler>@dcloudio/uni-cli-shared>@intlify/core-base>@intlify/message-resolver"
+    },
+    {
+      "package": "adm-zip",
+      "severity": "high",
+      "advisory": "GHSA-xcpc-8h2w-3j85",
+      "title": "adm-zip: Crafted ZIP file triggers 4GB memory allocation",
+      "installedVersions": [
+        "0.5.16"
+      ],
+      "patchedVersions": ">=0.6.0",
+      "url": "https://github.com/advisories/GHSA-xcpc-8h2w-3j85",
+      "directAncestors": [
+        "@dcloudio/uni-app",
+        "@dcloudio/uni-app-harmony",
+        "@dcloudio/uni-app-plus",
+        "@dcloudio/uni-automator",
+        "@dcloudio/uni-cli-shared",
+        "@dcloudio/uni-components",
+        "@dcloudio/uni-h5",
+        "@dcloudio/uni-mp-alipay",
+        "@dcloudio/uni-mp-baidu",
+        "@dcloudio/uni-mp-harmony",
+        "@dcloudio/uni-mp-jd",
+        "@dcloudio/uni-mp-kuaishou",
+        "@dcloudio/uni-mp-lark",
+        "@dcloudio/uni-mp-qq",
+        "@dcloudio/uni-mp-toutiao",
+        "@dcloudio/uni-mp-weixin",
+        "@dcloudio/uni-mp-xhs",
+        "@dcloudio/uni-quickapp-webview",
+        "@dcloudio/vite-plugin-uni",
+        "@uni-helper/plugin-uni"
+      ],
+      "shortestPath": ".>@dcloudio/uni-cli-shared>adm-zip"
+    },
+    {
+      "package": "jpeg-js",
+      "severity": "high",
+      "advisory": "GHSA-xvf7-4v9q-58w6",
+      "title": "Infinite loop in jpeg-js",
+      "installedVersions": [
+        "0.3.7"
+      ],
+      "patchedVersions": ">=0.4.4",
+      "url": "https://github.com/advisories/GHSA-xvf7-4v9q-58w6",
+      "directAncestors": [
+        "@dcloudio/uni-mp-baidu",
+        "@dcloudio/uni-mp-kuaishou",
+        "@dcloudio/uni-mp-weixin"
+      ],
+      "shortestPath": ".>@dcloudio/uni-mp-baidu>jimp>@jimp/types>@jimp/jpeg>jpeg-js"
+    },
+    {
+      "package": "path-to-regexp",
+      "severity": "high",
+      "advisory": "GHSA-37ch-88jc-xwx2",
+      "title": "path-to-regexp vulnerable to Regular Expression Denial of Service via multiple route parameters",
+      "installedVersions": [
+        "0.1.10"
+      ],
+      "patchedVersions": ">=0.1.13",
+      "url": "https://github.com/advisories/GHSA-37ch-88jc-xwx2",
+      "directAncestors": [
+        "@dcloudio/vite-plugin-uni",
+        "@uni-helper/plugin-uni"
+      ],
+      "shortestPath": ".>@dcloudio/vite-plugin-uni>express>path-to-regexp"
+    },
+    {
+      "package": "path-to-regexp",
+      "severity": "high",
+      "advisory": "GHSA-rhx6-c78j-4q9w",
+      "title": "path-to-regexp contains a ReDoS",
+      "installedVersions": [
+        "0.1.10"
+      ],
+      "patchedVersions": ">=0.1.12",
+      "url": "https://github.com/advisories/GHSA-rhx6-c78j-4q9w",
+      "directAncestors": [
+        "@dcloudio/vite-plugin-uni",
+        "@uni-helper/plugin-uni"
+      ],
+      "shortestPath": ".>@dcloudio/vite-plugin-uni>express>path-to-regexp"
+    },
+    {
+      "package": "postcss",
+      "severity": "high",
+      "advisory": "GHSA-6g55-p6wh-862q",
+      "title": "PostCSS: Arbitrary file read and information disclosure via attacker-controlled sourceMappingURL in CSS comments",
+      "installedVersions": [
+        "8.5.6"
+      ],
+      "patchedVersions": ">=8.5.12",
+      "url": "https://github.com/advisories/GHSA-6g55-p6wh-862q",
+      "directAncestors": [
+        "@dcloudio/uni-app",
+        "@dcloudio/uni-app-harmony",
+        "@dcloudio/uni-app-plus",
+        "@dcloudio/uni-automator",
+        "@dcloudio/uni-cli-shared",
+        "@dcloudio/uni-components",
+        "@dcloudio/uni-h5",
+        "@dcloudio/uni-mp-alipay",
+        "@dcloudio/uni-mp-baidu",
+        "@dcloudio/uni-mp-harmony",
+        "@dcloudio/uni-mp-jd",
+        "@dcloudio/uni-mp-kuaishou",
+        "@dcloudio/uni-mp-lark",
+        "@dcloudio/uni-mp-qq",
+        "@dcloudio/uni-mp-toutiao",
+        "@dcloudio/uni-mp-weixin",
+        "@dcloudio/uni-mp-xhs",
+        "@dcloudio/uni-quickapp-webview",
+        "@dcloudio/vite-plugin-uni",
+        "@uni-helper/plugin-uni"
+      ],
+      "shortestPath": ".>@dcloudio/uni-cli-shared>@dcloudio/uni-nvue-styler>postcss"
+    },
+    {
+      "package": "postcss",
+      "severity": "high",
+      "advisory": "GHSA-r28c-9q8g-f849",
+      "title": "PostCSS: Path Traversal in Previous Source Map Auto-Loading (sourceMappingURL) leads to Arbitrary .map File Disclosure",
+      "installedVersions": [
+        "8.5.6"
+      ],
+      "patchedVersions": ">=8.5.18",
+      "url": "https://github.com/advisories/GHSA-r28c-9q8g-f849",
+      "directAncestors": [
+        "@dcloudio/uni-app",
+        "@dcloudio/uni-app-harmony",
+        "@dcloudio/uni-app-plus",
+        "@dcloudio/uni-automator",
+        "@dcloudio/uni-cli-shared",
+        "@dcloudio/uni-components",
+        "@dcloudio/uni-h5",
+        "@dcloudio/uni-mp-alipay",
+        "@dcloudio/uni-mp-baidu",
+        "@dcloudio/uni-mp-harmony",
+        "@dcloudio/uni-mp-jd",
+        "@dcloudio/uni-mp-kuaishou",
+        "@dcloudio/uni-mp-lark",
+        "@dcloudio/uni-mp-qq",
+        "@dcloudio/uni-mp-toutiao",
+        "@dcloudio/uni-mp-weixin",
+        "@dcloudio/uni-mp-xhs",
+        "@dcloudio/uni-quickapp-webview",
+        "@dcloudio/vite-plugin-uni",
+        "@uni-helper/plugin-uni"
+      ],
+      "shortestPath": ".>@dcloudio/uni-cli-shared>@dcloudio/uni-nvue-styler>postcss"
+    },
+    {
+      "package": "vite",
+      "severity": "high",
+      "advisory": "GHSA-c27g-q93r-2cwf",
+      "title": "launch-editor vulnerable to command injection via the crafted request on Windows",
+      "installedVersions": [
+        "5.2.8"
+      ],
+      "patchedVersions": ">=5.4.9",
+      "url": "https://github.com/advisories/GHSA-c27g-q93r-2cwf",
+      "directAncestors": [
+        "@antfu/eslint-config",
+        "@dcloudio/uni-app",
+        "@dcloudio/uni-app-harmony",
+        "@dcloudio/uni-app-plus",
+        "@dcloudio/uni-components",
+        "@dcloudio/uni-h5",
+        "@dcloudio/uni-mp-baidu",
+        "@dcloudio/vite-plugin-uni",
+        "@uni-helper/eslint-config",
+        "@uni-helper/plugin-uni",
+        "@uni-helper/unocss-preset-uni",
+        "@uni-helper/vite-plugin-uni-components",
+        "@uni-helper/vite-plugin-uni-manifest",
+        "@uni-helper/vite-plugin-uni-pages",
+        "@uni-helper/vite-plugin-uni-platform",
+        "@uni-ku/bundle-optimizer",
+        "@uni-ku/root",
+        "@vitejs/plugin-vue",
+        "unocss",
+        "unocss-applet",
+        "unplugin-auto-import",
+        "vite",
+        "vitest"
+      ],
+      "shortestPath": ".>vite"
+    },
+    {
+      "package": "vite",
+      "severity": "high",
+      "advisory": "GHSA-fx2h-pf6j-xcff",
+      "title": "vite: `server.fs.deny` bypass on Windows alternate paths",
+      "installedVersions": [
+        "5.2.8"
+      ],
+      "patchedVersions": ">=6.4.3",
+      "url": "https://github.com/advisories/GHSA-fx2h-pf6j-xcff",
+      "directAncestors": [
+        "@antfu/eslint-config",
+        "@dcloudio/uni-app",
+        "@dcloudio/uni-app-harmony",
+        "@dcloudio/uni-app-plus",
+        "@dcloudio/uni-components",
+        "@dcloudio/uni-h5",
+        "@dcloudio/uni-mp-baidu",
+        "@dcloudio/vite-plugin-uni",
+        "@uni-helper/eslint-config",
+        "@uni-helper/plugin-uni",
+        "@uni-helper/unocss-preset-uni",
+        "@uni-helper/vite-plugin-uni-components",
+        "@uni-helper/vite-plugin-uni-manifest",
+        "@uni-helper/vite-plugin-uni-pages",
+        "@uni-helper/vite-plugin-uni-platform",
+        "@uni-ku/bundle-optimizer",
+        "@uni-ku/root",
+        "@vitejs/plugin-vue",
+        "unocss",
+        "unocss-applet",
+        "unplugin-auto-import",
+        "vite",
+        "vitest"
+      ],
+      "shortestPath": ".>vite"
+    },
+    {
+      "package": "ws",
+      "severity": "high",
+      "advisory": "GHSA-96hv-2xvq-fx4p",
+      "title": "ws: Memory exhaustion DoS from tiny fragments and data chunks",
+      "installedVersions": [
+        "8.18.0"
+      ],
+      "patchedVersions": ">=8.21.0",
+      "url": "https://github.com/advisories/GHSA-96hv-2xvq-fx4p",
+      "directAncestors": [
+        "@dcloudio/uni-automator",
+        "@dcloudio/uni-mp-baidu",
+        "@dcloudio/uni-mp-kuaishou",
+        "@dcloudio/uni-mp-weixin"
+      ],
+      "shortestPath": ".>@dcloudio/uni-automator>ws"
+    },
+    {
+      "package": "@intlify/core-base",
+      "severity": "moderate",
+      "advisory": "GHSA-x8qp-wqqm-57ph",
+      "title": "vue-i18n's escapeParameterHtml does not prevent DOM-based XSS through its tag attributes",
+      "installedVersions": [
+        "9.1.9"
+      ],
+      "patchedVersions": ">=9.14.5",
+      "url": "https://github.com/advisories/GHSA-x8qp-wqqm-57ph",
+      "directAncestors": [
+        "@dcloudio/uni-app",
+        "@dcloudio/uni-app-harmony",
+        "@dcloudio/uni-app-plus",
+        "@dcloudio/uni-automator",
+        "@dcloudio/uni-cli-shared",
+        "@dcloudio/uni-components",
+        "@dcloudio/uni-h5",
+        "@dcloudio/uni-mp-alipay",
+        "@dcloudio/uni-mp-baidu",
+        "@dcloudio/uni-mp-harmony",
+        "@dcloudio/uni-mp-jd",
+        "@dcloudio/uni-mp-kuaishou",
+        "@dcloudio/uni-mp-lark",
+        "@dcloudio/uni-mp-qq",
+        "@dcloudio/uni-mp-toutiao",
+        "@dcloudio/uni-mp-weixin",
+        "@dcloudio/uni-mp-xhs",
+        "@dcloudio/uni-quickapp-webview",
+        "@dcloudio/vite-plugin-uni",
+        "@uni-helper/plugin-uni"
+      ],
+      "shortestPath": ".>@dcloudio/uni-cli-shared>@intlify/core-base"
+    },
+    {
+      "package": "@vitest/mocker",
+      "severity": "moderate",
+      "advisory": "GHSA-82fw-gwwq-j7x9",
+      "title": "Vitest: Path Traversal / Arbitrary File Read via @vitest/mocker Redirect Mock",
+      "installedVersions": [
+        "3.2.7"
+      ],
+      "patchedVersions": ">=4.1.11",
+      "url": "https://github.com/advisories/GHSA-82fw-gwwq-j7x9",
+      "directAncestors": [
+        "@antfu/eslint-config",
+        "@uni-helper/eslint-config",
+        "vitest"
+      ],
+      "shortestPath": ".>vitest>@vitest/mocker"
+    },
+    {
+      "package": "adm-zip",
+      "severity": "moderate",
+      "advisory": "GHSA-vwc7-r8mq-g2x9",
+      "title": "adm-zip extraction follows destination symlinks, allowing arbitrary file overwrite",
+      "installedVersions": [
+        "0.5.16"
+      ],
+      "patchedVersions": ">=0.6.1",
+      "url": "https://github.com/advisories/GHSA-vwc7-r8mq-g2x9",
+      "directAncestors": [
+        "@dcloudio/uni-app",
+        "@dcloudio/uni-app-harmony",
+        "@dcloudio/uni-app-plus",
+        "@dcloudio/uni-automator",
+        "@dcloudio/uni-cli-shared",
+        "@dcloudio/uni-components",
+        "@dcloudio/uni-h5",
+        "@dcloudio/uni-mp-alipay",
+        "@dcloudio/uni-mp-baidu",
+        "@dcloudio/uni-mp-harmony",
+        "@dcloudio/uni-mp-jd",
+        "@dcloudio/uni-mp-kuaishou",
+        "@dcloudio/uni-mp-lark",
+        "@dcloudio/uni-mp-qq",
+        "@dcloudio/uni-mp-toutiao",
+        "@dcloudio/uni-mp-weixin",
+        "@dcloudio/uni-mp-xhs",
+        "@dcloudio/uni-quickapp-webview",
+        "@dcloudio/vite-plugin-uni",
+        "@uni-helper/plugin-uni"
+      ],
+      "shortestPath": ".>@dcloudio/uni-cli-shared>adm-zip"
+    },
+    {
+      "package": "esbuild",
+      "severity": "moderate",
+      "advisory": "GHSA-67mh-4wv8-2f99",
+      "title": "esbuild enables any website to send any requests to the development server and read the response",
+      "installedVersions": [
+        "0.20.2"
+      ],
+      "patchedVersions": ">=0.25.0",
+      "url": "https://github.com/advisories/GHSA-67mh-4wv8-2f99",
+      "directAncestors": [
+        "@dcloudio/uni-app",
+        "@dcloudio/uni-app-harmony",
+        "@dcloudio/uni-app-plus",
+        "@dcloudio/uni-automator",
+        "@dcloudio/uni-cli-shared",
+        "@dcloudio/uni-components",
+        "@dcloudio/uni-h5",
+        "@dcloudio/uni-mp-alipay",
+        "@dcloudio/uni-mp-baidu",
+        "@dcloudio/uni-mp-harmony",
+        "@dcloudio/uni-mp-jd",
+        "@dcloudio/uni-mp-kuaishou",
+        "@dcloudio/uni-mp-lark",
+        "@dcloudio/uni-mp-qq",
+        "@dcloudio/uni-mp-toutiao",
+        "@dcloudio/uni-mp-weixin",
+        "@dcloudio/uni-mp-xhs",
+        "@dcloudio/uni-quickapp-webview",
+        "@dcloudio/vite-plugin-uni",
+        "@uni-helper/unocss-preset-uni",
+        "@uni-helper/vite-plugin-uni-pages",
+        "@uni-helper/vite-plugin-uni-platform",
+        "@vitejs/plugin-vue"
+      ],
+      "shortestPath": ".>@dcloudio/uni-cli-shared>esbuild"
+    },
+    {
+      "package": "jpeg-js",
+      "severity": "moderate",
+      "advisory": "GHSA-w7q9-p3jq-fmhm",
+      "title": "Uncontrolled resource consumption in jpeg-js",
+      "installedVersions": [
+        "0.3.7"
+      ],
+      "patchedVersions": ">=0.4.0",
+      "url": "https://github.com/advisories/GHSA-w7q9-p3jq-fmhm",
+      "directAncestors": [
+        "@dcloudio/uni-mp-baidu",
+        "@dcloudio/uni-mp-kuaishou",
+        "@dcloudio/uni-mp-weixin"
+      ],
+      "shortestPath": ".>@dcloudio/uni-mp-baidu>jimp>@jimp/types>@jimp/jpeg>jpeg-js"
+    },
+    {
+      "package": "phin",
+      "severity": "moderate",
+      "advisory": "GHSA-x565-32qp-m3vf",
+      "title": "phin may include sensitive headers in subsequent requests after redirect",
+      "installedVersions": [
+        "2.9.3"
+      ],
+      "patchedVersions": null,
+      "url": "https://github.com/advisories/GHSA-x565-32qp-m3vf",
+      "directAncestors": [
+        "@dcloudio/uni-mp-baidu"
+      ],
+      "shortestPath": ".>@dcloudio/uni-mp-baidu>jimp>@jimp/custom>@jimp/core>phin"
+    },
+    {
+      "package": "postcss",
+      "severity": "moderate",
+      "advisory": "GHSA-fxqj-rqcc-2cmp",
+      "title": "PostCSS: incomplete fix of GHSA-6g55-p6wh-862q — attacker-controlled sourceMappingURL reads arbitrary .map files when `from` is unset",
+      "installedVersions": [
+        "8.5.6"
+      ],
+      "patchedVersions": ">=8.5.23",
+      "url": "https://github.com/advisories/GHSA-fxqj-rqcc-2cmp",
+      "directAncestors": [
+        "@dcloudio/uni-app",
+        "@dcloudio/uni-app-harmony",
+        "@dcloudio/uni-app-plus",
+        "@dcloudio/uni-automator",
+        "@dcloudio/uni-cli-shared",
+        "@dcloudio/uni-components",
+        "@dcloudio/uni-h5",
+        "@dcloudio/uni-mp-alipay",
+        "@dcloudio/uni-mp-baidu",
+        "@dcloudio/uni-mp-harmony",
+        "@dcloudio/uni-mp-jd",
+        "@dcloudio/uni-mp-kuaishou",
+        "@dcloudio/uni-mp-lark",
+        "@dcloudio/uni-mp-qq",
+        "@dcloudio/uni-mp-toutiao",
+        "@dcloudio/uni-mp-weixin",
+        "@dcloudio/uni-mp-xhs",
+        "@dcloudio/uni-quickapp-webview",
+        "@dcloudio/vite-plugin-uni",
+        "@uni-helper/plugin-uni"
+      ],
+      "shortestPath": ".>@dcloudio/uni-cli-shared>@dcloudio/uni-nvue-styler>postcss"
+    },
+    {
+      "package": "postcss",
+      "severity": "moderate",
+      "advisory": "GHSA-qx2v-qp2m-jg93",
+      "title": "PostCSS has XSS via Unescaped </style> in its CSS Stringify Output",
+      "installedVersions": [
+        "8.5.6"
+      ],
+      "patchedVersions": ">=8.5.10",
+      "url": "https://github.com/advisories/GHSA-qx2v-qp2m-jg93",
+      "directAncestors": [
+        "@dcloudio/uni-app",
+        "@dcloudio/uni-app-harmony",
+        "@dcloudio/uni-app-plus",
+        "@dcloudio/uni-automator",
+        "@dcloudio/uni-cli-shared",
+        "@dcloudio/uni-components",
+        "@dcloudio/uni-h5",
+        "@dcloudio/uni-mp-alipay",
+        "@dcloudio/uni-mp-baidu",
+        "@dcloudio/uni-mp-harmony",
+        "@dcloudio/uni-mp-jd",
+        "@dcloudio/uni-mp-kuaishou",
+        "@dcloudio/uni-mp-lark",
+        "@dcloudio/uni-mp-qq",
+        "@dcloudio/uni-mp-toutiao",
+        "@dcloudio/uni-mp-weixin",
+        "@dcloudio/uni-mp-xhs",
+        "@dcloudio/uni-quickapp-webview",
+        "@dcloudio/vite-plugin-uni",
+        "@uni-helper/plugin-uni"
+      ],
+      "shortestPath": ".>@dcloudio/uni-cli-shared>@dcloudio/uni-nvue-styler>postcss"
+    },
+    {
+      "package": "qs",
+      "severity": "moderate",
+      "advisory": "GHSA-4mjr-xmp4-gh2g",
+      "title": "qs: Denial of Service via Attacker Controlled isBuffer",
+      "installedVersions": [
+        "6.11.0",
+        "6.13.0"
+      ],
+      "patchedVersions": ">=6.16.0",
+      "url": "https://github.com/advisories/GHSA-4mjr-xmp4-gh2g",
+      "directAncestors": [
+        "@dcloudio/vite-plugin-uni",
+        "@uni-helper/plugin-uni"
+      ],
+      "shortestPath": ".>@dcloudio/vite-plugin-uni>express>qs"
+    },
+    {
+      "package": "qs",
+      "severity": "moderate",
+      "advisory": "GHSA-6rw7-vpxm-498p",
+      "title": "qs's arrayLimit bypass in its bracket notation allows DoS via memory exhaustion",
+      "installedVersions": [
+        "6.11.0",
+        "6.13.0"
+      ],
+      "patchedVersions": ">=6.14.1",
+      "url": "https://github.com/advisories/GHSA-6rw7-vpxm-498p",
+      "directAncestors": [
+        "@dcloudio/vite-plugin-uni",
+        "@uni-helper/plugin-uni"
+      ],
+      "shortestPath": ".>@dcloudio/vite-plugin-uni>express>qs"
+    },
+    {
+      "package": "qs",
+      "severity": "moderate",
+      "advisory": "GHSA-q8mj-m7cp-5q26",
+      "title": "qs has a remotely triggerable DoS: qs.stringify crashes with TypeError on null/undefined entries in comma-format arrays when encodeValuesOnly is set",
+      "installedVersions": [
+        "6.13.0"
+      ],
+      "patchedVersions": ">=6.15.2",
+      "url": "https://github.com/advisories/GHSA-q8mj-m7cp-5q26",
+      "directAncestors": [
+        "@dcloudio/vite-plugin-uni",
+        "@uni-helper/plugin-uni"
+      ],
+      "shortestPath": ".>@dcloudio/vite-plugin-uni>express>body-parser>qs"
+    },
+    {
+      "package": "vite",
+      "severity": "moderate",
+      "advisory": "GHSA-356w-63v5-8wf4",
+      "title": "Vite has an `server.fs.deny` bypass with an invalid `request-target`",
+      "installedVersions": [
+        "5.2.8"
+      ],
+      "patchedVersions": ">=5.4.18",
+      "url": "https://github.com/advisories/GHSA-356w-63v5-8wf4",
+      "directAncestors": [
+        "@antfu/eslint-config",
+        "@dcloudio/uni-app",
+        "@dcloudio/uni-app-harmony",
+        "@dcloudio/uni-app-plus",
+        "@dcloudio/uni-components",
+        "@dcloudio/uni-h5",
+        "@dcloudio/uni-mp-baidu",
+        "@dcloudio/vite-plugin-uni",
+        "@uni-helper/eslint-config",
+        "@uni-helper/plugin-uni",
+        "@uni-helper/unocss-preset-uni",
+        "@uni-helper/vite-plugin-uni-components",
+        "@uni-helper/vite-plugin-uni-manifest",
+        "@uni-helper/vite-plugin-uni-pages",
+        "@uni-helper/vite-plugin-uni-platform",
+        "@uni-ku/bundle-optimizer",
+        "@uni-ku/root",
+        "@vitejs/plugin-vue",
+        "unocss",
+        "unocss-applet",
+        "unplugin-auto-import",
+        "vite",
+        "vitest"
+      ],
+      "shortestPath": ".>vite"
+    },
+    {
+      "package": "vite",
+      "severity": "moderate",
+      "advisory": "GHSA-4r4m-qw57-chr8",
+      "title": "Vite has a `server.fs.deny` bypassed for `inline` and `raw` with `?import` query",
+      "installedVersions": [
+        "5.2.8"
+      ],
+      "patchedVersions": ">=5.4.16",
+      "url": "https://github.com/advisories/GHSA-4r4m-qw57-chr8",
+      "directAncestors": [
+        "@antfu/eslint-config",
+        "@dcloudio/uni-app",
+        "@dcloudio/uni-app-harmony",
+        "@dcloudio/uni-app-plus",
+        "@dcloudio/uni-components",
+        "@dcloudio/uni-h5",
+        "@dcloudio/uni-mp-baidu",
+        "@dcloudio/vite-plugin-uni",
+        "@uni-helper/eslint-config",
+        "@uni-helper/plugin-uni",
+        "@uni-helper/unocss-preset-uni",
+        "@uni-helper/vite-plugin-uni-components",
+        "@uni-helper/vite-plugin-uni-manifest",
+        "@uni-helper/vite-plugin-uni-pages",
+        "@uni-helper/vite-plugin-uni-platform",
+        "@uni-ku/bundle-optimizer",
+        "@uni-ku/root",
+        "@vitejs/plugin-vue",
+        "unocss",
+        "unocss-applet",
+        "unplugin-auto-import",
+        "vite",
+        "vitest"
+      ],
+      "shortestPath": ".>vite"
+    },
+    {
+      "package": "vite",
+      "severity": "moderate",
+      "advisory": "GHSA-4w7w-66w2-5vf9",
+      "title": "Vite Vulnerable to Path Traversal in Optimized Deps `.map` Handling",
+      "installedVersions": [
+        "5.2.8"
+      ],
+      "patchedVersions": ">=6.4.2",
+      "url": "https://github.com/advisories/GHSA-4w7w-66w2-5vf9",
+      "directAncestors": [
+        "@antfu/eslint-config",
+        "@dcloudio/uni-app",
+        "@dcloudio/uni-app-harmony",
+        "@dcloudio/uni-app-plus",
+        "@dcloudio/uni-components",
+        "@dcloudio/uni-h5",
+        "@dcloudio/uni-mp-baidu",
+        "@dcloudio/vite-plugin-uni",
+        "@uni-helper/eslint-config",
+        "@uni-helper/plugin-uni",
+        "@uni-helper/unocss-preset-uni",
+        "@uni-helper/vite-plugin-uni-components",
+        "@uni-helper/vite-plugin-uni-manifest",
+        "@uni-helper/vite-plugin-uni-pages",
+        "@uni-helper/vite-plugin-uni-platform",
+        "@uni-ku/bundle-optimizer",
+        "@uni-ku/root",
+        "@vitejs/plugin-vue",
+        "unocss",
+        "unocss-applet",
+        "unplugin-auto-import",
+        "vite",
+        "vitest"
+      ],
+      "shortestPath": ".>vite"
+    },
+    {
+      "package": "vite",
+      "severity": "moderate",
+      "advisory": "GHSA-64vr-g452-qvp3",
+      "title": "Vite DOM Clobbering gadget found in vite bundled scripts that leads to XSS",
+      "installedVersions": [
+        "5.2.8"
+      ],
+      "patchedVersions": ">=5.2.14",
+      "url": "https://github.com/advisories/GHSA-64vr-g452-qvp3",
+      "directAncestors": [
+        "@antfu/eslint-config",
+        "@dcloudio/uni-app",
+        "@dcloudio/uni-app-harmony",
+        "@dcloudio/uni-app-plus",
+        "@dcloudio/uni-components",
+        "@dcloudio/uni-h5",
+        "@dcloudio/uni-mp-baidu",
+        "@dcloudio/vite-plugin-uni",
+        "@uni-helper/eslint-config",
+        "@uni-helper/plugin-uni",
+        "@uni-helper/unocss-preset-uni",
+        "@uni-helper/vite-plugin-uni-components",
+        "@uni-helper/vite-plugin-uni-manifest",
+        "@uni-helper/vite-plugin-uni-pages",
+        "@uni-helper/vite-plugin-uni-platform",
+        "@uni-ku/bundle-optimizer",
+        "@uni-ku/root",
+        "@vitejs/plugin-vue",
+        "unocss",
+        "unocss-applet",
+        "unplugin-auto-import",
+        "vite",
+        "vitest"
+      ],
+      "shortestPath": ".>vite"
+    },
+    {
+      "package": "vite",
+      "severity": "moderate",
+      "advisory": "GHSA-859w-5945-r5v3",
+      "title": "Vite's server.fs.deny bypassed with /. for files under project root",
+      "installedVersions": [
+        "5.2.8"
+      ],
+      "patchedVersions": ">=5.4.19",
+      "url": "https://github.com/advisories/GHSA-859w-5945-r5v3",
+      "directAncestors": [
+        "@antfu/eslint-config",
+        "@dcloudio/uni-app",
+        "@dcloudio/uni-app-harmony",
+        "@dcloudio/uni-app-plus",
+        "@dcloudio/uni-components",
+        "@dcloudio/uni-h5",
+        "@dcloudio/uni-mp-baidu",
+        "@dcloudio/vite-plugin-uni",
+        "@uni-helper/eslint-config",
+        "@uni-helper/plugin-uni",
+        "@uni-helper/unocss-preset-uni",
+        "@uni-helper/vite-plugin-uni-components",
+        "@uni-helper/vite-plugin-uni-manifest",
+        "@uni-helper/vite-plugin-uni-pages",
+        "@uni-helper/vite-plugin-uni-platform",
+        "@uni-ku/bundle-optimizer",
+        "@uni-ku/root",
+        "@vitejs/plugin-vue",
+        "unocss",
+        "unocss-applet",
+        "unplugin-auto-import",
+        "vite",
+        "vitest"
+      ],
+      "shortestPath": ".>vite"
+    },
+    {
+      "package": "vite",
+      "severity": "moderate",
+      "advisory": "GHSA-93m4-6634-74q7",
+      "title": "vite allows server.fs.deny bypass via backslash on Windows",
+      "installedVersions": [
+        "5.2.8"
+      ],
+      "patchedVersions": ">=5.4.21",
+      "url": "https://github.com/advisories/GHSA-93m4-6634-74q7",
+      "directAncestors": [
+        "@antfu/eslint-config",
+        "@dcloudio/uni-app",
+        "@dcloudio/uni-app-harmony",
+        "@dcloudio/uni-app-plus",
+        "@dcloudio/uni-components",
+        "@dcloudio/uni-h5",
+        "@dcloudio/uni-mp-baidu",
+        "@dcloudio/vite-plugin-uni",
+        "@uni-helper/eslint-config",
+        "@uni-helper/plugin-uni",
+        "@uni-helper/unocss-preset-uni",
+        "@uni-helper/vite-plugin-uni-components",
+        "@uni-helper/vite-plugin-uni-manifest",
+        "@uni-helper/vite-plugin-uni-pages",
+        "@uni-helper/vite-plugin-uni-platform",
+        "@uni-ku/bundle-optimizer",
+        "@uni-ku/root",
+        "@vitejs/plugin-vue",
+        "unocss",
+        "unocss-applet",
+        "unplugin-auto-import",
+        "vite",
+        "vitest"
+      ],
+      "shortestPath": ".>vite"
+    },
+    {
+      "package": "vite",
+      "severity": "moderate",
+      "advisory": "GHSA-9cwx-2883-4wfx",
+      "title": "Vite's `server.fs.deny` is bypassed when using `?import&raw`",
+      "installedVersions": [
+        "5.2.8"
+      ],
+      "patchedVersions": ">=5.2.14",
+      "url": "https://github.com/advisories/GHSA-9cwx-2883-4wfx",
+      "directAncestors": [
+        "@antfu/eslint-config",
+        "@dcloudio/uni-app",
+        "@dcloudio/uni-app-harmony",
+        "@dcloudio/uni-app-plus",
+        "@dcloudio/uni-components",
+        "@dcloudio/uni-h5",
+        "@dcloudio/uni-mp-baidu",
+        "@dcloudio/vite-plugin-uni",
+        "@uni-helper/eslint-config",
+        "@uni-helper/plugin-uni",
+        "@uni-helper/unocss-preset-uni",
+        "@uni-helper/vite-plugin-uni-components",
+        "@uni-helper/vite-plugin-uni-manifest",
+        "@uni-helper/vite-plugin-uni-pages",
+        "@uni-helper/vite-plugin-uni-platform",
+        "@uni-ku/bundle-optimizer",
+        "@uni-ku/root",
+        "@vitejs/plugin-vue",
+        "unocss",
+        "unocss-applet",
+        "unplugin-auto-import",
+        "vite",
+        "vitest"
+      ],
+      "shortestPath": ".>vite"
+    },
+    {
+      "package": "vite",
+      "severity": "moderate",
+      "advisory": "GHSA-v6wh-96g9-6wx3",
+      "title": "launch-editor: NTLMv2 hash disclosure via UNC path handling on Windows",
+      "installedVersions": [
+        "5.2.8"
+      ],
+      "patchedVersions": ">=6.4.3",
+      "url": "https://github.com/advisories/GHSA-v6wh-96g9-6wx3",
+      "directAncestors": [
+        "@antfu/eslint-config",
+        "@dcloudio/uni-app",
+        "@dcloudio/uni-app-harmony",
+        "@dcloudio/uni-app-plus",
+        "@dcloudio/uni-components",
+        "@dcloudio/uni-h5",
+        "@dcloudio/uni-mp-baidu",
+        "@dcloudio/vite-plugin-uni",
+        "@uni-helper/eslint-config",
+        "@uni-helper/plugin-uni",
+        "@uni-helper/unocss-preset-uni",
+        "@uni-helper/vite-plugin-uni-components",
+        "@uni-helper/vite-plugin-uni-manifest",
+        "@uni-helper/vite-plugin-uni-pages",
+        "@uni-helper/vite-plugin-uni-platform",
+        "@uni-ku/bundle-optimizer",
+        "@uni-ku/root",
+        "@vitejs/plugin-vue",
+        "unocss",
+        "unocss-applet",
+        "unplugin-auto-import",
+        "vite",
+        "vitest"
+      ],
+      "shortestPath": ".>vite"
+    },
+    {
+      "package": "vite",
+      "severity": "moderate",
+      "advisory": "GHSA-vg6x-rcgg-rjx6",
+      "title": "Websites were able to send any requests to the development server and read the response in vite",
+      "installedVersions": [
+        "5.2.8"
+      ],
+      "patchedVersions": ">=5.4.12",
+      "url": "https://github.com/advisories/GHSA-vg6x-rcgg-rjx6",
+      "directAncestors": [
+        "@antfu/eslint-config",
+        "@dcloudio/uni-app",
+        "@dcloudio/uni-app-harmony",
+        "@dcloudio/uni-app-plus",
+        "@dcloudio/uni-components",
+        "@dcloudio/uni-h5",
+        "@dcloudio/uni-mp-baidu",
+        "@dcloudio/vite-plugin-uni",
+        "@uni-helper/eslint-config",
+        "@uni-helper/plugin-uni",
+        "@uni-helper/unocss-preset-uni",
+        "@uni-helper/vite-plugin-uni-components",
+        "@uni-helper/vite-plugin-uni-manifest",
+        "@uni-helper/vite-plugin-uni-pages",
+        "@uni-helper/vite-plugin-uni-platform",
+        "@uni-ku/bundle-optimizer",
+        "@uni-ku/root",
+        "@vitejs/plugin-vue",
+        "unocss",
+        "unocss-applet",
+        "unplugin-auto-import",
+        "vite",
+        "vitest"
+      ],
+      "shortestPath": ".>vite"
+    },
+    {
+      "package": "vite",
+      "severity": "moderate",
+      "advisory": "GHSA-x574-m823-4x7w",
+      "title": "Vite bypasses server.fs.deny when using ?raw??",
+      "installedVersions": [
+        "5.2.8"
+      ],
+      "patchedVersions": ">=5.4.15",
+      "url": "https://github.com/advisories/GHSA-x574-m823-4x7w",
+      "directAncestors": [
+        "@antfu/eslint-config",
+        "@dcloudio/uni-app",
+        "@dcloudio/uni-app-harmony",
+        "@dcloudio/uni-app-plus",
+        "@dcloudio/uni-components",
+        "@dcloudio/uni-h5",
+        "@dcloudio/uni-mp-baidu",
+        "@dcloudio/vite-plugin-uni",
+        "@uni-helper/eslint-config",
+        "@uni-helper/plugin-uni",
+        "@uni-helper/unocss-preset-uni",
+        "@uni-helper/vite-plugin-uni-components",
+        "@uni-helper/vite-plugin-uni-manifest",
+        "@uni-helper/vite-plugin-uni-pages",
+        "@uni-helper/vite-plugin-uni-platform",
+        "@uni-ku/bundle-optimizer",
+        "@uni-ku/root",
+        "@vitejs/plugin-vue",
+        "unocss",
+        "unocss-applet",
+        "unplugin-auto-import",
+        "vite",
+        "vitest"
+      ],
+      "shortestPath": ".>vite"
+    },
+    {
+      "package": "vite",
+      "severity": "moderate",
+      "advisory": "GHSA-xcj6-pq6g-qj4x",
+      "title": "Vite allows server.fs.deny to be bypassed with .svg or relative paths",
+      "installedVersions": [
+        "5.2.8"
+      ],
+      "patchedVersions": ">=5.4.17",
+      "url": "https://github.com/advisories/GHSA-xcj6-pq6g-qj4x",
+      "directAncestors": [
+        "@antfu/eslint-config",
+        "@dcloudio/uni-app",
+        "@dcloudio/uni-app-harmony",
+        "@dcloudio/uni-app-plus",
+        "@dcloudio/uni-components",
+        "@dcloudio/uni-h5",
+        "@dcloudio/uni-mp-baidu",
+        "@dcloudio/vite-plugin-uni",
+        "@uni-helper/eslint-config",
+        "@uni-helper/plugin-uni",
+        "@uni-helper/unocss-preset-uni",
+        "@uni-helper/vite-plugin-uni-components",
+        "@uni-helper/vite-plugin-uni-manifest",
+        "@uni-helper/vite-plugin-uni-pages",
+        "@uni-helper/vite-plugin-uni-platform",
+        "@uni-ku/bundle-optimizer",
+        "@uni-ku/root",
+        "@vitejs/plugin-vue",
+        "unocss",
+        "unocss-applet",
+        "unplugin-auto-import",
+        "vite",
+        "vitest"
+      ],
+      "shortestPath": ".>vite"
+    },
+    {
+      "package": "vitest",
+      "severity": "moderate",
+      "advisory": "GHSA-82fw-gwwq-j7x9",
+      "title": "Vitest: Path Traversal / Arbitrary File Read via @vitest/mocker Redirect Mock",
+      "installedVersions": [
+        "3.2.7"
+      ],
+      "patchedVersions": ">=4.1.11",
+      "url": "https://github.com/advisories/GHSA-82fw-gwwq-j7x9",
+      "directAncestors": [
+        "@antfu/eslint-config",
+        "@uni-helper/eslint-config",
+        "vitest"
+      ],
+      "shortestPath": ".>vitest"
+    },
+    {
+      "package": "ws",
+      "severity": "moderate",
+      "advisory": "GHSA-58qx-3vcg-4xpx",
+      "title": "ws: Uninitialized memory disclosure",
+      "installedVersions": [
+        "8.18.0"
+      ],
+      "patchedVersions": ">=8.20.1",
+      "url": "https://github.com/advisories/GHSA-58qx-3vcg-4xpx",
+      "directAncestors": [
+        "@dcloudio/uni-automator",
+        "@dcloudio/uni-mp-baidu",
+        "@dcloudio/uni-mp-kuaishou",
+        "@dcloudio/uni-mp-weixin"
+      ],
+      "shortestPath": ".>@dcloudio/uni-automator>ws"
+    },
+    {
+      "package": "@babel/core",
+      "severity": "low",
+      "advisory": "GHSA-4x5r-pxfx-6jf8",
+      "title": "@babel/core: Arbitrary File Read via sourceMappingURL Comment",
+      "installedVersions": [
+        "7.25.2"
+      ],
+      "patchedVersions": ">=7.29.6",
+      "url": "https://github.com/advisories/GHSA-4x5r-pxfx-6jf8",
+      "directAncestors": [
+        "@dcloudio/uni-app",
+        "@dcloudio/uni-app-harmony",
+        "@dcloudio/uni-app-plus",
+        "@dcloudio/uni-automator",
+        "@dcloudio/uni-cli-shared",
+        "@dcloudio/uni-components",
+        "@dcloudio/uni-h5",
+        "@dcloudio/uni-mp-alipay",
+        "@dcloudio/uni-mp-baidu",
+        "@dcloudio/uni-mp-harmony",
+        "@dcloudio/uni-mp-jd",
+        "@dcloudio/uni-mp-kuaishou",
+        "@dcloudio/uni-mp-lark",
+        "@dcloudio/uni-mp-qq",
+        "@dcloudio/uni-mp-toutiao",
+        "@dcloudio/uni-mp-weixin",
+        "@dcloudio/uni-mp-xhs",
+        "@dcloudio/uni-quickapp-webview",
+        "@dcloudio/vite-plugin-uni"
+      ],
+      "shortestPath": ".>@dcloudio/uni-cli-shared>@babel/core"
+    },
+    {
+      "package": "@tootallnate/once",
+      "severity": "low",
+      "advisory": "GHSA-vpq2-c234-7xj6",
+      "title": "@tootallnate/once vulnerable to Incorrect Control Flow Scoping",
+      "installedVersions": [
+        "1.1.2"
+      ],
+      "patchedVersions": ">=2.0.1",
+      "url": "https://github.com/advisories/GHSA-vpq2-c234-7xj6",
+      "directAncestors": [
+        "@antfu/eslint-config",
+        "@dcloudio/uni-automator",
+        "@uni-helper/eslint-config",
+        "vitest"
+      ],
+      "shortestPath": ".>vitest>jsdom>http-proxy-agent>@tootallnate/once"
+    },
+    {
+      "package": "body-parser",
+      "severity": "low",
+      "advisory": "GHSA-v422-hmwv-36x6",
+      "title": "body-parser vulnerable to denial of service when invalid limit value silently disables size enforcement",
+      "installedVersions": [
+        "1.20.3"
+      ],
+      "patchedVersions": ">=1.20.6",
+      "url": "https://github.com/advisories/GHSA-v422-hmwv-36x6",
+      "directAncestors": [
+        "@dcloudio/vite-plugin-uni",
+        "@uni-helper/plugin-uni"
+      ],
+      "shortestPath": ".>@dcloudio/vite-plugin-uni>express>body-parser"
+    },
+    {
+      "package": "cookie",
+      "severity": "low",
+      "advisory": "GHSA-pxg6-pf52-xh8x",
+      "title": "cookie accepts cookie name, path, and domain with out of bounds characters",
+      "installedVersions": [
+        "0.6.0"
+      ],
+      "patchedVersions": ">=0.7.0",
+      "url": "https://github.com/advisories/GHSA-pxg6-pf52-xh8x",
+      "directAncestors": [
+        "@dcloudio/vite-plugin-uni",
+        "@uni-helper/plugin-uni"
+      ],
+      "shortestPath": ".>@dcloudio/vite-plugin-uni>express>cookie"
+    },
+    {
+      "package": "postcss-selector-parser",
+      "severity": "low",
+      "advisory": "GHSA-w9m9-85wc-3x92",
+      "title": "postcss-selector-parser allows denial of service through uncontrolled AST recursion",
+      "installedVersions": [
+        "6.1.2"
+      ],
+      "patchedVersions": ">=6.1.3",
+      "url": "https://github.com/advisories/GHSA-w9m9-85wc-3x92",
+      "directAncestors": [
+        "@dcloudio/uni-app",
+        "@dcloudio/uni-app-harmony",
+        "@dcloudio/uni-app-plus",
+        "@dcloudio/uni-automator",
+        "@dcloudio/uni-cli-shared",
+        "@dcloudio/uni-components",
+        "@dcloudio/uni-h5",
+        "@dcloudio/uni-mp-alipay",
+        "@dcloudio/uni-mp-baidu",
+        "@dcloudio/uni-mp-harmony",
+        "@dcloudio/uni-mp-jd",
+        "@dcloudio/uni-mp-kuaishou",
+        "@dcloudio/uni-mp-lark",
+        "@dcloudio/uni-mp-qq",
+        "@dcloudio/uni-mp-toutiao",
+        "@dcloudio/uni-mp-weixin",
+        "@dcloudio/uni-mp-xhs",
+        "@dcloudio/uni-quickapp-webview",
+        "@dcloudio/vite-plugin-uni",
+        "@uni-helper/plugin-uni"
+      ],
+      "shortestPath": ".>@dcloudio/uni-app-harmony>postcss-selector-parser"
+    },
+    {
+      "package": "qs",
+      "severity": "low",
+      "advisory": "GHSA-w7fw-mjwx-w883",
+      "title": "qs's arrayLimit bypass in comma parsing allows denial of service",
+      "installedVersions": [
+        "6.11.0",
+        "6.13.0"
+      ],
+      "patchedVersions": ">=6.14.2",
+      "url": "https://github.com/advisories/GHSA-w7fw-mjwx-w883",
+      "directAncestors": [
+        "@dcloudio/vite-plugin-uni",
+        "@uni-helper/plugin-uni"
+      ],
+      "shortestPath": ".>@dcloudio/vite-plugin-uni>express>qs"
+    },
+    {
+      "package": "send",
+      "severity": "low",
+      "advisory": "GHSA-m6fv-jmcg-4jfg",
+      "title": "send vulnerable to template injection that can lead to XSS",
+      "installedVersions": [
+        "0.18.0"
+      ],
+      "patchedVersions": ">=0.19.0",
+      "url": "https://github.com/advisories/GHSA-m6fv-jmcg-4jfg",
+      "directAncestors": [
+        "@dcloudio/vite-plugin-uni",
+        "@uni-helper/plugin-uni"
+      ],
+      "shortestPath": ".>@dcloudio/vite-plugin-uni>express>serve-static>send"
+    },
+    {
+      "package": "vite",
+      "severity": "low",
+      "advisory": "GHSA-g4jq-h2w9-997c",
+      "title": "Vite middleware may serve files starting with the same name with the public directory",
+      "installedVersions": [
+        "5.2.8"
+      ],
+      "patchedVersions": ">=5.4.20",
+      "url": "https://github.com/advisories/GHSA-g4jq-h2w9-997c",
+      "directAncestors": [
+        "@antfu/eslint-config",
+        "@dcloudio/uni-app",
+        "@dcloudio/uni-app-harmony",
+        "@dcloudio/uni-app-plus",
+        "@dcloudio/uni-components",
+        "@dcloudio/uni-h5",
+        "@dcloudio/uni-mp-baidu",
+        "@dcloudio/vite-plugin-uni",
+        "@uni-helper/eslint-config",
+        "@uni-helper/plugin-uni",
+        "@uni-helper/unocss-preset-uni",
+        "@uni-helper/vite-plugin-uni-components",
+        "@uni-helper/vite-plugin-uni-manifest",
+        "@uni-helper/vite-plugin-uni-pages",
+        "@uni-helper/vite-plugin-uni-platform",
+        "@uni-ku/bundle-optimizer",
+        "@uni-ku/root",
+        "@vitejs/plugin-vue",
+        "unocss",
+        "unocss-applet",
+        "unplugin-auto-import",
+        "vite",
+        "vitest"
+      ],
+      "shortestPath": ".>vite"
+    },
+    {
+      "package": "vite",
+      "severity": "low",
+      "advisory": "GHSA-jqfw-vq24-v9c3",
+      "title": "Vite's `server.fs` settings were not applied to HTML files",
+      "installedVersions": [
+        "5.2.8"
+      ],
+      "patchedVersions": ">=5.4.20",
+      "url": "https://github.com/advisories/GHSA-jqfw-vq24-v9c3",
+      "directAncestors": [
+        "@antfu/eslint-config",
+        "@dcloudio/uni-app",
+        "@dcloudio/uni-app-harmony",
+        "@dcloudio/uni-app-plus",
+        "@dcloudio/uni-components",
+        "@dcloudio/uni-h5",
+        "@dcloudio/uni-mp-baidu",
+        "@dcloudio/vite-plugin-uni",
+        "@uni-helper/eslint-config",
+        "@uni-helper/plugin-uni",
+        "@uni-helper/unocss-preset-uni",
+        "@uni-helper/vite-plugin-uni-components",
+        "@uni-helper/vite-plugin-uni-manifest",
+        "@uni-helper/vite-plugin-uni-pages",
+        "@uni-helper/vite-plugin-uni-platform",
+        "@uni-ku/bundle-optimizer",
+        "@uni-ku/root",
+        "@vitejs/plugin-vue",
+        "unocss",
+        "unocss-applet",
+        "unplugin-auto-import",
+        "vite",
+        "vitest"
+      ],
+      "shortestPath": ".>vite"
+    }
+  ]
+}

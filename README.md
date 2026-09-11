@@ -2,6 +2,30 @@
 
 基于 [create-uni](https://uni-helper.js.org/create-uni/core) 脚手架初始模版封装建设。
 
+## 开发环境
+
+推荐使用 `.nvmrc` 指定的 Node.js 22.22.2。pnpm 版本由 `package.json` 的 `packageManager` 固定为 12.4.1。
+
+首次从旧版 pnpm 切换时，可用 npm 引导，确保 pnpm 12 的原生可执行文件完成安装：
+
+```sh
+npm install --global pnpm@12.4.1
+```
+
+日常开发命令：
+
+```sh
+pnpm install --frozen-lockfile
+pnpm dev
+pnpm test
+pnpm type-check
+pnpm lint
+pnpm build
+pnpm build mp-weixin
+```
+
+平台名是 unh 的位置参数；测试环境构建使用 `pnpm build:test`。主要依赖的兼容范围、迁移原因与验证结果见[依赖升级记录](docs/dependency-upgrade-2026-09-12.md)。
+
 ## TODO
 
 ### Basic
