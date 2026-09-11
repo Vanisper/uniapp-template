@@ -17,6 +17,7 @@ overrides:
 
 patchedDependencies:
   '@uni-helper/unh@0.3.2': patches/@uni-helper__unh@0.3.2.patch
+  devframe@0.9.18: patches/devframe@0.9.18.patch
 
 allowBuilds:
   '@parcel/watcher': true

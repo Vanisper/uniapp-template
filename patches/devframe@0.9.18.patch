@@ -1,0 +1,31 @@
+diff --git a/dist/recipes/interactive-auth.mjs b/dist/recipes/interactive-auth.mjs
+index 404586a5fd73cc4e8d82201a38e7429b2a293be1..1f9a1b447807f5fbec8ce5e0cca67200161f5721 100644
+--- a/dist/recipes/interactive-auth.mjs
++++ b/dist/recipes/interactive-auth.mjs
+@@ -134,7 +134,13 @@ function createInteractiveAuth(context, options = {}) {
+ 				session.meta.isTrusted = true;
+ 				return { isTrusted: true };
+ 			}
+-			return { isTrusted: verifyAuthToken(params.authToken, session, storage) };
++			const isTrusted = verifyAuthToken(params.authToken, session, storage);
++			// 兼容尚未主动请求验证码的 Inspector 客户端
++			if (!isTrusted) printBanner({ requester: {
++				ua: describeUA(params.ua),
++				origin: params.origin
++			} });
++			return { isTrusted };
+ 		}
+ 	});
+ 	const anonymousAuthExchange = defineRpcFunction({
+@@ -155,6 +161,11 @@ function createInteractiveAuth(context, options = {}) {
+ 				session,
+ 				authToken
+ 			});
++			// 过期或连续输错触发轮换时，补打新码
++			if (!authToken) printBanner({ requester: {
++				ua: describeUA(params.ua),
++				origin: params.origin
++			} });
+ 			return { authToken };
+ 		}
+ 	});

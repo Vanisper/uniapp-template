@@ -169,6 +169,7 @@ pnpmfileChecksum: sha256-Zny0bPT0FlVpjiBG5MSAquYwe+BovkqEHCCCDwf88n0=
 
 patchedDependencies:
   '@uni-helper/unh@0.3.2': f0a73567ef9ebc07fa664e1ddd173d5b11bf7457ffbd3836f851e27c311453e9
+  devframe@0.9.18: 52df250c6bcc22917f6d9ebd54fa82efd60c080bb448dd5f470d78190bd33439
 
 importers:
 
@@ -288,7 +289,7 @@ importers:
         version: 1.1.0(@uni-helper/uni-app-types@1.1.0(typescript@5.9.3)(vue@3.4.21(typescript@5.9.3)))(@uni-helper/uni-cloud-types@1.1.0(typescript@5.9.3)(vue@3.4.21(typescript@5.9.3)))(@uni-helper/uni-ui-types@1.1.0(@uni-helper/uni-app-types@1.1.0(typescript@5.9.3)(vue@3.4.21(typescript@5.9.3)))(typescript@5.9.3)(vue@3.4.21(typescript@5.9.3)))(typescript@5.9.3)(vue@3.4.21(typescript@5.9.3))
       '@uni-helper/unocss-preset-uni':
         specifier: 0.5.1
-        version: 0.5.1(unocss-applet@0.15.1(unocss@66.10.1(@devframes/hub@0.9.18(crossws@0.4.12(srvx@1.0.4))(devframe@0.9.18(cac@7.0.0)(srvx@1.0.4)))(cac@7.0.0)(crossws@0.4.12(srvx@1.0.4))(rollup@4.63.1)(srvx@1.0.4)(vite@5.2.8(@types/node@22.20.2)(sass@1.104.0)(terser@5.51.2))))(unocss@66.10.1(@devframes/hub@0.9.18(crossws@0.4.12(srvx@1.0.4))(devframe@0.9.18(cac@7.0.0)(srvx@1.0.4)))(cac@7.0.0)(crossws@0.4.12(srvx@1.0.4))(rollup@4.63.1)(srvx@1.0.4)(vite@5.2.8(@types/node@22.20.2)(sass@1.104.0)(terser@5.51.2)))
+        version: 0.5.1(unocss-applet@0.15.1(unocss@66.10.1(@devframes/hub@0.9.18(crossws@0.4.12(srvx@1.0.4))(devframe@0.9.18(patch_hash=52df250c6bcc22917f6d9ebd54fa82efd60c080bb448dd5f470d78190bd33439)(cac@7.0.0)(srvx@1.0.4)))(cac@7.0.0)(crossws@0.4.12(srvx@1.0.4))(rollup@4.63.1)(srvx@1.0.4)(vite@5.2.8(@types/node@22.20.2)(sass@1.104.0)(terser@5.51.2))))(unocss@66.10.1(@devframes/hub@0.9.18(crossws@0.4.12(srvx@1.0.4))(devframe@0.9.18(patch_hash=52df250c6bcc22917f6d9ebd54fa82efd60c080bb448dd5f470d78190bd33439)(cac@7.0.0)(srvx@1.0.4)))(cac@7.0.0)(crossws@0.4.12(srvx@1.0.4))(rollup@4.63.1)(srvx@1.0.4)(vite@5.2.8(@types/node@22.20.2)(sass@1.104.0)(terser@5.51.2)))
       '@uni-helper/vite-plugin-uni-components':
         specifier: ^0.3.2
         version: 0.3.2(rollup@4.63.1)(supports-color@8.1.1)(vite@5.2.8(@types/node@22.20.2)(sass@1.104.0)(terser@5.51.2))
@@ -339,10 +340,10 @@ importers:
         version: 5.9.3
       unocss:
         specifier: 66.10.1
-        version: 66.10.1(@devframes/hub@0.9.18(crossws@0.4.12(srvx@1.0.4))(devframe@0.9.18(cac@7.0.0)(srvx@1.0.4)))(cac@7.0.0)(crossws@0.4.12(srvx@1.0.4))(rollup@4.63.1)(srvx@1.0.4)(vite@5.2.8(@types/node@22.20.2)(sass@1.104.0)(terser@5.51.2))
+        version: 66.10.1(@devframes/hub@0.9.18(crossws@0.4.12(srvx@1.0.4))(devframe@0.9.18(patch_hash=52df250c6bcc22917f6d9ebd54fa82efd60c080bb448dd5f470d78190bd33439)(cac@7.0.0)(srvx@1.0.4)))(cac@7.0.0)(crossws@0.4.12(srvx@1.0.4))(rollup@4.63.1)(srvx@1.0.4)(vite@5.2.8(@types/node@22.20.2)(sass@1.104.0)(terser@5.51.2))
       unocss-applet:
         specifier: 0.15.1
-        version: 0.15.1(unocss@66.10.1(@devframes/hub@0.9.18(crossws@0.4.12(srvx@1.0.4))(devframe@0.9.18(cac@7.0.0)(srvx@1.0.4)))(cac@7.0.0)(crossws@0.4.12(srvx@1.0.4))(rollup@4.63.1)(srvx@1.0.4)(vite@5.2.8(@types/node@22.20.2)(sass@1.104.0)(terser@5.51.2)))
+        version: 0.15.1(unocss@66.10.1(@devframes/hub@0.9.18(crossws@0.4.12(srvx@1.0.4))(devframe@0.9.18(patch_hash=52df250c6bcc22917f6d9ebd54fa82efd60c080bb448dd5f470d78190bd33439)(cac@7.0.0)(srvx@1.0.4)))(cac@7.0.0)(crossws@0.4.12(srvx@1.0.4))(rollup@4.63.1)(srvx@1.0.4)(vite@5.2.8(@types/node@22.20.2)(sass@1.104.0)(terser@5.51.2)))
       unplugin-auto-import:
         specifier: ^21.1.0
         version: 21.1.0(esbuild@0.20.2)(oxc-parser@0.131.0)(rollup@4.63.1)(vite@5.2.8(@types/node@22.20.2)(sass@1.104.0)(terser@5.51.2))
@@ -8346,11 +8347,11 @@ snapshots:
       - ts-node
       - vue
 
-  '@devframes/hub@0.9.18(crossws@0.4.12(srvx@1.0.4))(devframe@0.9.18(cac@7.0.0)(srvx@1.0.4))':
+  '@devframes/hub@0.9.18(crossws@0.4.12(srvx@1.0.4))(devframe@0.9.18(patch_hash=52df250c6bcc22917f6d9ebd54fa82efd60c080bb448dd5f470d78190bd33439)(cac@7.0.0)(srvx@1.0.4))':
     dependencies:
       '@standard-schema/spec': 1.1.0
       destr: 2.0.5
-      devframe: 0.9.18(cac@7.0.0)(srvx@1.0.4)
+      devframe: 0.9.18(patch_hash=52df250c6bcc22917f6d9ebd54fa82efd60c080bb448dd5f470d78190bd33439)(cac@7.0.0)(srvx@1.0.4)
       h3: 2.0.1-rc.31(crossws@0.4.12(srvx@1.0.4))
       pathe: 2.0.3
       perfect-debounce: 2.1.0
@@ -8361,26 +8362,26 @@ snapshots:
       - crossws
       - ocache
 
-  '@devframes/json-render@0.9.18(@devframes/hub@0.9.18(crossws@0.4.12(srvx@1.0.4))(devframe@0.9.18(cac@7.0.0)(srvx@1.0.4)))(devframe@0.9.18(cac@7.0.0)(srvx@1.0.4))':
+  '@devframes/json-render@0.9.18(@devframes/hub@0.9.18(crossws@0.4.12(srvx@1.0.4))(devframe@0.9.18(patch_hash=52df250c6bcc22917f6d9ebd54fa82efd60c080bb448dd5f470d78190bd33439)(cac@7.0.0)(srvx@1.0.4)))(devframe@0.9.18(patch_hash=52df250c6bcc22917f6d9ebd54fa82efd60c080bb448dd5f470d78190bd33439)(cac@7.0.0)(srvx@1.0.4))':
     dependencies:
       '@json-render/core': 0.20.0(zod@4.6.1)
       '@standard-schema/spec': 1.1.0
-      devframe: 0.9.18(cac@7.0.0)(srvx@1.0.4)
+      devframe: 0.9.18(patch_hash=52df250c6bcc22917f6d9ebd54fa82efd60c080bb448dd5f470d78190bd33439)(cac@7.0.0)(srvx@1.0.4)
       zod: 4.6.1
     optionalDependencies:
-      '@devframes/hub': 0.9.18(crossws@0.4.12(srvx@1.0.4))(devframe@0.9.18(cac@7.0.0)(srvx@1.0.4))
+      '@devframes/hub': 0.9.18(crossws@0.4.12(srvx@1.0.4))(devframe@0.9.18(patch_hash=52df250c6bcc22917f6d9ebd54fa82efd60c080bb448dd5f470d78190bd33439)(cac@7.0.0)(srvx@1.0.4))
 
-  '@devframes/service-shiki@0.9.18(devframe@0.9.18(cac@7.0.0)(srvx@1.0.4))':
+  '@devframes/service-shiki@0.9.18(devframe@0.9.18(patch_hash=52df250c6bcc22917f6d9ebd54fa82efd60c080bb448dd5f470d78190bd33439)(cac@7.0.0)(srvx@1.0.4))':
     dependencies:
-      devframe: 0.9.18(cac@7.0.0)(srvx@1.0.4)
+      devframe: 0.9.18(patch_hash=52df250c6bcc22917f6d9ebd54fa82efd60c080bb448dd5f470d78190bd33439)(cac@7.0.0)(srvx@1.0.4)
       shiki: 4.4.3
 
-  '@devframes/vite@0.9.18(@devframes/hub@0.9.18(crossws@0.4.12(srvx@1.0.4))(devframe@0.9.18(cac@7.0.0)(srvx@1.0.4)))(devframe@0.9.18(cac@7.0.0)(srvx@1.0.4))(vite@5.2.8(@types/node@22.20.2)(sass@1.104.0)(terser@5.51.2))':
+  '@devframes/vite@0.9.18(@devframes/hub@0.9.18(crossws@0.4.12(srvx@1.0.4))(devframe@0.9.18(patch_hash=52df250c6bcc22917f6d9ebd54fa82efd60c080bb448dd5f470d78190bd33439)(cac@7.0.0)(srvx@1.0.4)))(devframe@0.9.18(patch_hash=52df250c6bcc22917f6d9ebd54fa82efd60c080bb448dd5f470d78190bd33439)(cac@7.0.0)(srvx@1.0.4))(vite@5.2.8(@types/node@22.20.2)(sass@1.104.0)(terser@5.51.2))':
     dependencies:
-      devframe: 0.9.18(cac@7.0.0)(srvx@1.0.4)
+      devframe: 0.9.18(patch_hash=52df250c6bcc22917f6d9ebd54fa82efd60c080bb448dd5f470d78190bd33439)(cac@7.0.0)(srvx@1.0.4)
       pathe: 2.0.3
     optionalDependencies:
-      '@devframes/hub': 0.9.18(crossws@0.4.12(srvx@1.0.4))(devframe@0.9.18(cac@7.0.0)(srvx@1.0.4))
+      '@devframes/hub': 0.9.18(crossws@0.4.12(srvx@1.0.4))(devframe@0.9.18(patch_hash=52df250c6bcc22917f6d9ebd54fa82efd60c080bb448dd5f470d78190bd33439)(cac@7.0.0)(srvx@1.0.4))
       vite: 5.2.8(@types/node@22.20.2)(sass@1.104.0)(terser@5.51.2)
 
   '@e18e/eslint-plugin@0.8.0(eslint@10.10.0(jiti@2.7.0)(supports-color@8.1.1))':
@@ -9884,14 +9885,14 @@ snapshots:
       typescript: 5.9.3
       vue: 3.4.21(typescript@5.9.3)
 
-  '@uni-helper/unocss-preset-uni@0.5.1(unocss-applet@0.15.1(unocss@66.10.1(@devframes/hub@0.9.18(crossws@0.4.12(srvx@1.0.4))(devframe@0.9.18(cac@7.0.0)(srvx@1.0.4)))(cac@7.0.0)(crossws@0.4.12(srvx@1.0.4))(rollup@4.63.1)(srvx@1.0.4)(vite@5.2.8(@types/node@22.20.2)(sass@1.104.0)(terser@5.51.2))))(unocss@66.10.1(@devframes/hub@0.9.18(crossws@0.4.12(srvx@1.0.4))(devframe@0.9.18(cac@7.0.0)(srvx@1.0.4)))(cac@7.0.0)(crossws@0.4.12(srvx@1.0.4))(rollup@4.63.1)(srvx@1.0.4)(vite@5.2.8(@types/node@22.20.2)(sass@1.104.0)(terser@5.51.2)))':
+  '@uni-helper/unocss-preset-uni@0.5.1(unocss-applet@0.15.1(unocss@66.10.1(@devframes/hub@0.9.18(crossws@0.4.12(srvx@1.0.4))(devframe@0.9.18(patch_hash=52df250c6bcc22917f6d9ebd54fa82efd60c080bb448dd5f470d78190bd33439)(cac@7.0.0)(srvx@1.0.4)))(cac@7.0.0)(crossws@0.4.12(srvx@1.0.4))(rollup@4.63.1)(srvx@1.0.4)(vite@5.2.8(@types/node@22.20.2)(sass@1.104.0)(terser@5.51.2))))(unocss@66.10.1(@devframes/hub@0.9.18(crossws@0.4.12(srvx@1.0.4))(devframe@0.9.18(patch_hash=52df250c6bcc22917f6d9ebd54fa82efd60c080bb448dd5f470d78190bd33439)(cac@7.0.0)(srvx@1.0.4)))(cac@7.0.0)(crossws@0.4.12(srvx@1.0.4))(rollup@4.63.1)(srvx@1.0.4)(vite@5.2.8(@types/node@22.20.2)(sass@1.104.0)(terser@5.51.2)))':
     dependencies:
       '@uni-helper/uni-env': 0.3.1
       '@unocss/preset-legacy-compat': 66.10.1
       '@unocss/preset-mini': 66.10.1
       '@unocss/rule-utils': 66.10.1
-      unocss: 66.10.1(@devframes/hub@0.9.18(crossws@0.4.12(srvx@1.0.4))(devframe@0.9.18(cac@7.0.0)(srvx@1.0.4)))(cac@7.0.0)(crossws@0.4.12(srvx@1.0.4))(rollup@4.63.1)(srvx@1.0.4)(vite@5.2.8(@types/node@22.20.2)(sass@1.104.0)(terser@5.51.2))
-      unocss-applet: 0.15.1(unocss@66.10.1(@devframes/hub@0.9.18(crossws@0.4.12(srvx@1.0.4))(devframe@0.9.18(cac@7.0.0)(srvx@1.0.4)))(cac@7.0.0)(crossws@0.4.12(srvx@1.0.4))(rollup@4.63.1)(srvx@1.0.4)(vite@5.2.8(@types/node@22.20.2)(sass@1.104.0)(terser@5.51.2)))
+      unocss: 66.10.1(@devframes/hub@0.9.18(crossws@0.4.12(srvx@1.0.4))(devframe@0.9.18(patch_hash=52df250c6bcc22917f6d9ebd54fa82efd60c080bb448dd5f470d78190bd33439)(cac@7.0.0)(srvx@1.0.4)))(cac@7.0.0)(crossws@0.4.12(srvx@1.0.4))(rollup@4.63.1)(srvx@1.0.4)(vite@5.2.8(@types/node@22.20.2)(sass@1.104.0)(terser@5.51.2))
+      unocss-applet: 0.15.1(unocss@66.10.1(@devframes/hub@0.9.18(crossws@0.4.12(srvx@1.0.4))(devframe@0.9.18(patch_hash=52df250c6bcc22917f6d9ebd54fa82efd60c080bb448dd5f470d78190bd33439)(cac@7.0.0)(srvx@1.0.4)))(cac@7.0.0)(crossws@0.4.12(srvx@1.0.4))(rollup@4.63.1)(srvx@1.0.4)(vite@5.2.8(@types/node@22.20.2)(sass@1.104.0)(terser@5.51.2)))
 
   '@uni-helper/vite-plugin-uni-components@0.3.2(rollup@4.63.1)(supports-color@8.1.1)(vite@5.2.8(@types/node@22.20.2)(sass@1.104.0)(terser@5.51.2))':
     dependencies:
@@ -10034,16 +10035,16 @@ snapshots:
     dependencies:
       '@unocss/core': 66.10.1
 
-  '@unocss/inspector@66.10.1(@devframes/hub@0.9.18(crossws@0.4.12(srvx@1.0.4))(devframe@0.9.18(cac@7.0.0)(srvx@1.0.4)))(cac@7.0.0)(crossws@0.4.12(srvx@1.0.4))(srvx@1.0.4)(vite@5.2.8(@types/node@22.20.2)(sass@1.104.0)(terser@5.51.2))':
+  '@unocss/inspector@66.10.1(@devframes/hub@0.9.18(crossws@0.4.12(srvx@1.0.4))(devframe@0.9.18(patch_hash=52df250c6bcc22917f6d9ebd54fa82efd60c080bb448dd5f470d78190bd33439)(cac@7.0.0)(srvx@1.0.4)))(cac@7.0.0)(crossws@0.4.12(srvx@1.0.4))(srvx@1.0.4)(vite@5.2.8(@types/node@22.20.2)(sass@1.104.0)(terser@5.51.2))':
     dependencies:
-      '@devframes/service-shiki': 0.9.18(devframe@0.9.18(cac@7.0.0)(srvx@1.0.4))
-      '@devframes/vite': 0.9.18(@devframes/hub@0.9.18(crossws@0.4.12(srvx@1.0.4))(devframe@0.9.18(cac@7.0.0)(srvx@1.0.4)))(devframe@0.9.18(cac@7.0.0)(srvx@1.0.4))(vite@5.2.8(@types/node@22.20.2)(sass@1.104.0)(terser@5.51.2))
+      '@devframes/service-shiki': 0.9.18(devframe@0.9.18(patch_hash=52df250c6bcc22917f6d9ebd54fa82efd60c080bb448dd5f470d78190bd33439)(cac@7.0.0)(srvx@1.0.4))
+      '@devframes/vite': 0.9.18(@devframes/hub@0.9.18(crossws@0.4.12(srvx@1.0.4))(devframe@0.9.18(patch_hash=52df250c6bcc22917f6d9ebd54fa82efd60c080bb448dd5f470d78190bd33439)(cac@7.0.0)(srvx@1.0.4)))(devframe@0.9.18(patch_hash=52df250c6bcc22917f6d9ebd54fa82efd60c080bb448dd5f470d78190bd33439)(cac@7.0.0)(srvx@1.0.4))(vite@5.2.8(@types/node@22.20.2)(sass@1.104.0)(terser@5.51.2))
       '@unocss/config': 66.10.1
       '@unocss/core': 66.10.1
       '@unocss/rule-utils': 66.10.1
       '@vitejs/devtools-kit': 0.7.3(cac@7.0.0)(crossws@0.4.12(srvx@1.0.4))(srvx@1.0.4)(vite@5.2.8(@types/node@22.20.2)(sass@1.104.0)(terser@5.51.2))
       colorette: 2.0.20
-      devframe: 0.9.18(cac@7.0.0)(srvx@1.0.4)
+      devframe: 0.9.18(patch_hash=52df250c6bcc22917f6d9ebd54fa82efd60c080bb448dd5f470d78190bd33439)(cac@7.0.0)(srvx@1.0.4)
       tinyglobby: 0.2.17
       unplugin-utils: 0.3.2
     transitivePeerDependencies:
@@ -10150,12 +10151,12 @@ snapshots:
     dependencies:
       '@unocss/core': 66.10.1
 
-  '@unocss/vite@66.10.1(@devframes/hub@0.9.18(crossws@0.4.12(srvx@1.0.4))(devframe@0.9.18(cac@7.0.0)(srvx@1.0.4)))(cac@7.0.0)(crossws@0.4.12(srvx@1.0.4))(srvx@1.0.4)(vite@5.2.8(@types/node@22.20.2)(sass@1.104.0)(terser@5.51.2))':
+  '@unocss/vite@66.10.1(@devframes/hub@0.9.18(crossws@0.4.12(srvx@1.0.4))(devframe@0.9.18(patch_hash=52df250c6bcc22917f6d9ebd54fa82efd60c080bb448dd5f470d78190bd33439)(cac@7.0.0)(srvx@1.0.4)))(cac@7.0.0)(crossws@0.4.12(srvx@1.0.4))(srvx@1.0.4)(vite@5.2.8(@types/node@22.20.2)(sass@1.104.0)(terser@5.51.2))':
     dependencies:
       '@jridgewell/remapping': 2.3.5
       '@unocss/config': 66.10.1
       '@unocss/core': 66.10.1
-      '@unocss/inspector': 66.10.1(@devframes/hub@0.9.18(crossws@0.4.12(srvx@1.0.4))(devframe@0.9.18(cac@7.0.0)(srvx@1.0.4)))(cac@7.0.0)(crossws@0.4.12(srvx@1.0.4))(srvx@1.0.4)(vite@5.2.8(@types/node@22.20.2)(sass@1.104.0)(terser@5.51.2))
+      '@unocss/inspector': 66.10.1(@devframes/hub@0.9.18(crossws@0.4.12(srvx@1.0.4))(devframe@0.9.18(patch_hash=52df250c6bcc22917f6d9ebd54fa82efd60c080bb448dd5f470d78190bd33439)(cac@7.0.0)(srvx@1.0.4)))(cac@7.0.0)(crossws@0.4.12(srvx@1.0.4))(srvx@1.0.4)(vite@5.2.8(@types/node@22.20.2)(sass@1.104.0)(terser@5.51.2))
       chokidar: 5.0.0
       magic-string: 1.2.2
       pathe: 2.0.3
@@ -10173,9 +10174,9 @@ snapshots:
 
   '@vitejs/devtools-kit@0.7.3(cac@7.0.0)(crossws@0.4.12(srvx@1.0.4))(srvx@1.0.4)(vite@5.2.8(@types/node@22.20.2)(sass@1.104.0)(terser@5.51.2))':
     dependencies:
-      '@devframes/hub': 0.9.18(crossws@0.4.12(srvx@1.0.4))(devframe@0.9.18(cac@7.0.0)(srvx@1.0.4))
-      '@devframes/json-render': 0.9.18(@devframes/hub@0.9.18(crossws@0.4.12(srvx@1.0.4))(devframe@0.9.18(cac@7.0.0)(srvx@1.0.4)))(devframe@0.9.18(cac@7.0.0)(srvx@1.0.4))
-      devframe: 0.9.18(cac@7.0.0)(srvx@1.0.4)
+      '@devframes/hub': 0.9.18(crossws@0.4.12(srvx@1.0.4))(devframe@0.9.18(patch_hash=52df250c6bcc22917f6d9ebd54fa82efd60c080bb448dd5f470d78190bd33439)(cac@7.0.0)(srvx@1.0.4))
+      '@devframes/json-render': 0.9.18(@devframes/hub@0.9.18(crossws@0.4.12(srvx@1.0.4))(devframe@0.9.18(patch_hash=52df250c6bcc22917f6d9ebd54fa82efd60c080bb448dd5f470d78190bd33439)(cac@7.0.0)(srvx@1.0.4)))(devframe@0.9.18(patch_hash=52df250c6bcc22917f6d9ebd54fa82efd60c080bb448dd5f470d78190bd33439)(cac@7.0.0)(srvx@1.0.4))
+      devframe: 0.9.18(patch_hash=52df250c6bcc22917f6d9ebd54fa82efd60c080bb448dd5f470d78190bd33439)(cac@7.0.0)(srvx@1.0.4)
       local-pkg: 1.2.1
       mlly: 1.8.2
       nostics: 1.2.0
@@ -11069,7 +11070,7 @@ snapshots:
 
   detect-newline@3.1.0: {}
 
-  devframe@0.9.18(cac@7.0.0)(srvx@1.0.4):
+  devframe@0.9.18(patch_hash=52df250c6bcc22917f6d9ebd54fa82efd60c080bb448dd5f470d78190bd33439)(cac@7.0.0)(srvx@1.0.4):
     dependencies:
       '@modelcontextprotocol/server': 2.0.0
       '@standard-schema/spec': 1.1.0
@@ -14175,15 +14176,15 @@ snapshots:
 
   universalify@2.0.1: {}
 
-  unocss-applet@0.15.1(unocss@66.10.1(@devframes/hub@0.9.18(crossws@0.4.12(srvx@1.0.4))(devframe@0.9.18(cac@7.0.0)(srvx@1.0.4)))(cac@7.0.0)(crossws@0.4.12(srvx@1.0.4))(rollup@4.63.1)(srvx@1.0.4)(vite@5.2.8(@types/node@22.20.2)(sass@1.104.0)(terser@5.51.2))):
+  unocss-applet@0.15.1(unocss@66.10.1(@devframes/hub@0.9.18(crossws@0.4.12(srvx@1.0.4))(devframe@0.9.18(patch_hash=52df250c6bcc22917f6d9ebd54fa82efd60c080bb448dd5f470d78190bd33439)(cac@7.0.0)(srvx@1.0.4)))(cac@7.0.0)(crossws@0.4.12(srvx@1.0.4))(rollup@4.63.1)(srvx@1.0.4)(vite@5.2.8(@types/node@22.20.2)(sass@1.104.0)(terser@5.51.2))):
     dependencies:
       '@unocss-applet/preset-applet': 0.15.1
       '@unocss-applet/preset-rem-rpx': 0.15.1
       '@unocss-applet/transformer-attributify': 0.15.1
       '@unocss-applet/transformer-hover': 0.15.1
-      unocss: 66.10.1(@devframes/hub@0.9.18(crossws@0.4.12(srvx@1.0.4))(devframe@0.9.18(cac@7.0.0)(srvx@1.0.4)))(cac@7.0.0)(crossws@0.4.12(srvx@1.0.4))(rollup@4.63.1)(srvx@1.0.4)(vite@5.2.8(@types/node@22.20.2)(sass@1.104.0)(terser@5.51.2))
+      unocss: 66.10.1(@devframes/hub@0.9.18(crossws@0.4.12(srvx@1.0.4))(devframe@0.9.18(patch_hash=52df250c6bcc22917f6d9ebd54fa82efd60c080bb448dd5f470d78190bd33439)(cac@7.0.0)(srvx@1.0.4)))(cac@7.0.0)(crossws@0.4.12(srvx@1.0.4))(rollup@4.63.1)(srvx@1.0.4)(vite@5.2.8(@types/node@22.20.2)(sass@1.104.0)(terser@5.51.2))
 
-  unocss@66.10.1(@devframes/hub@0.9.18(crossws@0.4.12(srvx@1.0.4))(devframe@0.9.18(cac@7.0.0)(srvx@1.0.4)))(cac@7.0.0)(crossws@0.4.12(srvx@1.0.4))(rollup@4.63.1)(srvx@1.0.4)(vite@5.2.8(@types/node@22.20.2)(sass@1.104.0)(terser@5.51.2)):
+  unocss@66.10.1(@devframes/hub@0.9.18(crossws@0.4.12(srvx@1.0.4))(devframe@0.9.18(patch_hash=52df250c6bcc22917f6d9ebd54fa82efd60c080bb448dd5f470d78190bd33439)(cac@7.0.0)(srvx@1.0.4)))(cac@7.0.0)(crossws@0.4.12(srvx@1.0.4))(rollup@4.63.1)(srvx@1.0.4)(vite@5.2.8(@types/node@22.20.2)(sass@1.104.0)(terser@5.51.2)):
     dependencies:
       '@unocss/cli': 66.10.1
       '@unocss/core': 66.10.1
@@ -14202,7 +14203,7 @@ snapshots:
       '@unocss/transformer-compile-class': 66.10.1
       '@unocss/transformer-directives': 66.10.1
       '@unocss/transformer-variant-group': 66.10.1
-      '@unocss/vite': 66.10.1(@devframes/hub@0.9.18(crossws@0.4.12(srvx@1.0.4))(devframe@0.9.18(cac@7.0.0)(srvx@1.0.4)))(cac@7.0.0)(crossws@0.4.12(srvx@1.0.4))(srvx@1.0.4)(vite@5.2.8(@types/node@22.20.2)(sass@1.104.0)(terser@5.51.2))
+      '@unocss/vite': 66.10.1(@devframes/hub@0.9.18(crossws@0.4.12(srvx@1.0.4))(devframe@0.9.18(patch_hash=52df250c6bcc22917f6d9ebd54fa82efd60c080bb448dd5f470d78190bd33439)(cac@7.0.0)(srvx@1.0.4)))(cac@7.0.0)(crossws@0.4.12(srvx@1.0.4))(srvx@1.0.4)(vite@5.2.8(@types/node@22.20.2)(sass@1.104.0)(terser@5.51.2))
     transitivePeerDependencies:
       - '@devframes/hub'
       - '@devframes/hub-ui'

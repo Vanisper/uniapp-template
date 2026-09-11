@@ -58,7 +58,7 @@ DCloud 同批次包具体包括：
 
 | 依赖或工具 | 原声明 | 目标版本 | 决策与理由 |
 | --- | --- | --- | --- |
-| `vitest` | `^2.1.9` | `4.1.11`，测试工作区 | 从停止维护的 3.x 迁出，使用包含公告修复的 4.x；8 个文件、45 项测试通过 |
+| `vitest` | `^2.1.9` | `4.1.11`，测试工作区 | 从停止维护的 3.x 迁出，使用包含公告修复的 4.x；9 个文件、47 项测试通过 |
 | 测试专用 `vite` | 原来与应用共用 `5.2.8` | `6.4.3`，测试工作区 | 与 Vitest 4 实际隔离安装；应用构建仍使用 5.2.8 |
 | `happy-dom` | `^15.11.7` | `20.14.3`，测试工作区 | 保留现有 DOM 测试目的，不改用真实小程序自动化环境 |
 | `@vue/test-utils` | `^2.4.11` | `2.5.0` | 更新 Vue 测试工具，核查组件卸载行为 |
@@ -162,6 +162,12 @@ root 1.5 新增 nvue、支持小写分包字段并修复路径括号匹配，本
 首轮把 66.8.1 视为上限，依据是新版 Inspector 引入的 `@devframes/vite` 只声明 Vite 7/8 peer。复核发现，当前 0.9.18 将该 peer 标为 optional，活跃的 `/single` 入口仅对 Vite 作类型导入，实际需要的 server 接口是 `middlewares.use` 和 `httpServer.once`。没有发现 `server.environments` 等 Vite 6+ 专属 API。Inspector 的事件插件也使用普通 middleware 与 `handleHotUpdate`；DevTools 创建器只是提供可选宿主消费的插件字段。静态 import 和 peer 范围差距都不能单独证明新版本必然运行失败。[optional peer](https://github.com/devframes/devframe/blob/74056280cae0c5ac78f803be3601debd4d9a6278/packages/vite/package.json#L39-L54)、[server 接口](https://github.com/devframes/devframe/blob/74056280cae0c5ac78f803be3601debd4d9a6278/packages/vite/src/single.ts#L1-L38)、[SPA](https://github.com/devframes/devframe/blob/74056280cae0c5ac78f803be3601debd4d9a6278/packages/vite/src/single.ts#L63-L79)、[RPC bridge](https://github.com/devframes/devframe/blob/74056280cae0c5ac78f803be3601debd4d9a6278/packages/vite/src/single.ts#L156-L218)、[DevTools 创建器](https://github.com/vitejs/devtools/blob/f5abefb19055d087b086273491d64837e26aa384/packages/kit/src/node/create-plugin-from-devframe.ts#L45-L64)
 
 本轮在实际 Vite 5.2.8 开发服务上完成验证：`/__unocss/` SPA 与脚本资源可用，通过官方 devframe 客户端从连接元数据发现 WebSocket，完成认证并调用真实项目、模块信息和 CSS 生成 RPC；首页宽度从 137px 改为 139px 后，模块 CSS、服务返回的 Uno 虚拟样式和浏览器计算样式同步变化，收到 Inspector revision 广播与 Vite HMR update；恢复源码后，再确认旧连接随服务停止而断开，重启后的 RPC/HMR 连接重新建立。
+
+后续在未授权 Chrome 中发现首次授权流程遗漏：页面要求输入验证码，终端却没有输出。上述协议脚本主动调用了 `requestAuthCode()`，替页面触发了打印，因此不能用那次验证证明首次访问正常。UnoCSS 66.10.1 的预编译页面禁用了 `simpleAuth`，只发起旧握手和验证码交换；devframe 0.9.18 则改为收到单独的 `request-code` 请求后才打印。66.10.2 的客户端仍有同样问题，升级该补丁版本不能解决。[Inspector 连接配置](https://github.com/unocss/unocss/blob/v66.10.1/packages-integrations/inspector/client/composables/rpc.ts#L32-L37)、[授权界面](https://github.com/unocss/unocss/blob/v66.10.1/packages-integrations/inspector/client/components/AuthGate.vue#L54-L79)、[devframe 请求与打印逻辑](https://github.com/devframes/devframe/blob/74056280cae0c5ac78f803be3601debd4d9a6278/packages/devframe/src/recipes/interactive-auth.ts#L167-L239)
+
+`patches/devframe@0.9.18.patch` 为旧客户端补充兼容：未授权握手或验证码交换失败时，调用现有 `printBanner()`。授权结果、敏感 RPC 门禁、可信设备存储、验证码过期与失败次数限制均沿用上游；按验证码去重的打印逻辑也保留。新码在过期或达到失败次数上限后由原逻辑生成，再显示到终端。上游客户端补齐请求及重新获取验证码的入口后，应移除此补丁，并重新验证未授权浏览器首次访问。
+
+修复后，未授权 Chrome 打开原始 Inspector 页面即可触发终端验证码，无需外部脚本请求。新增两项真实 HTTP/WebSocket/RPC 回归，补丁前均因缺少提示失败，补丁后验证首次握手、错误码拒绝、第五次错误后的新码提示、正确授权及可信令牌重连通过。另从无 `node_modules` 的副本执行冻结安装、47 项测试、全部类型检查、lint 和 H5 构建，均通过；锁文件 SHA256 前后保持 `5e5604a049ef88e9fd6850069db0a7c9b195518012f3a30bb8325ae5b9498191`，包版本没有变化。
 
 这些结果支持采用新组合，原“UnoCSS 只能停在 66.8.1”的结论已撤回。但 optional peer 不等于上游已声明支持任意 Vite：`@devframes/vite@0.9.18` 对 Vite 5 的声明差距仍保留记录，本次验证证明的是当前配置的实际路径，没有修改 peer 声明、关闭 Inspector 或替换 DCloud 的 Vite 来消除提示。
 
@@ -349,13 +355,14 @@ DCloud 发行日志同时包含 uni-app 与 uni-app x，UTS、uvue 和蒸汽模�
 | TypeScript 5.9.3 | 已提交 `38d5348`，对齐模板与 TS5 peer |
 | UnoCSS 66.10.1 / preset 0.5.1 / applet 0.15.1 | 已提交 `d44f901`；移除属性补丁，五项属性回归通过 |
 | Inspector SPA、资源及 RPC | 通过；官方客户端认证后获取真实项目、66.10.1 版本、模块与 CSS |
+| Inspector 首次授权 | 补丁后未授权 Chrome 访问可触发验证码；两项真实连接回归覆盖握手、错误码限制、换码与可信重连 |
 | Inspector 与浏览器 HMR | 通过；137px → 139px → 恢复源码，模块 CSS、虚拟样式、浏览器计算样式一致，收到 Inspector/Vite 更新通知 |
 | H5 服务重启 | 通过；旧 RPC 连接断开，重启后新 RPC 与 Vite HMR 连接成功 |
 | 测试依赖隔离 | app/node 使用 Vite 5.2.8，test 使用 Vite 6.4.3 / Vitest 4.1.11；无残留 Vitest 3 |
 | `pnpm type-check` | 统一入口及 app/node/test 三项检查全部通过 |
 | 编辑器项目归属 | TS server 5.9.3 的 projectInfo 确认 main→app、vite.config→node、Tabbar 测试和测试配置→test |
 | Vue 类型宏与 alias | Vue 3.4 compiler-sfc 对根 references 下的解析通过 |
-| 新测试工作区全量测试 | 实际 Vitest 4.1.11 执行，8 个文件、45 项全部通过 |
+| 新测试工作区全量测试 | 实际 Vitest 4.1.11 执行，9 个文件、47 项全部通过 |
 | 本轮五种构建 | `build:test`、H5、微信、支付宝与 App 均通过；test mode 复制目录 diff 一致 |
 | 本轮路由产物 | 2 个主包页面、2 个分包共 3 个页面，tabBar 正确且无重复路径 |
 | 本轮生产浏览器冒烟 | 首页 → Demo → 中文参数 hi 页面通过；计数器加到 1、刷新仍为 1，warn/error 日志为空 |
