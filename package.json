@@ -71,7 +71,7 @@
     "@vue/tsconfig": "^0.9.1",
     "eslint": "^9.39.2",
     "happy-dom": "^20.14.3",
-    "miniprogram-api-typings": "^4.1.2",
+    "miniprogram-api-typings": "^5.2.3",
     "sass": "1.64.2",
     "typescript": "^6.0.3",
     "unocss": "66.0.0",
