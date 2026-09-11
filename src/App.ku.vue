@@ -1,6 +1,6 @@
 <script setup lang="ts">
 function handleClickGithub() {
-  if (window?.open) {
+  if (typeof window !== 'undefined' && window.open) {
     window.open('https://github.com/uni-ku/root')
   }
   else {
