@@ -64,7 +64,7 @@
     "@uni-ku/root": "^1.4.1",
     "@vitejs/plugin-vue": "^5.2.4",
     "@vue/runtime-core": "3.4.21",
-    "@vue/test-utils": "^2.4.11",
+    "@vue/test-utils": "^2.5.0",
     "@vue/tsconfig": "^0.8.1",
     "eslint": "^9.39.2",
     "happy-dom": "^20.14.3",
