@@ -65,8 +65,8 @@ importers:
         specifier: 3.0.0-5020420260813003
         version: 3.0.0-5020420260813003(postcss@8.5.28)(rollup@4.55.3)(vue@3.4.21(typescript@6.0.3))
       echarts:
-        specifier: ^6.0.0
-        version: 6.0.0
+        specifier: ^6.1.0
+        version: 6.1.0
       pinia:
         specifier: 2.2.4
         version: 2.2.4(typescript@6.0.3)(vue@3.4.21(typescript@6.0.3))
@@ -75,7 +75,7 @@ importers:
         version: 4.1.3(pinia@2.2.4(typescript@6.0.3)(vue@3.4.21(typescript@6.0.3)))
       uni-echarts:
         specifier: ^2.4.1
-        version: 2.4.2(echarts@6.0.0)(vue@3.4.21(typescript@6.0.3))
+        version: 2.4.2(echarts@6.1.0)(vue@3.4.21(typescript@6.0.3))
       vue:
         specifier: 3.4.21
         version: 3.4.21(typescript@6.0.3)
@@ -3359,8 +3359,8 @@ packages:
   duplexer@0.1.2:
     resolution: {integrity: sha512-jtD6YG370ZCIi/9GTaJKQxWTZD045+4R4hTk/x1UyoqadyJ9x9CgSi1RlVDQF8U2sxLLSnFkCaMihqljHIWgMg==}
 
-  echarts@6.0.0:
-    resolution: {integrity: sha512-Tte/grDQRiETQP4xz3iZWSvoHrkCQtwqd6hs+mifXcjrCuo2iKWbajFObuLJVBlDIJlOzgQPd1hsaKt/3+OMkQ==}
+  echarts@6.1.0:
+    resolution: {integrity: sha512-q0yaFPggC9FUdsWH4blavRWFmxdrIodbkoKNAjJudAI6CA9gNPxHtV2RcZNEepZVlk4yvBYkOkbk6HIVpIyHZA==}
 
   editorconfig@3.0.2:
     resolution: {integrity: sha512-T0ix8GhtxyKVfUFEcvdNDt3YGqlwkFHbD4/5bgFUDgFmxhI/cSRAeJ87/Sz//Cq8Eam6JX/e23RkoFO71P7aAA==}
@@ -6196,8 +6196,8 @@ packages:
     resolution: {integrity: sha512-l8HWhqlv1TvoNLwbf1fd8rS0zjAoVE6tdEUhMhKrnRXkfHFULIXMbDpljcSr6IyQoMzfWxF4Nqml3+2ZDgjk7g==}
     engines: {HBuilderX: ^3.0.7, uni-app: ^4.07}
 
-  zrender@6.0.0:
-    resolution: {integrity: sha512-41dFXEEXuJpNecuUQq6JlbybmnHaqqpGlbH1yxnA5V9MMP4SbohSVZsJIwz+zdjQXSSlR1Vc34EgH1zxyTDvhg==}
+  zrender@6.1.0:
+    resolution: {integrity: sha512-oEGMDB6pOP2S6OwRR4PdVv610zrjnA3Bh+JnSG12fYJlBKjtNAoEb5fSUoCOOINlH96I2fU38/A2UpRKs67xYQ==}
 
   zwitch@2.0.4:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
@@ -10273,10 +10273,10 @@ snapshots:
 
   duplexer@0.1.2: {}
 
-  echarts@6.0.0:
+  echarts@6.1.0:
     dependencies:
       tslib: 2.3.0
-      zrender: 6.0.0
+      zrender: 6.1.0
 
   editorconfig@3.0.2:
     dependencies:
@@ -13156,9 +13156,9 @@ snapshots:
 
   undici-types@8.9.0: {}
 
-  uni-echarts@2.4.2(echarts@6.0.0)(vue@3.4.21(typescript@6.0.3)):
+  uni-echarts@2.4.2(echarts@6.1.0)(vue@3.4.21(typescript@6.0.3)):
     dependencies:
-      echarts: 6.0.0
+      echarts: 6.1.0
       oxc-parser: 0.108.0
       vue: 3.4.21(typescript@6.0.3)
 
@@ -13630,7 +13630,7 @@ snapshots:
 
   z-paging@2.8.8: {}
 
-  zrender@6.0.0:
+  zrender@6.1.0:
     dependencies:
       tslib: 2.3.0
 
