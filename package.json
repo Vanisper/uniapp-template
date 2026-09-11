@@ -50,7 +50,7 @@
     "@dcloudio/uni-cli-shared": "3.0.0-5020420260813003",
     "@dcloudio/uni-stacktracey": "3.0.0-5020420260813003",
     "@dcloudio/vite-plugin-uni": "3.0.0-5020420260813003",
-    "@iconify-json/carbon": "^1.2.15",
+    "@iconify-json/carbon": "^1.2.27",
     "@iconify-json/line-md": "^1.2.16",
     "@mini-types/alipay": "^3.0.14",
     "@types/node": "^22.20.2",
