@@ -8,7 +8,7 @@ export default defineConfig({
     vue(),
     AutoImport({
       dts: false,
-      imports: ['vue'],
+      imports: ['vue', 'pinia'],
     }),
   ],
   resolve: {

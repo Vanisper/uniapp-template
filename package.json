@@ -3,10 +3,10 @@
   "version": "0.0.0",
   "versionCode": 0,
   "private": true,
+  "packageManager": "pnpm@10.32.1+sha512.a706938f0e89ac1456b6563eab4edf1d1faf3368d1191fc5c59790e96dc918e4456ab2e67d613de1043d2e8c81f87303e6b40d4ffeca9df15ef1ad567348f2be",
   "engines": {
     "node": "^22.22.2 || ^24.15.0 || >=26.0.0"
   },
-  "packageManager": "pnpm@10.32.1+sha512.a706938f0e89ac1456b6563eab4edf1d1faf3368d1191fc5c59790e96dc918e4456ab2e67d613de1043d2e8c81f87303e6b40d4ffeca9df15ef1ad567348f2be",
   "scripts": {
     "dev": "unh dev",
     "dev:test": "unh dev --mode test",
@@ -37,7 +37,7 @@
     "@dcloudio/uni-quickapp-webview": "3.0.0-5020420260813003",
     "echarts": "^6.0.0",
     "pinia": "2.2.4",
-    "pinia-plugin-persistedstate": "^4.7.1",
+    "pinia-plugin-persistedstate": "4.1.3",
     "uni-echarts": "^2.4.1",
     "vue": "3.4.21",
     "vue-i18n": "9.6.2",

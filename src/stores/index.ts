@@ -9,6 +9,10 @@ store.use(
       getItem: uni.getStorageSync,
       setItem: uni.setStorageSync,
     },
+    serializer: {
+      serialize: JSON.stringify,
+      deserialize: JSON.parse,
+    },
   }),
 )
 
