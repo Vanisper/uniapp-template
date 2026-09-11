@@ -133,8 +133,8 @@ importers:
         specifier: ^0.5.0
         version: 0.5.0(vite@5.2.8(@types/node@25.0.9)(sass@1.64.2)(terser@5.51.2))
       '@uni-helper/vite-plugin-uni-platform':
-        specifier: ^0.0.5
-        version: 0.0.5
+        specifier: ^0.1.2
+        version: 0.1.2(vite@5.2.8(@types/node@25.0.9)(sass@1.64.2)(terser@5.51.2))
       '@uni-ku/bundle-optimizer':
         specifier: ^2.2.0
         version: 2.2.0(chokidar@3.6.0)(vite@5.2.8(@types/node@25.0.9)(sass@1.64.2)(terser@5.51.2))(vue@3.4.21(typescript@5.9.3))
@@ -2110,6 +2110,9 @@ packages:
   '@uni-helper/uni-env@0.1.8':
     resolution: {integrity: sha512-oZQisgM5sFarGrswKHJvS5S7xNMXLjcBcPTKp2gzLMon+chdHiKua1+Hlqe/NX79Re35W4A6/QHDrw9cZ5AVGQ==}
 
+  '@uni-helper/uni-env@0.2.2':
+    resolution: {integrity: sha512-cTScRRKflwnx7WSA9mi3QELPMjKIeHFoR0I2RzqO1TuJ5PR45raHt+qmxR7n5fDe3t65ZKYsGS7WFPo0SniJxA==}
+
   '@uni-helper/uni-env@0.3.1':
     resolution: {integrity: sha512-q5FeM7aAj/kmRuiG2NRRrVqbXLie9H6PNMvpGAh+IwGRIQeJPyN1xCJ+Lgpv2qHPDYEyNWiSrwsH6+P8OdEPCg==}
 
@@ -2183,8 +2186,10 @@ packages:
     peerDependencies:
       vite: ^5.0.0
 
-  '@uni-helper/vite-plugin-uni-platform@0.0.5':
-    resolution: {integrity: sha512-T0lUwM3bGtGTcig3TBWP3VyRUQAY39/TMGL0064YMv8mt3F55S3KfpW7HIKEzV+EPF41TBX1ahhspuN8MJrpew==}
+  '@uni-helper/vite-plugin-uni-platform@0.1.2':
+    resolution: {integrity: sha512-kVpTYX2dEs0cI134s2Q49KNACNt55dyqgBTo0btN2wbch62Qqf+EkEv+ECsUJ1LIaFw8+4IqQjI0IJdnANpW5A==}
+    peerDependencies:
+      vite: ^5.0.0
 
   '@uni-ku/bundle-optimizer@2.2.0':
     resolution: {integrity: sha512-yM8WfEisQifoXZU16/Fagy6lO+KF2d9ZxXQJf7bxviQmUN9c+jC231IyiXILIWC40TjttKRTyAp7kJpB2WbHmQ==}
@@ -8653,6 +8658,10 @@ snapshots:
     dependencies:
       std-env: 3.10.0
 
+  '@uni-helper/uni-env@0.2.2':
+    dependencies:
+      std-env: 3.10.0
+
   '@uni-helper/uni-env@0.3.1':
     dependencies:
       std-env: 3.10.0
@@ -8754,9 +8763,10 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@uni-helper/vite-plugin-uni-platform@0.0.5':
+  '@uni-helper/vite-plugin-uni-platform@0.1.2(vite@5.2.8(@types/node@25.0.9)(sass@1.64.2)(terser@5.51.2))':
     dependencies:
-      '@uni-helper/uni-env': 0.1.8
+      '@uni-helper/uni-env': 0.2.2
+      vite: 5.2.8(@types/node@25.0.9)(sass@1.64.2)(terser@5.51.2)
 
   '@uni-ku/bundle-optimizer@2.2.0(chokidar@3.6.0)(vite@5.2.8(@types/node@25.0.9)(sass@1.64.2)(terser@5.51.2))(vue@3.4.21(typescript@5.9.3))':
     dependencies:

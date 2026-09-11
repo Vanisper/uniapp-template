@@ -62,7 +62,7 @@
     "@uni-helper/vite-plugin-uni-layouts": "^0.1.11",
     "@uni-helper/vite-plugin-uni-manifest": "^0.6.0",
     "@uni-helper/vite-plugin-uni-pages": "^0.5.0",
-    "@uni-helper/vite-plugin-uni-platform": "^0.0.5",
+    "@uni-helper/vite-plugin-uni-platform": "^0.1.2",
     "@uni-ku/bundle-optimizer": "^2.2.0",
     "@uni-ku/root": "^1.4.1",
     "@vitejs/plugin-vue": "^5.2.4",
