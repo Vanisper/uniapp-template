@@ -2,7 +2,9 @@
 
 本次以 uni-app 正式版工具链的兼容约束为基础，调查全部直接依赖和包管理器。升级目标既包括版本更新，也包括修正已存在的依赖搭配和接入偏移。不能用一次 `update --latest` 代替这些判断。
 
-原版本取自 `main` 的 `82b45f58f01d57f6b873a35625dd03cf142af0f9`，调查时间为 2026-09-11 至 2026-09-12。版本依据包括 npm 元数据、官方模板、发布日志及对应版本的源码、类型声明。共核查原有 58 项直接依赖，调整其中 47 项声明，保留 11 项，新增 3 项显式开发依赖，并升级包管理器和对应 CI 安装 Action。下表列出最终目标；执行验证与提交记录见文末。
+原版本取自 `main` 的 `82b45f58f01d57f6b873a35625dd03cf142af0f9`，调查时间为 2026-09-11 至 2026-09-12。版本依据包括 npm 元数据、官方模板、发布日志及对应版本的源码、类型声明。首轮核查了原有 58 项直接依赖，随后对照 create-uni 的实际生成模板复核，并按授权修正 TypeScript、UnoCSS 与测试工具链方案。
+
+最终采用 TypeScript 5.9.3、UnoCSS 66.10.1 / uni preset 0.5.1 / applet 0.15.1，以及独立测试工作区中的 Vitest 4.1.11 / Vite 6.4.3。应用保持 DCloud 配套的 Vite 5.2.8。业务、Node 与测试配置分别维护并统一检查；版本、接入、行为验证及剩余边界如下。
 
 ## 版本矩阵
 
@@ -38,7 +40,7 @@ DCloud 同批次包具体包括：
 | `@uni-helper/plugin-uni` | `0.1.0` | `0.1.0` | 保持，已是 latest |
 | `@uni-helper/unh` | `^0.2.10` | `0.3.2`，精确锁定并打补丁 | 修复构建失败的退出状态与后置 hook，见补丁说明 |
 | `@uni-helper/uni-types` | `^1.0.0-alpha.7` | `1.1.0`，声明 `^1.1.0` | 更新稳定版类型；最新 1.3.0 尚处于 pnpm 默认 24 小时发布等待期 |
-| `@uni-helper/unocss-preset-uni` | `^0.2.11` | `0.4.0`，精确锁定 | 与 UnoCSS 66.8.1 配套，保持整条插件链支持 Vite 5 |
+| `@uni-helper/unocss-preset-uni` | `^0.2.11` | `0.5.1`，精确锁定 | 对齐 create-uni 新预设组合，开发 Inspector 已实测 |
 | `@uni-helper/vite-plugin-uni-components` | `^0.2.6` | `0.3.2` | 更新组件扫描与解析器，修复导入变量命名 |
 | `@uni-helper/vite-plugin-uni-layouts` | `^0.1.11` | `0.1.11` | 保持，已是 latest |
 | `@uni-helper/vite-plugin-uni-manifest` | `^0.2.12` | `0.6.0` | 更新配置类型及生成生命周期，适配 ESM 入口 |
@@ -46,7 +48,7 @@ DCloud 同批次包具体包括：
 | `@uni-helper/vite-plugin-uni-platform` | `^0.0.5` | `0.1.2` | 修复平台文件路径解析 |
 | `@uni-ku/bundle-optimizer` | `^2.2.0` | `2.2.0` | 保持，已是 latest |
 | `@uni-ku/root` | `^1.4.1` | `1.5.0` | 新增 nvue 支持，修复分包字段及路径匹配 |
-| `unocss` | `66.0.0` | `66.8.1`，精确锁定 | 匹配 uni 预设，并避开新版 inspector 的 Vite 7/8 要求 |
+| `unocss` | `66.0.0` | `66.10.1`，精确锁定 | 新 Inspector 在实际 Vite 5 上通过协议、HMR 与重启验证；66.10.2 尚未满足本项目发布等待期 |
 | `unplugin-auto-import` | `^19.1.0` | `21.1.0` | 适配 ESM-only，排除 Vue 3.4 不提供的 API 并覆盖生成声明 |
 | `echarts` | `^6.0.0` | `6.1.0` | 更新图表修复，核查 minor 中的破坏性变化 |
 | `uni-echarts` | `^2.4.1` | `2.5.3` | 更新手势兼容及 Vite 自动配置 |
@@ -56,17 +58,18 @@ DCloud 同批次包具体包括：
 
 | 依赖或工具 | 原声明 | 目标版本 | 决策与理由 |
 | --- | --- | --- | --- |
-| `vitest` | `^2.1.9` | `3.2.7` | 采用支持 Vite 5 的维护版本，不进入 4/5 |
-| `happy-dom` | `^15.11.7` | `20.14.3` | 更新 DOM 测试环境，核查 ESM 与执行默认值 |
+| `vitest` | `^2.1.9` | `4.1.11`，测试工作区 | 从停止维护的 3.x 迁出，使用包含公告修复的 4.x；8 个文件、45 项测试通过 |
+| 测试专用 `vite` | 原来与应用共用 `5.2.8` | `6.4.3`，测试工作区 | 与 Vitest 4 实际隔离安装；应用构建仍使用 5.2.8 |
+| `happy-dom` | `^15.11.7` | `20.14.3`，测试工作区 | 保留现有 DOM 测试目的，不改用真实小程序自动化环境 |
 | `@vue/test-utils` | `^2.4.11` | `2.5.0` | 更新 Vue 测试工具，核查组件卸载行为 |
-| `typescript` | `^5.9.3` | `6.0.3`，限制在 6.0.x | 保留 Vue/Volar 所需的编译器 API，不进入 TS 7 |
-| `vue-tsc` | `^3.2.1` | `3.3.11` | 配套 TypeScript 6 |
-| `@vue/tsconfig` | `^0.8.1` | `0.9.1` | 升级并通过 `extends` 实际启用 |
+| `typescript` | `^5.9.3` | `5.9.3`，精确锁定 | 对齐实际生成模板，消除 manifest-types 的 TS5 peer 例外；没有已识别的 TS6 功能需求 |
+| `vue-tsc` | `^3.2.1` | `3.3.11` | 与 create-uni 模板一致，配合 TS 5.9.3 |
+| `@vue/tsconfig` | `^0.8.1` | `0.9.1` | 业务配置实际继承 DOM 基础配置，工具和测试分别检查 |
 | `@types/node` | `^25.0.3` | `22.20.2` | 对齐实际验证的 Node 22 运行环境 |
 | `eslint` | `^9.39.2` | `10.10.0` | 与新 uni-helper ESLint 配置配套 |
 | `@uni-helper/eslint-config` | `^0.6.1` | `0.7.5` | 新版 peer 要求 ESLint 10 |
 | `@antfu/eslint-config` | 新增直接依赖 | `9.5.1`，精确锁定 | 显式匹配 uni-helper 配置及 ESLint 10 |
-| `unocss-applet` | 新增直接依赖 | `0.14.0`，精确锁定 | 用真实属性转换器执行回归测试，与 uni preset 0.4.0 对齐 |
+| `unocss-applet` | 新增直接依赖 | `0.15.1`，精确锁定 | 与新预设配套，已包含多行属性修复，移除旧本地补丁后五项回归通过 |
 | `magic-string` | 新增直接依赖 | `1.2.2`，精确锁定 | 属性转换回归直接使用源码编辑 API |
 | `miniprogram-api-typings` | `^4.1.2` | `5.2.3` | 更新微信 API 类型，核查原生构造器类型变化 |
 | `@mini-types/alipay` | `^3.0.14` | `3.0.14` | 保持，已是 latest |
@@ -74,6 +77,24 @@ DCloud 同批次包具体包括：
 | `@iconify-json/line-md` | `^1.2.16` | `1.2.16` | 保持，已是 latest |
 | pnpm | `10.32.1` | `12.4.1` | 更新包管理器，迁移工作区配置与构建许可 |
 | `pnpm/action-setup`（CI） | `v4` | `v6.1.0` | 配套 pnpm 12 的安装引导 |
+
+## create-uni 生成模板复核
+
+对照基准是 create-uni 2.15.1、仓库提交 `30d1ea9dc6c9ec9088f2a3987e2797b6079d4dca`。npm 发布包中的 117 个模板文件与该提交逐字节一致。检查对象是 `packages/core/template` 及其生成逻辑；根 monorepo 的 TypeScript 6、Vitest 5 和 pnpm 12 开发依赖不会自动进入应用产物。自定义项目依次合并 base、配置、插件、模块与 UI；命名模板则下载其他仓库，不能混为一套配置。[模板发布范围](https://github.com/uni-helper/create-uni/blob/30d1ea9dc6c9ec9088f2a3987e2797b6079d4dca/packages/core/package.json#L30-L33)、[生成流程](https://github.com/uni-helper/create-uni/blob/30d1ea9dc6c9ec9088f2a3987e2797b6079d4dca/packages/core/src/index.ts#L136-L187)
+
+| 对照项 | create-uni 实际产物 | 本项目决策 |
+| --- | --- | --- |
+| DCloud / Vue / Vite / Pinia | 5.24 批次 / 3.4.21 / 5.2.8 / 2.2.4 | 已对齐，保留正式编译链和 Pinia namespace 返回契约 |
+| TypeScript | 5.9.3 | 已从首轮 TS6 改为精确 5.9.3；保留正确 paths、实际 extends 和配置覆盖 |
+| UnoCSS 组合 | Uno `~66.10.1`、preset `^0.5.1`、applet `^0.15.1` | 已采用 66.10.1 / 0.5.1 / 0.15.1，实测后移除已被上游修复的补丁 |
+| 测试模块 | Vitest 4.1.10、真实小程序自动化环境 | 采用已修复公告的 4.1.11；保留本项目 DOM/Node 测试，在独立工作区使用 Vite 6.4.3 |
+| i18n / Sass / DCloud types | 9.6.2 / 1.64.2 / `^3.4.8` | 保留我们的 9.14.5 / 1.104.0 / 精确 3.4.31；wot2 模块本身也会把 Sass 覆盖成 1.104.0 |
+| 持久化、unh 补丁、tar 定向覆盖 | 没有对应接入或修复 | 保留本项目已有能力及经复现验证的修复，不能由最小模板的缺省推导为不需要 |
+| Node 与 pnpm 策略 | 产物没有固定 Node/pnpm；构建脚本全部放行 | 保留已验证的 Node 22.22.2、pnpm 12.4.1 与逐包 allowBuilds；不是模板强制要求 |
+
+版本来源：[base](https://github.com/uni-helper/create-uni/blob/30d1ea9dc6c9ec9088f2a3987e2797b6079d4dca/packages/core/template/base/package.json#L11-L46)、[Pinia](https://github.com/uni-helper/create-uni/blob/30d1ea9dc6c9ec9088f2a3987e2797b6079d4dca/packages/core/template/module/pinia/package.json)、[TypeScript](https://github.com/uni-helper/create-uni/blob/30d1ea9dc6c9ec9088f2a3987e2797b6079d4dca/packages/core/template/config/typescript/package.json)、[UnoCSS](https://github.com/uni-helper/create-uni/blob/30d1ea9dc6c9ec9088f2a3987e2797b6079d4dca/packages/core/template/module/unocss/package.json)、[Vitest](https://github.com/uni-helper/create-uni/blob/30d1ea9dc6c9ec9088f2a3987e2797b6079d4dca/packages/core/template/module/vitest/package.json)、[wot2 Sass](https://github.com/uni-helper/create-uni/blob/30d1ea9dc6c9ec9088f2a3987e2797b6079d4dca/packages/core/template/UI/wot2/package.json)。
+
+保留项目的分包目录、pages `/client` 类型入口、`InternalPageItem` 迁移、组件声明位置与 namespace、Vue 3.4 自动导入过滤、unh 预生成及 test mode 复制。模板中的 `includes` 拼写、未实际继承的 tsconfig 包，以及 `window?.open` 都不应照搬。脚手架 CI 的生成和构建矩阵，也不等于生成项目的全部类型、测试和开发 Inspector 已经验证。[模板 TS 配置](https://github.com/uni-helper/create-uni/blob/30d1ea9dc6c9ec9088f2a3987e2797b6079d4dca/packages/core/template/config/typescript/jsconfig.json#L18)、[模板 App.ku.vue](https://github.com/uni-helper/create-uni/blob/30d1ea9dc6c9ec9088f2a3987e2797b6079d4dca/packages/core/template/plugin/root/src/App.ku.vue#L1-L12)、[生成组合 CI](https://github.com/uni-helper/create-uni/blob/30d1ea9dc6c9ec9088f2a3987e2797b6079d4dca/.github/workflows/core_test.yml#L61-L128)
 
 ## 决定升级上限的兼容关系
 
@@ -85,9 +106,13 @@ DCloud 同批次包具体包括：
 
 Pinia 2.2.5 起要求 Vue `^3.5.11`，所以保留 2.2.4。persistedstate 4.2 要求 Pinia `>=2.3.0`，4.3 起要求 `>=3.0.0`；原来的 4.7.1 搭配 Pinia 2.2.4 已经偏离支持范围。修正到精确 4.1.3 后，不能再使用 `^4.1.3`，否则后续更新锁文件仍可选入不兼容的 4.x。[Pinia 2.2.5 peer](https://registry.npmjs.org/pinia/2.2.5)、[persistedstate 4.1.3 元数据](https://registry.npmjs.org/pinia-plugin-persistedstate/4.1.3)、[persistedstate 变更记录](https://github.com/prazdevs/pinia-plugin-persistedstate/blob/main/CHANGELOG.md)
 
-### 测试和类型工具跟随编译链
+### 应用编译与测试工具链分开约束
 
-Vitest 3.2.7 仍接受 Vite 5；4 要求 Vite 6，5 要求 Vite 6.4 及以上，因此本次止于维护中的 3.x。TypeScript 7.0 已经正式发布，但原生编译器的 API 不能直接替换 vue-tsc/Volar 使用的旧编译器 API，所以选定 TypeScript 6.0.3 和 vue-tsc 3.3.11。较大的版本号不是兼容性的替代证据。[Vitest 3.2.7 元数据](https://registry.npmjs.org/vitest/3.2.7)、[Vitest 4 迁移](https://vitest.dev/guide/migration.html)、[TypeScript 7 公告](https://devblogs.microsoft.com/typescript/announcing-typescript-7-0/)、[Vue Language Tools 发布记录](https://github.com/vuejs/language-tools/releases)
+首轮将测试与应用共用一个 Vite，因而停在 Vitest 3.2.7。这是当时的安装布局选择，不是 DCloud 要求所有测试都只能使用 Vite 5。官方安全公告明确说明 Vitest 2/3 已停止维护且不计划回补此次修复，原报告“维护中的 3.x”表述有误。[Vitest 官方公告](https://github.com/vitest-dev/vitest/security/advisories/GHSA-82fw-gwwq-j7x9)
+
+当前已将测试运行器放入 `tools/testing` 工作区，安装 Vitest 4.1.11 与 Vite 6.4.3，应用根仍固定 Vite 5.2.8。两条链有各自实际解析的 Vite，不能仅用包别名或口头称为隔离。测试迁移继续保留 Vue 3.4.21、Vue Test Utils、Happy DOM 和真实 CLI 回归；45 项测试、分开的类型检查及五种构建已经通过，ESLint 的旧 Vitest 路径也已清除，最终审计不再命中 Vitest 公告。[Vitest 4 迁移](https://v4.vitest.dev/guide/migration)、[Vitest 4.1.11 元数据](https://registry.npmjs.org/vitest/4.1.11)
+
+TypeScript 6 曾通过本项目检查，但并没有必须升级到 6 的业务或 Vue 工具需求。复核后采用模板的精确 5.9.3，满足 uni-manifest-types 0.6.0 已发布的 TS5 optional peer；这项修正消除声明例外，不代表发现 TS6 的实际运行故障。vue-tsc 3.3.11 保留。TypeScript 7 的原生编译器 API 迁移与本次选择 5.9.3 是不同问题，不能用它证明 6.0.3 是唯一目标。[模板 TypeScript](https://github.com/uni-helper/create-uni/blob/30d1ea9dc6c9ec9088f2a3987e2797b6079d4dca/packages/core/template/config/typescript/package.json)、[manifest-types 已发布 peer](https://registry.npmjs.org/@uni-helper%2Funi-manifest-types/0.6.0)
 
 完整工具图的 Node 要求为 `^22.22.2 || ^24.15.0 || >=26.0.0`。其中 uni-pages 0.5 的 Babel 8 依赖和 ESLint 插件都有比“Node 22”更精确的补丁版本要求。本次采用 Node 22.22.2 验证，并将 `@types/node` 对齐 22.x；类型包声明更高版本的 API，并不能让较低版本 Node 获得这些能力。[uni-pages 0.5 迁移说明](https://github.com/uni-helper/vite-plugin-uni-pages/blob/v0.5.0/packages/core/README.md)、[Vue tsconfig 说明](https://github.com/vuejs/tsconfig)
 
@@ -108,7 +133,7 @@ uni-pages 0.4 移除了 `<route>` 自定义块与旧 Volar 服务；0.5 转为 E
 实际命中的迁移有两处：
 
 - `PageMetaDatum` 不再导出，`usePages.ts` 改用已验证导出的 `InternalPageItem`
-- `tsconfig.json` 的类型入口改为 `@uni-helper/vite-plugin-uni-pages/client`，以加载 `definePage` 全局和虚拟模块声明
+- 业务与测试 tsconfig 的类型入口改为 `@uni-helper/vite-plugin-uni-pages/client`，以加载 `definePage` 全局和虚拟模块声明
 
 `UserPagesConfig` 仍以兼容类型导出，无需将它视为删除 API。0.5 同时修正 `softinputMode` / `softinputNavBar` 拼写，并把只对页面有效的 `disableScroll` / `disableSwipeBack` 移出全局样式类型；当前配置未使用这些旧字段。[uni-pages 0.5 README](https://github.com/uni-helper/vite-plugin-uni-pages/blob/v0.5.0/packages/core/README.md)、[类型定义](https://github.com/uni-helper/vite-plugin-uni-pages/blob/v0.5.0/packages/core/src/types.ts)
 
@@ -126,19 +151,19 @@ manifest 0.5 及 auto-import 21 转为 ESM-only；auto-import 21 最低 Node 为
 
 auto-import 的 Vue preset 已包含当前 Vue 3.4.21 不提供的 `getCurrentWatcher`、`onWatcherCleanup`、`useId` 和 `useTemplateRef`。生成这些全局声明会让编辑器错误地暗示项目具备新版 API，因此显式通过 `ignore` 排除四项。实测还发现默认 `dtsMode: 'append'` 会保留已禁用的旧声明，所以同时设为 `'overwrite'`，让声明文件反映当前导入集合。不能只升级插件和生成类型，却把 Vue 运行时仍受 DCloud 约束这一点遗漏。[auto-import 配置说明](https://github.com/unplugin/unplugin-auto-import#configuration)
 
-components 0.3 同步了上游组件扫描实现；现有 `directoryAsNamespace`、声明文件路径和两个 resolver 仍符合接口。升级实测发现，0.3.2 会根据 DCloud 传递安装的 vue-router 和 plugin-vue-jsx，自动生成 `RouterLink` / `RouterView` 和 TSX 全局声明。项目没有注册这些跨平台全局组件，安装存在不等于实际提供。因此在 `Components()` 中显式设置 `types: []` 和 `dtsTsx: false`，重新构建后声明恢复为项目真实组件集合。[components 0.3](https://github.com/uni-helper/vite-plugin-uni-components/releases/tag/v0.3.0)、[components 0.3.2](https://github.com/uni-helper/vite-plugin-uni-components/releases/tag/v0.3.2)
+components 0.3 同步了上游组件扫描实现；现有 `directoryAsNamespace`、声明文件路径和两个 resolver 仍符合接口。0.3.2 会根据安装的 vue-router 和 plugin-vue-jsx，自动生成 `RouterLink` / `RouterView` 和 TSX 全局声明。DCloud H5 运行时的 `initRouter()` 实际调用 `app.use(router)`，不能笼统说项目从未提供路由组件。这里保留 `types: []` 和 `dtsTsx: false`，是显式选择本项目的跨平台类型边界，避免将 H5 能力承诺给 App/小程序，也避免仅因传递依赖存在就生成全项目 TSX 声明。[components 0.3](https://github.com/uni-helper/vite-plugin-uni-components/releases/tag/v0.3.0)、[components 0.3.2](https://github.com/uni-helper/vite-plugin-uni-components/releases/tag/v0.3.2)、[DCloud H5 5.24 发布源码](https://registry.npmjs.org/@dcloudio/uni-h5/-/uni-h5-3.0.0-5020420260813003.tgz)
 
 root 1.5 新增 nvue、支持小写分包字段并修复路径括号匹配，本次保留 `App.ku.vue` / `ku-root-view` 接入。[root 1.5](https://github.com/uni-ku/root/releases/tag/v1.5.0)
 
 ### UnoCSS 与样式兼容
 
-新 uni 预设用默认 Wind3 替代已弃用的 presetUno，默认并未切换到 Wind4。本项目大量使用 attributify、`hover-class` 和 `--at-apply`，本次保留 `presetUni()`、directives 与 variant-group transformer 的搭配。小程序属性转 class 的转换继续由预设注册。[预设选择源码](https://github.com/uni-helper/unocss-preset-uni/blob/v0.4.0/src/presets.ts)
+新 uni 预设默认使用 Wind3，没有自动切换到 Wind4。本项目大量使用 attributify、`hover-class` 和 `--at-apply`，保留 `presetUni()`、directives 与 variant-group transformer；平台单位转换和小程序颜色语法回退仍由预设处理。当前组合精确固定为 UnoCSS 66.10.1、uni preset 0.5.1 和 applet 0.15.1，满足预设和 applet 的 `~66.10.1` 配套范围。66.10.2 在此次安装时发布不足 24 小时，本项目没有为它增加年龄豁免；选 66.10.1 是当前安装策略的结果，不是发现 66.10.2 不兼容。[模板 Uno 配置](https://github.com/uni-helper/create-uni/blob/30d1ea9dc6c9ec9088f2a3987e2797b6079d4dca/packages/core/template/module/unocss/uno.config.js.ejs#L14-L33)、[预设 0.5.1 元数据](https://registry.npmjs.org/@uni-helper%2Funocss-preset-uni/0.5.1)、[applet 0.15.1 元数据](https://registry.npmjs.org/unocss-applet/0.15.1)
 
-H5/App 默认使用 rpx→rem，小程序默认使用 rem→rpx，并自动回退小程序不支持的新颜色语法。本次组合精确固定为 uni preset 0.4.0 和 UnoCSS 66.8.1：预设及其 unocss-applet 0.14 都要求 UnoCSS `~66.8.1`，这条版本线也明确支持 Vite 5。[uni 预设选项](https://github.com/uni-helper/unocss-preset-uni/blob/v0.4.0/src/options.ts)、[预设 0.4.0 元数据](https://registry.npmjs.org/@uni-helper%2Funocss-preset-uni/0.4.0)、[applet 0.14.0 元数据](https://registry.npmjs.org/unocss-applet/0.14.0)
+首轮把 66.8.1 视为上限，依据是新版 Inspector 引入的 `@devframes/vite` 只声明 Vite 7/8 peer。复核发现，当前 0.9.18 将该 peer 标为 optional，活跃的 `/single` 入口仅对 Vite 作类型导入，实际需要的 server 接口是 `middlewares.use` 和 `httpServer.once`。没有发现 `server.environments` 等 Vite 6+ 专属 API。Inspector 的事件插件也使用普通 middleware 与 `handleHotUpdate`；DevTools 创建器只是提供可选宿主消费的插件字段。静态 import 和 peer 范围差距都不能单独证明新版本必然运行失败。[optional peer](https://github.com/devframes/devframe/blob/74056280cae0c5ac78f803be3601debd4d9a6278/packages/vite/package.json#L39-L54)、[server 接口](https://github.com/devframes/devframe/blob/74056280cae0c5ac78f803be3601debd4d9a6278/packages/vite/src/single.ts#L1-L38)、[SPA](https://github.com/devframes/devframe/blob/74056280cae0c5ac78f803be3601debd4d9a6278/packages/vite/src/single.ts#L63-L79)、[RPC bridge](https://github.com/devframes/devframe/blob/74056280cae0c5ac78f803be3601debd4d9a6278/packages/vite/src/single.ts#L156-L218)、[DevTools 创建器](https://github.com/vitejs/devtools/blob/f5abefb19055d087b086273491d64837e26aa384/packages/kit/src/node/create-plugin-from-devframe.ts#L45-L64)
 
-未采用最新 66.10.2 / preset 0.5.1 的原因在传递依赖：UnoCSS 66.10.0 起把 inspector 改为 devframe，新增的 `@devframes/vite` 只接受宿主 Vite 7/8。虽然 `@unocss/vite` 自身仍写着支持 Vite 5，其 inspector 会直接接入项目的 Vite server；单独安装一份 Vite 8，或仅设置 `inspector: false`，都不能证明整条集成链满足公开支持范围。[UnoCSS 66.10.0 发布说明](https://github.com/unocss/unocss/releases/tag/v66.10.0)、[devframes Vite peer](https://registry.npmjs.org/@devframes%2Fvite/0.9.11)
+本轮在实际 Vite 5.2.8 开发服务上完成验证：`/__unocss/` SPA 与脚本资源可用，通过官方 devframe 客户端从连接元数据发现 WebSocket，完成认证并调用真实项目、模块信息和 CSS 生成 RPC；首页宽度从 137px 改为 139px 后，模块 CSS、服务返回的 Uno 虚拟样式和浏览器计算样式同步变化，收到 Inspector revision 广播与 Vite HMR update；恢复源码后，再确认旧连接随服务停止而断开，重启后的 RPC/HMR 连接重新建立。
 
-UnoCSS 单链上限虽可到 66.9.2，但 uni preset 0.4 的范围停在 66.8.x，0.5 又要求 66.10.x，两者求交后的目标是 66.8.1 / 0.4.0。66.8.1 inspector 已不再依赖旧 vue-flow-layout，也没有 devframes，因此同时消除了原 66.0.0 inspector 对更高 Vue 补丁版本的 peer 冲突，无需覆盖应用 Vue 或额外放宽 peer 规则。[inspector 66.8.1 依赖](https://registry.npmjs.org/@unocss%2Finspector/66.8.1)、[Vite 集成 66.8.1 peer](https://registry.npmjs.org/@unocss%2Fvite/66.8.1)、[预设 0.5.1 元数据](https://registry.npmjs.org/@uni-helper%2Funocss-preset-uni/0.5.1)
+这些结果支持采用新组合，原“UnoCSS 只能停在 66.8.1”的结论已撤回。但 optional peer 不等于上游已声明支持任意 Vite：`@devframes/vite@0.9.18` 对 Vite 5 的声明差距仍保留记录，本次验证证明的是当前配置的实际路径，没有修改 peer 声明、关闭 Inspector 或替换 DCloud 的 Vite 来消除提示。
 
 Sass 1.79 起提示 legacy JS API 弃用，1.80 起提示 `@import` 和全局内置函数弃用。项目源码未发现对应旧导入和颜色函数，但 DCloud 与第三方样式仍可能产生告警。Vite 5.2.8 不支持后续版本的 modern compiler 配置，不能照搬 Vite 6 建议或通过屏蔽告警宣称迁移完成。保留 1.x 是当前编译链的兼容决策。[Sass legacy API](https://sass-lang.com/documentation/breaking-changes/legacy-js-api/)、[Sass import 弃用](https://sass-lang.com/documentation/breaking-changes/import/)
 
@@ -158,19 +183,28 @@ Vue I18n 9/10 已结束维护，保留 9.14.5 不能消除 DCloud 内置 9.1.9 �
 
 ### TypeScript 与配置覆盖
 
-TypeScript 6 已弃用 `baseUrl`。原值为 `.`，而路径映射本来就是 `@/*: ['./src/*']`，本次删除该项，不使用 `ignoreDeprecations`。`types`、`strict`、`module` 等已显式设置；side-effect import 检查与 `vite/client` 的样式声明一并纳入类型验证。[TypeScript 6 发布说明](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-6-0.html)
+TypeScript 已精确改为 5.9.3。原 `baseUrl: '.'` 在相对路径映射 `@/*: ['./src/*']` 下没有必要，删除后仍保持删除，没有为了版本对齐恢复冗余选项或加入 `ignoreDeprecations`。此前 TS6 检查通过的记录只说明当时可运行，不再作为当前必须保留 TS6 的理由。
 
-原来虽然安装了 `@vue/tsconfig`，实际没有 `extends`，升级这个包不会自动改变任何编译选项。本次通过 `extends: '@vue/tsconfig/tsconfig.json'` 真正启用 0.9.1 基础配置，同时保留 uni-app 的平台 types 与 Volar 插件。继承带入的 `noEmit`、`allowImportingTsExtensions`、`moduleDetection: force` 等选项已经包含在实际类型检查中。[Vue tsconfig 官方说明](https://github.com/vuejs/tsconfig)
+原来虽然安装了 `@vue/tsconfig`，实际没有 `extends`。当前业务配置实际继承 `@vue/tsconfig/tsconfig.dom.json`，并保留 uni-app 平台 types、pages `/client` 和 Volar 插件；根 `tsconfig.json` 作为 solution 引用三个独立配置。[Vue tsconfig 官方说明](https://github.com/vuejs/tsconfig)
 
-原 `tsconfig.include` 只包含 `src`，遗漏了根目录的 Vite、Vitest 等工具配置。本次加入 `*.config.ts` 和 `plugins/**/*.ts`，将这些配置、构建插件及新增回归测试纳入正式 `pnpm type-check`，扩大后的范围已通过类型检查。
+| 配置 | 检查范围与边界 |
+| --- | --- |
+| `tsconfig.app.json` | Vue 业务源码与平台声明，排除测试；使用应用 Vite 5 类型 |
+| `tsconfig.node.json` | 根工具配置及构建插件，使用 Node 类型；不提供 DOM/window |
+| `tsconfig.test.json` | 源码测试、插件测试和 `tools/testing` 配置；显式使用测试工作区的 Vitest 4 / Vite 6 类型 |
+| 根 `tsconfig.json` | 仅组织 app/node/test references；统一检查命令需要实际遍历三个项目，不能把空 solution 的 noEmit 退出码当作完整检查 |
 
-TypeScript 6 保留一项明确的上游声明例外：`@uni-helper/uni-manifest-types@0.6.0` 的 optional peer 仍为 `typescript: ^5.0.0`，因此不能声称所有已发布 peer 范围都满足。该包自身的 devDependencies 和同版本仓库 catalog 已使用 TypeScript `^6.0.3`；它只提供声明，不调用编译器内部 API。补充验证使用 TS 6.0.3、`strict`、`noEmit` 和 `skipLibCheck: false` 检查完整发布声明，结果无诊断；项目 manifest 配置及全部源码、根配置和插件也通过检查。基于这些证据保留 TS 6，公开记录范围滞后，不通过放宽 peer 规则掩盖它。[上游 0.6.0 包配置](https://github.com/uni-helper/vite-plugin-uni-manifest/blob/v0.6.0/packages/types/package.json)、[同版本 TypeScript catalog](https://github.com/uni-helper/vite-plugin-uni-manifest/blob/v0.6.0/pnpm-workspace.yaml)、[已发布 peer 元数据](https://registry.npmjs.org/@uni-helper%2Funi-manifest-types/0.6.0)
+正式安装后的 app/node/test 三项类型检查均通过。TypeScript 5.9.3 server 的 `projectInfo` 也确认：`src/main.ts` 属于 app、`vite.config.ts` 属于 node、Tabbar 测试与 `tools/testing/vitest.config.ts` 属于 test；应用与工具解析 Vite 5.2.8，测试解析 Vite 6.4.3 / Vitest 4.1.11。Vue 3.4 compiler-sfc 对根 references 下的 alias 与类型宏解析另已通过。
+
+拆分配置并不意味着所有传递全局都已隔离。node 项目确实没有 DOM/window；app 虽未主动列入 Node types，仍会经 pages 相关声明传递引入 Node 全局，不能声称业务环境已严格禁止 Node API。该边界与检查通过一并记录。`pnpm type-check` 串行调用 `type-check:app`、`type-check:node` 和 `type-check:test`，完整命令已通过；子项目均采用 noEmit 检查，不产生构建声明文件。
 
 微信类型 v5 改动 Component/Behavior/Page 的返回品牌类型、标识符类型名及属性默认值推导。项目主要使用 uni-app API，未发现直接依赖相关原生泛型的调用；它是声明更新，不是微信基础库运行时升级。carbon 更新后的五个现用图标名称，以及 line-md 的 `chevron-left`，均已通过图标数据核对存在。[微信类型 CHANGELOG](https://github.com/wechat-miniprogram/api-typings/blob/master/CHANGELOG.md)
 
 ### 测试环境与 ESLint
 
-Vitest 3 调整了 `mockReset`、重复 `spyOn`、错误对比、fake timers 和测试选项参数位置。原测试主要使用普通 mocks 与 fake timers，重点回归 Tabbar 动画和 composable 生命周期；没有理由为尚未命中的变化添加全局兼容开关。[Vitest 3 迁移指南](https://v3.vitest.dev/guide/migration.html)
+首轮经过 Vitest 3 的 mock、fake timers 和选项迁移后，本轮继续迁至独立工作区中的 Vitest 4.1.11。现有测试验证 Vue 组件、组合函数及 CLI 进程，不等同于 create-uni 的 `vitest-environment-uniapp` 真机/开发者工具自动化示例，因此保留 Happy DOM/Node 测试环境。本轮同时验证了配置加载、Vue 编译、别名、pages.json 与真实依赖解析。[Vitest 4 迁移](https://v4.vitest.dev/guide/migration)、[create-uni 小程序测试配置](https://github.com/uni-helper/create-uni/blob/30d1ea9dc6c9ec9088f2a3987e2797b6079d4dca/packages/core/template/module/vitest/vitest.config.js)
+
+实际命中的迁移问题是生成的 `src/pages.json` 含注释，Vite 6 会在测试 mock 接管前尝试按 JSON 解析。测试配置通过 `test.server.deps.external` 精确匹配该文件，让既有 mock 接管；没有关闭所有 JSON 转换或改变生产生成文件。修正后，8 个测试文件、45 项测试在实际 Vitest 4.1.11 中全部通过。
 
 Happy DOM 16 重构解析器，19 移除 CommonJS，20 默认禁用页面 JavaScript evaluation。项目由 Vitest 提供 DOM，没有直接依赖 Browser API、页面 eval 或序列化快照，不应为了恢复旧默认而全局启用脚本执行。Vue Test Utils 2.5 删除 class component 支持并调整卸载时 emitted 清理，项目没有相应旧组件写法。[Happy DOM 19](https://github.com/capricorn86/happy-dom/releases/tag/v19.0.0)、[Happy DOM 20](https://github.com/capricorn86/happy-dom/releases/tag/v20.0.0)、[Vue Test Utils 2.5](https://github.com/vuejs/test-utils/releases/tag/v2.5.0)
 
@@ -178,19 +212,29 @@ ESLint 10 移除旧配置和 RuleContext API，并调整推荐规则。项目已
 
 实际配置已从 `uniHelper({ rules })` 改为 `uniHelper({}, { rules })`，把项目规则作为后置配置传入。原写法中的规则可能被后续 uni-helper 配置覆盖，文件里写了关闭规则不等于最后生效。本次保持项目已有的单行元素换行偏好，并通过正确配置顺序落实它。
 
+### ESLint 的可选测试运行器依赖
+
+移除根 Vitest 后，旧锁文件仍通过 `@antfu/eslint-config → @vitest/eslint-plugin` 的 optional peer 保留 Vitest 3。无锁解析又会为这条根工具路径选择 Vitest 4，并把它绑定到根 Vite 5，不能据此声称测试工具已经完全隔离。
+
+已检查 `@vitest/eslint-plugin@1.6.27` 的发布代码：规则分析测试源码和类型，没有运行时导入 Vitest。`.pnpmfile.mjs` 的 `readPackage` 因此只对该精确版本删除 `vitest` 的 `peerDependencies` 与 `peerDependenciesMeta`，保留 ESLint 插件及所有规则。这是移除未使用的可选依赖边，没有把 Vitest 的 Vite 6 要求改成允许 Vite 5，也没有关闭 peer 告警。[已发布包元数据](https://registry.npmjs.org/@vitest%2Feslint-plugin/1.6.27)、[pnpm readPackage hook](https://pnpm.io/pnpmfile#hooksreadpackagepkg-context-pkg--promisepkg)
+
+最终锁文件不再包含 Vitest 3；Vitest 4.1.11 与 mocker 都只连接 Vite 6.4.3。重新解析基于原锁文件，保留的同名快照没有无关依赖连边变化。完整 lint 通过，故意重复测试标题并使用 `.only` 的 stdin 探针仍触发 `test/no-identical-title` 和 `test/no-only-tests`，修正后的同一探针通过。
+
+后续升级该 ESLint 插件时，应重新核查运行时及类型依赖，不直接扩大 hook 的版本条件。如果新版需要实际加载 Vitest，应重新安排工具依赖边界；上游去掉这项可选 peer 后即可移除此 hook。
+
 ## 本地补丁与回归维护
 
-两项补丁都绑定已核查的精确版本，由 pnpm 的 `patchedDependencies` 应用。补丁保留在仓库，不依赖手工修改 `node_modules`；升级对应包时应先检查上游修复，再决定是否继续维护。
+首轮维护了两项精确版本补丁。当前 applet 已升级到包含修复的上游版本，旧属性补丁及其 pnpm 映射已移除；仍保留 unh 0.3.2 补丁，由 `patchedDependencies` 自动应用。升级对应包时应检查上游修复与回归结果，不依赖手工修改 `node_modules`。
 
 ### 小程序多行属性转换
 
 `@unocss-applet/transformer-attributify@0.14.0` 在计算属性片段偏移时只查找普通空格。标签名后直接出现换行或制表符时，后续 MagicString 编辑位置可能偏移，破坏生成 class 或既有属性。
 
-补丁 `patches/@unocss-applet__transformer-attributify@0.14.0.patch` 只把 `dist/index.mjs` 中的 `indexOf(' ')` 改为 `search(/\s/)`，统一处理首个空白字符，不改变属性解析、规则选择或样式配置。
+首轮补丁只把属性起点计算中的 `indexOf(' ')` 改为 `search(/\s/)`，统一处理首个空白字符。复核确认 applet 0.15.1 已包含相同修复，本轮升级后删除了 `patches/@unocss-applet__transformer-attributify@0.14.0.patch`，不再将这项问题描述为上游未修复。[上游修复源码](https://github.com/unocss-applet/unocss-applet/blob/5133ecb4f47c91f9b1334bdcaae46217eafe14dc/packages/transformer-attributify/src/index.ts#L159-L166)
 
 `plugins/vite/attributify.test.ts` 直接调用实际 transformer、UnoCSS generator 和 MagicString，再用 Vue SFC parser 检查转换后的结构。五项回归覆盖 LF、CRLF、制表符、单行空格，以及分组属性与无值属性混用；同时断言 class 完整、`hover-class` 保留且没有重复残留属性。新增 `unocss-applet` 和 `magic-string` 直接开发依赖，是为了明确这些测试的真实导入来源。
 
-移除条件：上游兼容版本已正确处理上述空白分隔，去掉补丁后的五项回归仍通过，且该版本与当前 uni preset / UnoCSS / Vite 的依赖范围一致。不能只因补丁文件无法应用就直接删除。
+移除补丁后，上述五项回归在 UnoCSS 66.10.1 / preset 0.5.1 / applet 0.15.1 组合中全部通过，测试保留。新版 Inspector 与 Vite 5 的声明差距及实际开发验证单独记录于样式兼容章节；不把补丁可移除混同于整条依赖链没有任何 peer 差距。
 
 ### unh 构建失败传播
 
@@ -212,15 +256,17 @@ pnpm 12.4.1 已正式发布。本次采用官方 10→12 迁移流程，已将 p
 | --- | --- |
 | `package.json.packageManager` | 已固定为 `pnpm@12.4.1` |
 | `package.json.pnpm.onlyBuiltDependencies` | 已改为 `pnpm-workspace.yaml` 的 `allowBuilds` 映射 |
-| `package.json.pnpm.patchedDependencies` | 已迁入工作区 YAML，保留两项精确版本补丁 |
+| `package.json.pnpm.patchedDependencies` | 已迁入工作区 YAML；当前仅保留 unh 精确版本补丁，applet 补丁随上游修复移除 |
 | `.npmrc` 的 `auto-install-peers` | 已迁为 `autoInstallPeers: true` |
 | `.npmrc` 的 `shamefully-hoist` | 已迁为 `shamefullyHoist: true` |
-| `.npmrc` 的 `strict-peer-dependencies` | 已迁为 `strictPeerDependencies: false`，TS6 声明例外仍公开记录 |
+| `.npmrc` 的 `strict-peer-dependencies` | 已迁为 `strictPeerDependencies: false`，保留原项目设置；当前 Uno Inspector 的声明差距公开记录 |
 | 三份 `unconfig: 7.3.2` 覆盖 | 已移除失效覆盖 |
 | registry | 保留原项目 registry，`.npmrc` 仅维护该项 |
 | `.nvmrc` | 已精确固定为 `22.22.2`，避免 CI 命中较旧的 22.x 缓存 |
 
-构建许可沿用原明确白名单，并按实际安装图新增 `@parcel/watcher: true` 和 `core-js-pure: false`。工作区还明确设置 `shellEmulator: true`、`trustPolicy: no-downgrade` 和 `minimumReleaseAgeExcludePrune: true`，落实新工具配置规则；没有用通配符允许全部构建脚本。[pnpm 11 默认值变化](https://github.com/pnpm/pnpm.io/blob/main/blog/releases/11.0.md)
+构建许可沿用逐包列表，并按实际安装图记录 `@parcel/watcher: true` 和 `core-js-pure: false`，不照搬 create-uni 产物的 `dangerouslyAllowAllBuilds: true`。pnpm 12、Node 精确版本及现有 CI 安装流程已完成迁移，因此本轮保留，不为形式对齐撤销既有工作。[create-uni 构建许可](https://github.com/uni-helper/create-uni/blob/30d1ea9dc6c9ec9088f2a3987e2797b6079d4dca/packages/core/template/base/pnpm-workspace.yaml#L1)
+
+`shellEmulator: true`、严格发布时间、`trustPolicy: no-downgrade` 和 `minimumReleaseAgeExcludePrune: true` 等属于当前项目选择保留的额外安装策略，不是 DCloud、create-uni 或采用 pnpm 12 的必要条件。它们会改变可安装版本和历史包处理方式，不能作为依赖兼容已经成立的证明。本轮复核没有继续增加治理项；相关迁移与例外仅按现有配置如实记录。[pnpm 11 默认值变化](https://github.com/pnpm/pnpm.io/blob/main/blog/releases/11.0.md)
 
 ### 发布等待期与锁文件重解析
 
@@ -232,13 +278,19 @@ uni-types 的目标因而改为 1.1.0，声明范围为 `^1.1.0`；最终锁文�
 
 `trustPolicy: no-downgrade` 另命中了 DCloud 精确依赖的 `@vitejs/plugin-legacy@5.3.2`。该版本发布于 `2024-03-08T12:40:20.991Z`，发布者为 vitebot，发布元数据没有 provenance，而更早的稳定版 4.0.4 已有该证明，因此符合 pnpm 按发布时间判定的信任降级规则；npm 官方与镜像的时间、完整性和证明信息一致，本次解析的 SHA512 也与原锁文件相同。为兼容这一历史发布，工作区使用官方 `trustPolicyIgnoreAfter: 525600` 分钟设置，将信任降级检查保留在最近一年发布的包上。
 
-这是策略范围的明确取舍：一年以前发布的包不再接受该项信任降级检查，不能把安装通过表述为所有包的完整信任检查都通过。它也没有改变此前记录的 uni-manifest-types / TS6 optional peer 例外。[pnpm trustPolicyIgnoreAfter 说明](https://github.com/pnpm/pnpm.io/blob/main/versioned_docs/version-10.x/settings.md#trustpolicyignoreafter)
+这是策略范围的明确取舍：一年以前发布的包不再接受该项信任降级检查，不能把安装通过表述为所有包的完整信任检查都通过。它与版本 peer 是独立问题；此前 uni-manifest-types / TS6 例外已通过对齐 TypeScript 5.9.3 消除。[pnpm trustPolicyIgnoreAfter 说明](https://github.com/pnpm/pnpm.io/blob/main/versioned_docs/version-10.x/settings.md#trustpolicyignoreafter)
 
 ### 本机引导与 CI 配套
 
 首次由旧 pnpm 10 自动引导 pnpm 12 时，本机精确版本缓存出现 `ENOEXEC`。针对该版本缓存执行官方 `install.js` 后，pnpm 12.4.1 已能启动；这属于本机引导修复，没有修改项目构建逻辑。另已验证通过 `npm exec` 启动精确 pnpm 12.4.1 的方式，可用于旧 pnpm 引导失败的环境。
 
 CI 的 `pnpm/action-setup@v4` 不支持新的 pnpm 12 安装流程，工作流已升级为 `v6.1.0`，该发布明确加入 pnpm 12 支持。Node 仍从精确 `.nvmrc` 读取；本机命令启动成功和实际 CI 成功分开记录。[action-setup 6.1.0 发布说明](https://github.com/pnpm/action-setup/releases/tag/v6.1.0)
+
+### pnpm 12 引导锁记录
+
+全新 archive 检出验证发现：已有本机缓存时 `--frozen-lockfile` 可以通过，空安装目录却报 `Cannot update packageManagerDependencies with frozen-lockfile`。锁文件只包含应用依赖，还不足以覆盖 pnpm 12 的自身引导过程。
+
+已将 pnpm 12.4.1 自动生成的包管理器 YAML document 加入同一锁文件，记录精确 pnpm 及其平台可执行包的完整性信息。原应用依赖 document 逐字保持不变，没有重新升级或降级传递依赖。此记录与 README 中的安装方式、CI 使用的 pnpm 12 安装 Action 配套维护。修正后从新的 archive 直接冻结安装通过，随后测试、类型、lint 和 H5 构建通过；安装前到构建后锁文件 SHA256 均为 `1fcc8ecbe325ea96d31b3225d113458aebfddee90e84acbddd175a4a1a59ab28`。
 
 ## 平台发行注意事项
 
@@ -252,75 +304,79 @@ DCloud 发行日志同时包含 uni-app 与 uni-app x，UTS、uvue 和蒸汽模�
 | --- | --- |
 | 已是调查时 latest | plugin-uni 0.1.0、uni-layouts 0.1.11、bundle-optimizer 2.2.0、z-paging 2.8.8、Alipay 类型 3.0.14、line-md 1.2.16 |
 | DCloud 正式编译器配套约束 | Vue/runtime-core 3.4.21、Vite 5.2.8、plugin-vue 5.2.4 |
-| inspector 宿主与 uni 预设全链约束 | UnoCSS 精确 66.8.1、uni preset 精确 0.4.0；不采用引入 Vite 7/8 集成的最新组合 |
-| pnpm 默认发布等待期 | uni-types 暂选 1.1.0；1.3.0 在本次解析时尚未发布满 24 小时 |
+| 当前项目的严格发布等待期 | uni-types 暂选 1.1.0；UnoCSS 采用 66.10.1。对应最新 1.3.0 / 66.10.2 在各自解析时不足 24 小时，未添加豁免 |
 | Vue peer 约束 | Pinia 2.2.4；persistedstate 精确对齐 4.1.3 |
-| 支持范围内更新，暂不跨越主版本 | Vitest 3.2.7、TypeScript 6.0.3、vue-i18n 9.14.5、Sass 1.104.0 |
+| 模板支持范围与现有需求 | TypeScript 精确 5.9.3；没有必须保留 TS6 的已识别需求 |
+| 跨平台运行时或 API 约束 | vue-i18n 9.14.5、Sass 1.104.0 |
+| 独立测试链的迁移目标 | Vitest 4.1.11 / Vite 6.4.3；不要求同时升级应用的 Vite |
 
 这组保留项不是遗漏。后续需要跨过 Vue/Vite 上限时，应重新评估 DCloud 发布线及全部 uni-app 插件，而不能只放宽 peer 检查。
 
 ## 已知漏洞审计与定向修复
 
-使用同一 npm 官方审计数据库分别扫描原始 `82b45f5` 锁文件和最终锁文件，基线审计只读取临时目录中的原文件，没有安装旧依赖。结果如下：
+以同一 npm 官方审计数据库比较原始 `82b45f5`、首轮升级快照和当前锁文件。基线只读取临时目录中的旧文件，没有安装旧依赖。
 
-| 严重程度 | 升级前 | 升级后 |
-| --- | --- | --- |
-| Critical | 25 | 0 |
-| High | 78 | 11 |
-| Moderate | 58 | 24 |
-| Low | 11 | 9 |
-| 合计 | 172 | 44 |
+| 严重程度 | 原始基线 | 首轮升级 | 本轮最终 |
+| --- | --- | --- | --- |
+| Critical | 25 | 0 | 0 |
+| High | 78 | 11 | 11 |
+| Moderate | 58 | 24 | 22 |
+| Low | 11 | 9 | 9 |
+| 合计 | 172 | 44 | 42 |
 
-命令为 `pnpm audit --json --registry=https://registry.npmjs.org`，最终退出码为 1，表示仍有已知漏洞。按包名和 GHSA 对照，最终没有新增的漏洞组合；计数会受同一公告在不同版本上的重复命中影响，也不等于生产应用存在相同数量的可利用入口。完整公告列表、已安装版本、修复范围及直接上游已整理为[精简审计快照](dependency-audit-2026-09-12.json)，其中只折叠重复传递路径。
+命令为 `pnpm audit --json --registry=https://registry.npmjs.org`，最终退出码为 1，表示仍有已知漏洞；按包名和 GHSA 对照原始基线，没有新增组合。计数会受同一公告在不同版本上的重复命中影响，也不等于生产应用存在相同数量的可利用入口。全部 42 项公告、已安装版本、修复范围及直接上游已更新到[精简审计快照](dependency-audit-2026-09-12.json)。
 
 最后一项 Critical 来自 `uni-layouts → c12 → giget 1.2.5 → tar 6.2.1`。它还包含多个路径处理与资源耗尽公告。项目并未使用远程模板解包，uni-layouts 0.1.11 的发布代码也未实际导入其声明的 c12；这不是已确认的业务攻击路径。不过旧 tar 仍在依赖树中，本次通过精确 `giget@1.2.5>tar: 7.5.22` 覆盖修复了该分支的全部 12 项公告。[tar 资源耗尽公告](https://github.com/advisories/GHSA-23hp-3jrh-7fpw)、[后续路径处理公告](https://github.com/advisories/GHSA-r292-9mhp-454m)
 
 这是经过验证的跨主版本覆盖：tar 7 要求 Node 18 及以上，当前 Node 满足；giget 使用的命名 `extract` 导出、Promise 完成契约和 `onentry` 路径处理仍可用。`plugins/layout-archive.test.ts` 沿 layouts 的真实依赖链加载 giget，在独立临时缓存中创建并离线提取小归档，验证仓库根目录剥离及子目录选择，两项均通过。升级 layouts/c12/giget 后，若其正常依赖已使用安全 tar，且这两项测试通过，即可移除该定向覆盖。
 
-剩余 11 项 High 涉及 Vite、DCloud 固定的 PostCSS、ws、adm-zip、Intlify，以及 Express 的 path-to-regexp 和 Jimp 的 jpeg-js。它们的公开修复版本超出当前上游声明或精确版本，需要分别适配编译器内部用法，不能通过普通更新就消除。本次保留正式编译链，明确记录这些风险；仅升级项目根依赖不能代表 DCloud 内置依赖已同步修复。开发服务仍应仅用于可信本机环境，不能把这组结果当作可公开暴露开发服务的依据。
+最终剩余的 11 项 High 涉及 Vite、DCloud 固定的 PostCSS、ws、adm-zip、Intlify，以及 Express 的 path-to-regexp 和 Jimp 的 jpeg-js。它们的公开修复版本超出当前上游声明或精确版本，需要分别适配编译器内部用法。本轮继续保留正式应用编译链；仅升级项目根依赖或测试工作区不能代表 DCloud 内置依赖已同步修复。
 
-Vitest / `@vitest/mocker` 3.2.7 另命中中危 GHSA-82fw-gwwq-j7x9，修复版本从 4.1.11 起。公告针对直接使用 `mockerPlugin` / `interceptorPlugin` 暴露的未鉴权 HMR 接口；本项目执行 `vitest run`，使用 Happy DOM，未配置这两个服务插件。当前测试方式不符合公告暴露条件，但依赖审计仍保留该命中，未以此声称漏洞不存在。[Vitest 官方公告](https://github.com/vitest-dev/vitest/security/advisories/GHSA-82fw-gwwq-j7x9)
+首轮 Vitest / `@vitest/mocker` 3.2.7 命中中危 GHSA-82fw-gwwq-j7x9。官方公告说明 2/3 已停止维护，修复从 4.1.11 起；create-uni 模板的 4.1.10 同样未包含该修复。本项目原测试方式未暴露公告描述的公开 mocker 插件接口，但这不能替代依赖修复。当前测试工作区已安装 4.1.11，ESLint 的旧 Vitest 路径也已清除；最终审计中 Vitest / mocker 的两项中危命中均已消失。[Vitest 官方公告](https://github.com/vitest-dev/vitest/security/advisories/GHSA-82fw-gwwq-j7x9)
 
 ## 验证结果
 
-最终验证环境为 macOS arm64、Node.js 22.22.2、pnpm 12.4.1。所有命令均在分支 `codex/dependency-upgrades` 的最终依赖树下执行，两个补丁由 pnpm 自动应用。
+验证环境为 macOS arm64、Node.js 22.22.2、pnpm 12.4.1，分支为 `codex/dependency-upgrades`。以下为本轮最终验证；首轮的完整执行记录可在 `2219ba2` 查看。
 
-| 检查 | 结果 |
+首轮新增的 15 项测试验证真实 store 持久化（3 项）、小程序属性转换（5 项）、unh CLI 成败传播（5 项）和归档提取兼容（2 项），本轮全部保留。两项补丁当时均经过失败与修复对照；本轮只移除已被上游修复的属性转换补丁。
+
+### 最终验证
+
+| 检查 | 当前结果 |
 | --- | --- |
-| 全新安装、`pnpm install --frozen-lockfile` | 通过；严格 24 小时发布等待期，无年龄豁免 |
-| `pnpm test` | 8 个测试文件、45 项测试全部通过；基线为 30 项 |
-| `pnpm type-check` | 通过，包含源码、根目录工具配置和 `plugins` |
-| `pnpm lint` | 通过，包含新工作区 YAML 与回归测试 |
-| `pnpm build:test` | 通过，构建成功后执行复制 hook |
-| `diff -qr dist/build/h5 dist/test/h5` | 通过，test mode 复制产物完全一致；在下一次生产构建前检查 |
-| `pnpm build` | H5 生产构建通过 |
-| `pnpm build mp-weixin` | 微信小程序构建通过 |
-| `pnpm build mp-alipay` | 支付宝小程序构建通过 |
-| `pnpm build app` | App 编译产物构建通过 |
-| `pnpm dev` | 开发服务成功启动；浏览器首页加载正常 |
-| H5 生产产物浏览器冒烟 | 首页 → Demo → 带参数页面、计数器修改及刷新持久化通过；最终产物重载后状态保持，控制台没有警告或错误 |
-| 路由与 manifest 核对 | 微信/支付宝均有 2 个主包页面、2 个分包共 3 个页面，无重复路径，tabBar 两项正确；统计开关仍为 `false` |
-| 归档提取兼容 | tar 7.5.22 覆盖后的真实 giget 根目录和子目录提取均通过 |
-| 已知漏洞审计 | 172 项降至 44 项，Critical 25 → 0；仍有 11 项 High，详情见前文 |
-| 独立只读复审 | 应用入口、自动导入、两项补丁及测试、pnpm 与 CI 配置未发现待修正问题 |
-
-新增 15 项测试分别验证真实 store 的持久化契约（3 项）、小程序属性转换（5 项）、unh CLI 成败传播（5 项）和归档提取兼容（2 项）。它们直接覆盖本次发现的问题，不以安装成功或静态类型替代行为验证。两个上游补丁都先通过无补丁失败、应用补丁后通过的对照验证。
+| TypeScript 5.9.3 | 已提交 `38d5348`，对齐模板与 TS5 peer |
+| UnoCSS 66.10.1 / preset 0.5.1 / applet 0.15.1 | 已提交 `d44f901`；移除属性补丁，五项属性回归通过 |
+| Inspector SPA、资源及 RPC | 通过；官方客户端认证后获取真实项目、66.10.1 版本、模块与 CSS |
+| Inspector 与浏览器 HMR | 通过；137px → 139px → 恢复源码，模块 CSS、虚拟样式、浏览器计算样式一致，收到 Inspector/Vite 更新通知 |
+| H5 服务重启 | 通过；旧 RPC 连接断开，重启后新 RPC 与 Vite HMR 连接成功 |
+| 测试依赖隔离 | app/node 使用 Vite 5.2.8，test 使用 Vite 6.4.3 / Vitest 4.1.11；无残留 Vitest 3 |
+| `pnpm type-check` | 统一入口及 app/node/test 三项检查全部通过 |
+| 编辑器项目归属 | TS server 5.9.3 的 projectInfo 确认 main→app、vite.config→node、Tabbar 测试和测试配置→test |
+| Vue 类型宏与 alias | Vue 3.4 compiler-sfc 对根 references 下的解析通过 |
+| 新测试工作区全量测试 | 实际 Vitest 4.1.11 执行，8 个文件、45 项全部通过 |
+| 本轮五种构建 | `build:test`、H5、微信、支付宝与 App 均通过；test mode 复制目录 diff 一致 |
+| 本轮路由产物 | 2 个主包页面、2 个分包共 3 个页面，tabBar 正确且无重复路径 |
+| 本轮生产浏览器冒烟 | 首页 → Demo → 中文参数 hi 页面通过；计数器加到 1、刷新仍为 1，warn/error 日志为空 |
+| ESLint 与规则探针 | 完整 lint 通过；重复标题和 `.only` 反例被拒绝，修正后通过 |
+| 全新检出的冻结安装 | 从 `08335ef` 创建无 node_modules 的 archive，直接冻结安装通过；随后测试、三类类型检查、lint、H5 构建通过，锁文件 SHA256 始终不变 |
+| 最终漏洞审计 | 42 项：0 Critical、11 High、22 Moderate、9 Low；无 Vitest / mocker 命中 |
 
 仍存在以下明确边界：
 
-- `pnpm peers check` 仍报告 uni-manifest-types 0.6.0 的 TS5 optional peer；实际 TS6 声明及项目检查通过，原因和证据见前文。
-- 构建及组件测试仍显示 Sass legacy JS API 弃用提示，这是固定 Vite 5.2.8 的调用方式；没有隐藏提示，Sass 2 不在当前可升级范围。
+- TypeScript 已回到 5.9.3，原 manifest-types / TS6 peer 例外已消除；`@devframes/vite@0.9.18` 的 optional peer 仍只声明 Vite 7/8，当前 Vite 5 活跃路径已有实际验证。
+- node 类型项目没有 DOM/window；业务类型仍通过 pages 传递声明引入 Node 全局，不能把配置拆分描述成业务环境已完全隔离 Node API。
+- 应用构建仍显示 Sass legacy JS API 弃用提示，这是固定 Vite 5.2.8 的调用方式；没有隐藏提示，Sass 2 不在当前可升级范围。
 - Vue I18n 9 已结束维护，DCloud 平台内置 9.1.9 的限制也未由根依赖升级消除。
 - `trustPolicyIgnoreAfter` 只对最近一年发布版本执行信任降级检查；完整性校验、发布等待期和构建脚本许可仍独立生效。
 - 本次没有执行远端 GitHub Actions、云打包、原生基座/真机运行及其他小程序平台运行。App 构建成功不等于原生发行验证；图表和国际化暂未接入业务实例，未声称覆盖其交互。
 
-构建导致的 `pages.json` 平台生成标记变化已核对为注释差异并恢复；本次验证启动的开发服务、静态服务和浏览器页均已关闭。
+本轮验证启动的服务与浏览器页均已关闭。构建仅改变 `pages.json` 的平台生成注释，核对后已恢复；临时 HMR 样式也已恢复。
 
 ## 提交记录
 
 升级按依赖拆分提交。DCloud 同批次 20 个包作为不可拆开的编译兼容单元；ESLint 配置组、UnoCSS 预设及其必要补丁按配套关系提交。后续发现的接入修正另作小提交，便于独立审查。
 
-下表列出文档提交前的 34 个实施提交。uni-types 曾验证 1.3.0，最终在 pnpm 迁移提交中按发布等待期调整到 1.1.0；以版本矩阵和最终锁文件为准。
+下表保留首轮文档提交前的 34 个实施提交，标题按历史原样记录，不表示其中每次中间决策仍是当前目标。uni-types 曾验证 1.3.0，随后按发布等待期调整到 1.1.0；TypeScript 6、Vitest 3 与 UnoCSS 66.8.1 的后续纠正分别见当前矩阵和下方追加记录。
 
 | Commit | 变更 |
 | --- | --- |
@@ -358,3 +414,13 @@ Vitest / `@vitest/mocker` 3.2.7 另命中中危 GHSA-82fw-gwwq-j7x9，修复版�
 | `2f08379` | ci(deps): 升级 pnpm 安装 action 以支持 12 系列 |
 | `9880c7b` | chore(deps): 升级 pnpm 至 12.4.1 并迁移安装策略 |
 | `9ce0c66` | fix(deps): 修复布局插件传递依赖 tar 的已知漏洞 |
+
+已完成的后续纠正：
+
+| Commit | 变更 |
+| --- | --- |
+| `38d5348` | chore(deps): 将 TypeScript 对齐 create-uni 的 5.9.3 |
+| `d44f901` | chore(deps): 对齐新版 UnoCSS 预设并移除已修复补丁 |
+| `b97f679` | chore(deps): 升级 Vitest 4 并隔离测试 Vite 工具链 |
+| `4b645ed` | chore(types): 拆分业务、Node 与测试项目配置 |
+| `08335ef` | fix(pnpm): 补全全新检出所需的包管理器锁记录 |
