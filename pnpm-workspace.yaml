@@ -1,0 +1,24 @@
+minimumReleaseAge: 1440
+minimumReleaseAgeStrict: true
+minimumReleaseAgeExcludePrune: true
+trustPolicy: no-downgrade
+# DCloud 固定的历史 Vite 插件缺少部分早期版本具有的来源证明
+trustPolicyIgnoreAfter: 525600
+autoInstallPeers: true
+strictPeerDependencies: false
+shamefullyHoist: true
+shellEmulator: true
+
+patchedDependencies:
+  '@uni-helper/unh@0.3.2': patches/@uni-helper__unh@0.3.2.patch
+  '@unocss-applet/transformer-attributify@0.14.0': patches/@unocss-applet__transformer-attributify@0.14.0.patch
+
+allowBuilds:
+  '@parcel/watcher': true
+  '@uni-helper/unocss-preset-uni': true
+  bufferutil: true
+  core-js: true
+  core-js-pure: false
+  esbuild: true
+  minidev: true
+  vue-demi: true
