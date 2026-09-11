@@ -20,6 +20,8 @@ export default async function createPlugins(mode: string, isBuild = false) {
     // https://uni-helper.js.org/vite-plugin-uni-components
     Components({
       dts: 'src/typings/components.d.ts',
+      dtsTsx: false,
+      types: [],
       directoryAsNamespace: true,
       resolvers: [UniEchartsResolver(), ZPagingResolver()],
     }),
