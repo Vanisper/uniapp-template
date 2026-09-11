@@ -12,6 +12,9 @@ node_modules
 dist
 *.local
 
+# 由 manifest.config.ts 和环境变量生成
+/src/manifest.json
+
 # Editor directories and files
 .idea
 *.suo

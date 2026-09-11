@@ -9,6 +9,7 @@ import createPlugins from './plugins/vite'
 export default defineConfig(async ({ mode, command }) => {
   return {
     base: './',
+    envDir: fileURLToPath(new URL('./envs', import.meta.url)),
     define: {
       __UNI_PLATFORM__: JSON.stringify(process.env.UNI_PLATFORM),
       __NODE_ENV__: JSON.stringify(mode),
