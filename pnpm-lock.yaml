@@ -151,8 +151,8 @@ importers:
         specifier: ^2.5.0
         version: 2.5.0(@vue/compiler-dom@3.5.42)(@vue/server-renderer@3.4.21(vue@3.4.21(typescript@6.0.3)))(vue@3.4.21(typescript@6.0.3))
       '@vue/tsconfig':
-        specifier: ^0.8.1
-        version: 0.8.1(typescript@6.0.3)(vue@3.4.21(typescript@6.0.3))
+        specifier: ^0.9.1
+        version: 0.9.1(typescript@6.0.3)(vue@3.4.21(typescript@6.0.3))
       eslint:
         specifier: ^9.39.2
         version: 9.39.2(jiti@2.7.0)
@@ -2494,10 +2494,10 @@ packages:
       '@vue/server-renderer':
         optional: true
 
-  '@vue/tsconfig@0.8.1':
-    resolution: {integrity: sha512-aK7feIWPXFSUhsCP9PFqPyFOcz4ENkb8hZ2pneL6m2UjCkccvaOhC/5KCKluuBufvp2KzkbdA2W2pk20vLzu3g==}
+  '@vue/tsconfig@0.9.1':
+    resolution: {integrity: sha512-buvjm+9NzLCJL29KY1j1991YYJ5e6275OiK+G4jtmfIb+z4POywbdm0wXusT9adVWqe0xqg70TbI7+mRx4uU9w==}
     peerDependencies:
-      typescript: 5.x
+      typescript: '>= 5.8'
       vue: ^3.4.0
     peerDependenciesMeta:
       typescript:
@@ -9304,7 +9304,7 @@ snapshots:
     optionalDependencies:
       '@vue/server-renderer': 3.4.21(vue@3.4.21(typescript@6.0.3))
 
-  '@vue/tsconfig@0.8.1(typescript@6.0.3)(vue@3.4.21(typescript@6.0.3))':
+  '@vue/tsconfig@0.9.1(typescript@6.0.3)(vue@3.4.21(typescript@6.0.3))':
     optionalDependencies:
       typescript: 6.0.3
       vue: 3.4.21(typescript@6.0.3)
