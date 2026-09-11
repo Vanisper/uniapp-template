@@ -344,7 +344,7 @@ DCloud 发行日志同时包含 uni-app 与 uni-app x，UTS、uvue 和蒸汽模�
 
 ## 验证结果
 
-验证环境为 macOS arm64、Node.js 22.22.2、pnpm 12.4.1，分支为 `codex/dependency-upgrades`。以下为本轮最终验证；首轮的完整执行记录可在 `2219ba2` 查看。
+验证环境为 macOS arm64、Node.js 22.22.2、pnpm 12.4.1，分支为 `chore/dependency-upgrades`。以下为本轮最终验证；首轮的完整执行记录可在 `2219ba2` 查看。
 
 首轮新增的 15 项测试验证真实 store 持久化（3 项）、小程序属性转换（5 项）、unh CLI 成败传播（5 项）和归档提取兼容（2 项），本轮全部保留。两项补丁当时均经过失败与修复对照；本轮只移除已被上游修复的属性转换补丁。
 
