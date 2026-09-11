@@ -18,6 +18,17 @@ export default defineConfig(async ({ mode, command }) => {
     server: {
       port: 13000,
     },
+    css: {
+      preprocessorOptions: {
+        // DCloud 配套的 Vite 5.2 仍使用旧 API，迁移编译链后移除此兼容项
+        scss: {
+          silenceDeprecations: ['legacy-js-api'],
+        },
+        sass: {
+          silenceDeprecations: ['legacy-js-api'],
+        },
+      },
+    },
     resolve: {
       alias: {
         '@': fileURLToPath(new URL('./src', import.meta.url)),

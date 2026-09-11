@@ -165,7 +165,9 @@ root 1.5 新增 nvue、支持小写分包字段并修复路径括号匹配，本
 
 这些结果支持采用新组合，原“UnoCSS 只能停在 66.8.1”的结论已撤回。但 optional peer 不等于上游已声明支持任意 Vite：`@devframes/vite@0.9.18` 对 Vite 5 的声明差距仍保留记录，本次验证证明的是当前配置的实际路径，没有修改 peer 声明、关闭 Inspector 或替换 DCloud 的 Vite 来消除提示。
 
-Sass 1.79 起提示 legacy JS API 弃用，1.80 起提示 `@import` 和全局内置函数弃用。项目源码未发现对应旧导入和颜色函数，但 DCloud 与第三方样式仍可能产生告警。Vite 5.2.8 不支持后续版本的 modern compiler 配置，不能照搬 Vite 6 建议或通过屏蔽告警宣称迁移完成。保留 1.x 是当前编译链的兼容决策。[Sass legacy API](https://sass-lang.com/documentation/breaking-changes/legacy-js-api/)、[Sass import 弃用](https://sass-lang.com/documentation/breaking-changes/import/)
+Sass 1.79 起提示 legacy JS API 弃用，1.80 起提示 `@import` 和全局内置函数弃用。当前 Vite 5.2.8 仍调用 `sass.render`；Vite 从 5.4 起才支持配置现代 Sass API，因此保留 Sass 1.x 与现有 DCloud 编译链。为减少这项已知工具链提示，已在 `css.preprocessorOptions.scss` 和 `sass` 中设置 `silenceDeprecations: ['legacy-js-api']`。该设置不表示旧 API 已迁移，其他弃用提示、普通警告和编译错误继续保留；升级 DCloud 配套工具链并切换新 API 后，应移除此兼容项。[Sass legacy API 与定向静默说明](https://sass-lang.com/documentation/breaking-changes/legacy-js-api/)、[Sass import 弃用](https://sass-lang.com/documentation/breaking-changes/import/)
+
+修改后的 H5 开发服务、H5/微信/App 构建均未再输出 `legacy-js-api`；H5 三份 CSS 的路径及 SHA256 与修改前一致。额外运行 Sass 警告和语法错误探针，确认普通 `@warn` 仍被报告、无效语法仍抛错，Node 配置类型检查及定向 lint 通过。
 
 ### 图表和国际化的验证边界
 
@@ -365,7 +367,7 @@ DCloud 发行日志同时包含 uni-app 与 uni-app x，UTS、uvue 和蒸汽模�
 
 - TypeScript 已回到 5.9.3，原 manifest-types / TS6 peer 例外已消除；`@devframes/vite@0.9.18` 的 optional peer 仍只声明 Vite 7/8，当前 Vite 5 活跃路径已有实际验证。
 - node 类型项目没有 DOM/window；业务类型仍通过 pages 传递声明引入 Node 全局，不能把配置拆分描述成业务环境已完全隔离 Node API。
-- 应用构建仍显示 Sass legacy JS API 弃用提示，这是固定 Vite 5.2.8 的调用方式；没有隐藏提示，Sass 2 不在当前可升级范围。
+- Sass 的 `legacy-js-api` 提示已定向静默；实际仍使用 Vite 5.2.8 的旧调用方式，Sass 2 不在当前可升级范围。
 - Vue I18n 9 已结束维护，DCloud 平台内置 9.1.9 的限制也未由根依赖升级消除。
 - `trustPolicyIgnoreAfter` 只对最近一年发布版本执行信任降级检查；完整性校验、发布等待期和构建脚本许可仍独立生效。
 - 本次没有执行远端 GitHub Actions、云打包、原生基座/真机运行及其他小程序平台运行。App 构建成功不等于原生发行验证；图表和国际化暂未接入业务实例，未声称覆盖其交互。
