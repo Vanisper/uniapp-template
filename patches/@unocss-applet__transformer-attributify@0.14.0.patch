@@ -1,0 +1,13 @@
+diff --git a/dist/index.mjs b/dist/index.mjs
+index 437727deeb09cda5e4405a7a434bcc169c2fb611..6552872f4da1cffa119b481a29ffb4466523dae2 100644
+--- a/dist/index.mjs
++++ b/dist/index.mjs
+@@ -118,7 +118,7 @@ function transformerAttributify(options = {}) {
+ 				let dynamicClassEnd = -1;
+ 				const attrSelectors = [];
+ 				const attrSeg = eleMatch[1] || "";
+-				const segOffset = eleMatch[0].indexOf(" ") + 1;
++				const segOffset = eleMatch[0].search(/\s/) + 1;
+ 				const attributes = Array.from(attrSeg.matchAll(attributeRE));
+ 				const edits = [];
+ 				let appendEdit = null;

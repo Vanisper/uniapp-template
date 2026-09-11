@@ -21,6 +21,6 @@ export default defineConfig({
   test: {
     clearMocks: true,
     environment: 'happy-dom',
-    include: ['src/**/*.test.ts'],
+    include: ['src/**/*.test.ts', 'plugins/**/*.test.ts'],
   },
 })
