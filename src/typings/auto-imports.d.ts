@@ -21,7 +21,6 @@ declare global {
   const getActivePinia: typeof import('pinia').getActivePinia
   const getCurrentInstance: typeof import('vue').getCurrentInstance
   const getCurrentScope: typeof import('vue').getCurrentScope
-  const getCurrentWatcher: typeof import('vue').getCurrentWatcher
   const h: typeof import('vue').h
   const inject: typeof import('vue').inject
   const isProxy: typeof import('vue').isProxy
@@ -73,7 +72,6 @@ declare global {
   const onUnload: typeof import('@dcloudio/uni-app').onUnload
   const onUnmounted: typeof import('vue').onUnmounted
   const onUpdated: typeof import('vue').onUpdated
-  const onWatcherCleanup: typeof import('vue').onWatcherCleanup
   const provide: typeof import('vue').provide
   const reactive: typeof import('vue').reactive
   const readonly: typeof import('vue').readonly
@@ -85,7 +83,6 @@ declare global {
   const shallowReadonly: typeof import('vue').shallowReadonly
   const shallowRef: typeof import('vue').shallowRef
   const storeToRefs: typeof import('pinia').storeToRefs
-  const themeColorOptions: typeof import('../composables/useTheme')['themeColorOptions']
   const toRaw: typeof import('vue').toRaw
   const toRef: typeof import('vue').toRef
   const toRefs: typeof import('vue').toRefs
@@ -99,7 +96,6 @@ declare global {
   const useCssVars: typeof import('vue').useCssVars
   const useExpose: typeof import('../composables/useExpose').useExpose
   const useExposeReceiver: typeof import('../composables/useExpose').useExposeReceiver
-  const useId: typeof import('vue').useId
   const useLayout: typeof import('../composables/useLayout').useLayout
   const useMixedOnShow: typeof import('../composables/usePageShowSignal').useMixedOnShow
   const useModel: typeof import('vue').useModel
@@ -111,7 +107,6 @@ declare global {
   const useQuery: typeof import('../composables/useQuery').useQuery
   const useRefReady: typeof import('../composables/useRefReady').useRefReady
   const useSlots: typeof import('vue').useSlots
-  const useTemplateRef: typeof import('vue').useTemplateRef
   const useTheme: typeof import('../composables/useTheme').useTheme
   const useThemeStore: typeof import('../stores/modules/theme').useThemeStore
   const useWindowInfo: typeof import('../composables/useWindowInfo').useWindowInfo
@@ -154,7 +149,6 @@ declare module 'vue' {
     readonly getActivePinia: UnwrapRef<typeof import('pinia')['getActivePinia']>
     readonly getCurrentInstance: UnwrapRef<typeof import('vue')['getCurrentInstance']>
     readonly getCurrentScope: UnwrapRef<typeof import('vue')['getCurrentScope']>
-    readonly getCurrentWatcher: UnwrapRef<typeof import('vue')['getCurrentWatcher']>
     readonly h: UnwrapRef<typeof import('vue')['h']>
     readonly inject: UnwrapRef<typeof import('vue')['inject']>
     readonly isProxy: UnwrapRef<typeof import('vue')['isProxy']>
@@ -206,7 +200,6 @@ declare module 'vue' {
     readonly onUnload: UnwrapRef<typeof import('@dcloudio/uni-app')['onUnload']>
     readonly onUnmounted: UnwrapRef<typeof import('vue')['onUnmounted']>
     readonly onUpdated: UnwrapRef<typeof import('vue')['onUpdated']>
-    readonly onWatcherCleanup: UnwrapRef<typeof import('vue')['onWatcherCleanup']>
     readonly provide: UnwrapRef<typeof import('vue')['provide']>
     readonly reactive: UnwrapRef<typeof import('vue')['reactive']>
     readonly readonly: UnwrapRef<typeof import('vue')['readonly']>
@@ -231,7 +224,6 @@ declare module 'vue' {
     readonly useCssVars: UnwrapRef<typeof import('vue')['useCssVars']>
     readonly useExpose: UnwrapRef<typeof import('../composables/useExpose')['useExpose']>
     readonly useExposeReceiver: UnwrapRef<typeof import('../composables/useExpose')['useExposeReceiver']>
-    readonly useId: UnwrapRef<typeof import('vue')['useId']>
     readonly useLayout: UnwrapRef<typeof import('../composables/useLayout')['useLayout']>
     readonly useMixedOnShow: UnwrapRef<typeof import('../composables/usePageShowSignal')['useMixedOnShow']>
     readonly useModel: UnwrapRef<typeof import('vue')['useModel']>
@@ -243,7 +235,6 @@ declare module 'vue' {
     readonly useQuery: UnwrapRef<typeof import('../composables/useQuery')['useQuery']>
     readonly useRefReady: UnwrapRef<typeof import('../composables/useRefReady')['useRefReady']>
     readonly useSlots: UnwrapRef<typeof import('vue')['useSlots']>
-    readonly useTemplateRef: UnwrapRef<typeof import('vue')['useTemplateRef']>
     readonly useTheme: UnwrapRef<typeof import('../composables/useTheme')['useTheme']>
     readonly useThemeStore: UnwrapRef<typeof import('../stores/modules/theme')['useThemeStore']>
     readonly useWindowInfo: UnwrapRef<typeof import('../composables/useWindowInfo')['useWindowInfo']>

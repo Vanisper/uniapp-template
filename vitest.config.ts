@@ -9,6 +9,8 @@ export default defineConfig({
     AutoImport({
       dts: false,
       imports: ['vue', 'pinia'],
+      // 当前 Vue 3.4 不提供这些预设 API
+      ignore: ['getCurrentWatcher', 'onWatcherCleanup', 'useId', 'useTemplateRef'],
     }),
   ],
   resolve: {
