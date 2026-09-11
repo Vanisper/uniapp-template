@@ -26,6 +26,22 @@ pnpm build mp-weixin
 
 平台名是 unh 的位置参数；测试环境构建使用 `pnpm build:test`。主要依赖的兼容范围、迁移原因与验证结果见[依赖升级记录](docs/dependency-upgrade-2026-09-12.md)。
 
+## 类型检查与测试
+
+`tsconfig.json` 只关联子项目，业务与工具配置分别维护类型环境：
+
+| 配置 | 范围 |
+| --- | --- |
+| `tsconfig.app.json` | `src` 中的业务代码与 Vue 组件，使用 DOM、uni-app 平台类型和 Volar 插件，排除测试 |
+| `tsconfig.node.json` | 根目录 TypeScript 工具配置、`plugins` 与工具脚本，使用 Node 类型，不引入 DOM |
+| `tsconfig.test.json` | 业务和插件测试、测试运行器配置，组合应用与 Node 环境 |
+
+`pnpm type-check` 依次检查三个子项目；也可通过 `type-check:app`、`type-check:node`、`type-check:test` 单独执行。直接对根配置运行 `tsc --noEmit` 不会递归检查这些引用项目。
+
+测试运行器位于 `tools/testing` 工作区，使用 Vitest 4.1.11 和 Vite 6.4.3；应用构建继续使用 DCloud 配套的 Vite 5.2.8。`pnpm test` 保持为统一入口，测试文件仍与被测代码放在一起。测试配置中的模块别名与 `tsconfig.test.json` 的路径映射共同保证它们加载同一套测试依赖。
+
+业务配置未显式加载 Node 类型，但 uni-pages 的声明会间接引入部分 Node 全局；配置拆分不等于禁止传递依赖引入类型。业务代码仍应使用 uni-app 的平台 API。
+
 ## TODO
 
 ### Basic

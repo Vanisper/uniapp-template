@@ -1,0 +1,44 @@
+{
+  "extends": "./tsconfig.app.json",
+  "compilerOptions": {
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ],
+      "vitest": [
+        "./tools/testing/node_modules/vitest"
+      ],
+      "vitest/*": [
+        "./tools/testing/node_modules/vitest/*"
+      ],
+      "vite": [
+        "./tools/testing/node_modules/vite"
+      ]
+    },
+    "types": [
+      "node",
+      "vite/client",
+      "@dcloudio/types",
+      "@mini-types/alipay",
+      "miniprogram-api-typings",
+      "@uni-helper/vite-plugin-uni-pages/client",
+      "uni-echarts/global",
+      "z-paging/types",
+      "@uni-helper/uni-types",
+      "@uni-ku/bundle-optimizer/client"
+    ]
+  },
+  "include": [
+    "src/**/*.test.ts",
+    "src/**/*.spec.ts",
+    "src/**/__tests__/**/*.ts",
+    "src/typings/**/*.d.ts",
+    "plugins/**/*.test.ts",
+    "plugins/**/*.spec.ts",
+    "plugins/**/__tests__/**/*.ts",
+    "tools/testing/**/*.ts"
+  ],
+  "exclude": [
+    "tools/testing/node_modules"
+  ]
+}

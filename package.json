@@ -14,7 +14,10 @@
     "build:test": "unh build --mode test",
     "about": "unh info",
     "test": "pnpm --dir tools/testing exec vitest run",
-    "type-check": "vue-tsc --noEmit",
+    "type-check": "pnpm type-check:app && pnpm type-check:node && pnpm type-check:test",
+    "type-check:app": "vue-tsc --noEmit -p tsconfig.app.json",
+    "type-check:node": "tsc --noEmit -p tsconfig.node.json",
+    "type-check:test": "vue-tsc --noEmit -p tsconfig.test.json",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
   },

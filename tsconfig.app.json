@@ -1,0 +1,41 @@
+{
+  "extends": "@vue/tsconfig/tsconfig.dom.json",
+  "compilerOptions": {
+    "lib": [
+      "DOM",
+      "DOM.Iterable",
+      "ESNext"
+    ],
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ]
+    },
+    "types": [
+      "vite/client",
+      "@dcloudio/types",
+      "@mini-types/alipay",
+      "miniprogram-api-typings",
+      "@uni-helper/vite-plugin-uni-pages/client",
+      "uni-echarts/global",
+      "z-paging/types",
+      "@uni-helper/uni-types",
+      "@uni-ku/bundle-optimizer/client"
+    ]
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.vue"
+  ],
+  "exclude": [
+    "src/**/*.test.*",
+    "src/**/*.spec.*",
+    "src/**/__tests__/**"
+  ],
+  "vueCompilerOptions": {
+    "plugins": [
+      "@uni-helper/uni-types/volar-plugin"
+    ]
+  }
+}
