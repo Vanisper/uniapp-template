@@ -2,6 +2,52 @@
 
 基于 [create-uni](https://uni-helper.js.org/create-uni/core) 脚手架初始模版封装建设。
 
+## 开发环境
+
+推荐使用 `.nvmrc` 指定的 Node.js 22.22.2。pnpm 版本由 `package.json` 的 `packageManager` 固定为 12.4.1。
+
+首次从旧版 pnpm 切换时，可用 npm 引导，确保 pnpm 12 的原生可执行文件完成安装：
+
+```sh
+npm install --global pnpm@12.4.1
+```
+
+日常开发命令：
+
+```sh
+pnpm install --frozen-lockfile
+pnpm dev
+pnpm test
+pnpm type-check
+pnpm lint
+pnpm build
+pnpm build mp-weixin
+```
+
+平台名是 unh 的位置参数；测试环境构建使用 `pnpm build:test`。主要依赖的兼容范围、迁移原因与验证结果见[依赖升级记录](docs/dependencies/dependency-upgrade-2026-09-12.md)。
+
+微信开发使用 `pnpm dev wx`，编译完成后会自动打开微信开发者工具。请先复制 `envs/.env` 为 `envs/.env.local`，填写 `UNI_MP_WEIXIN_APPID`，然后启动开发服务。本机环境文件已被 Git 忽略；环境变量及多环境配置见 [envs/README.md](envs/README.md)。未配置 AppID 时，产物使用 `touristappid`，当前开发者工具的自动打开流程会报 AppID 不存在。
+
+H5 开发时，UnoCSS Inspector 地址为 <http://localhost:13000/__unocss/>，端口以开发服务实际输出为准。当前版本不会自动打印入口地址；未授权浏览器打开该页面后，在运行 `pnpm dev` 的终端查看 `Devframe` 提示框中的 `auth code`，输入页面完成授权。授权按浏览器保存；已授权浏览器可以直接进入。验证码过期时提交或刷新页面，再查看终端中的新码。
+
+## 类型检查与测试
+
+`tsconfig.json` 只关联子项目，业务与工具配置分别维护类型环境：
+
+| 配置 | 范围 |
+| --- | --- |
+| `tsconfig.app.json` | `src` 中的业务代码与 Vue 组件，使用 DOM、uni-app 平台类型和 Volar 插件，排除测试 |
+| `tsconfig.node.json` | 根目录 TypeScript 工具配置、`plugins` 与工具脚本，使用 Node 类型，不引入 DOM |
+| `tsconfig.test.json` | 业务和插件测试、测试运行器配置，组合应用与 Node 环境 |
+
+`pnpm type-check` 依次检查三个子项目；也可通过 `type-check:app`、`type-check:node`、`type-check:test` 单独执行。直接对根配置运行 `tsc --noEmit` 不会递归检查这些引用项目。
+
+unh 的环境变量类型生成功能已关闭（`env.dts: false`）；构建配置与客户端变量的读取范围见[环境变量说明](envs/README.md#客户端变量与类型)。
+
+测试运行器位于 `tools/testing` 工作区，使用 Vitest 4.1.11 和 Vite 6.4.3；应用构建继续使用 DCloud 配套的 Vite 5.2.8。`pnpm test` 保持为统一入口，测试文件仍与被测代码放在一起。测试配置中的模块别名与 `tsconfig.test.json` 的路径映射共同保证它们加载同一套测试依赖。
+
+业务配置未显式加载 Node 类型，但 uni-pages 的声明会间接引入部分 Node 全局；配置拆分不等于禁止传递依赖引入类型。业务代码仍应使用 uni-app 的平台 API。
+
 ## TODO
 
 ### Basic

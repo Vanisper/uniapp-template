@@ -20,6 +20,8 @@ export default async function createPlugins(mode: string, isBuild = false) {
     // https://uni-helper.js.org/vite-plugin-uni-components
     Components({
       dts: 'src/typings/components.d.ts',
+      dtsTsx: false,
+      types: [],
       directoryAsNamespace: true,
       resolvers: [UniEchartsResolver(), ZPagingResolver()],
     }),
@@ -68,7 +70,10 @@ export default async function createPlugins(mode: string, isBuild = false) {
         //   imports: ['createRouter', 'useRouter', 'useRoute'],
         // },
       ],
+      // 当前 Vue 3.4 不提供这些预设 API
+      ignore: ['getCurrentWatcher', 'onWatcherCleanup', 'useId', 'useTemplateRef'],
       dts: 'src/typings/auto-imports.d.ts',
+      dtsMode: 'overwrite',
       dirs: ['src/composables', 'src/stores/modules', 'src/utils'],
       vueTemplate: true,
     }),

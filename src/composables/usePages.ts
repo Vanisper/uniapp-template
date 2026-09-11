@@ -1,4 +1,4 @@
-import type { GlobalStyle, PageMetaDatum, UserPagesConfig } from '@uni-helper/vite-plugin-uni-pages'
+import type { GlobalStyle, InternalPageItem, UserPagesConfig } from '@uni-helper/vite-plugin-uni-pages'
 import { computed, shallowRef } from 'vue'
 import pagesData from '@/pages.json'
 // import { pages, subPackages } from 'virtual:uni-pages'
@@ -29,7 +29,7 @@ export function usePages() {
   }
 
   function findPage(pagePath: string) {
-    const find = (pageMeta: PageMetaDatum) => pageMeta.path === pagePath
+    const find = (pageMeta: InternalPageItem) => pageMeta.path === pagePath
 
     const page = pages?.find(find)
 

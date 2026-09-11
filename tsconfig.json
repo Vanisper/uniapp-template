@@ -1,42 +1,14 @@
 {
-  "compilerOptions": {
-    "target": "ESNext",
-    "jsx": "preserve",
-    "jsxImportSource": "vue",
-    "lib": ["DOM", "DOM.Iterable", "ESNext"],
-    "useDefineForClassFields": true,
-    "baseUrl": ".",
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
-    "paths": {
-      "@/*": ["./src/*"]
+  "references": [
+    {
+      "path": "./tsconfig.app.json"
     },
-    "resolveJsonModule": true,
-    "types": [
-      "vite/client",
-      "@dcloudio/types",
-      "@mini-types/alipay",
-      "miniprogram-api-typings",
-      "@uni-helper/vite-plugin-uni-pages",
-      "uni-echarts/global",
-      "z-paging/types",
-      "@uni-helper/uni-types",
-      "@uni-ku/bundle-optimizer/client"
-    ],
-    "strict": true,
-    "noImplicitThis": true,
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "verbatimModuleSyntax": true,
-    "skipLibCheck": true
-  },
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.tsx",
-    "src/**/*.jsx",
-    "src/**/*.vue"
+    {
+      "path": "./tsconfig.node.json"
+    },
+    {
+      "path": "./tsconfig.test.json"
+    }
   ],
-  "vueCompilerOptions": {
-    "plugins": ["@uni-helper/uni-types/volar-plugin"]
-  }
+  "files": []
 }

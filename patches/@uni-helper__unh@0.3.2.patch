@@ -1,0 +1,26 @@
+diff --git a/dist/cli.mjs b/dist/cli.mjs
+index 7816756adf9489e69425a286fbfdfe1a7a097863..d6bb35cc7f6a0dc0a9e4bf3fa42832affe6d0842 100755
+--- a/dist/cli.mjs
++++ b/dist/cli.mjs
+@@ -672,7 +672,10 @@ function executeUniCommandOnDev(uniCommand) {
+ */
+ function executeUniCommandOnBuild(uniCommand) {
+ 	const { command, args, options } = buildCommandOptions(uniCommand, "inherit");
+-	sync(command, args, options);
++	const result = sync(command, args, options);
++	if (result.error) throw result.error;
++	if (result.signal) throw new Error(`uni 构建被信号 ${result.signal} 终止`);
++	if (result.status !== 0) throw new Error(`uni 构建失败，退出码: ${result.status ?? "未知"}`);
+ }
+ /**
+ * 获取原始的命令行参数
+@@ -990,7 +993,8 @@ async function main() {
+ 			handlePlatformCommand();
+ 		});
+ 		cli.help(customHelp);
+-		cli.parse();
++		cli.parse(process.argv, { run: false });
++		await cli.runMatchedCommand();
+ 	} catch (error) {
+ 		console.error("Fatal error:", error instanceof Error ? error.message : error);
+ 		process.exit(1);

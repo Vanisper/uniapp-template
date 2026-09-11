@@ -10,6 +10,7 @@ if (THEME_CONFIG.tabbar.mode === 'custom') {
     // 小程序端此部分配置足够隐藏原生 tabbar，其他端不能完全隐藏
     // TODO: 故相关部分需要调用 `uni.hideTabBar()`
     custom: true,
+    // 此文件内条件编译无法生效，仅表达意图
     // #ifdef MP-ALIPAY
     customize: true,
     overlay: true,

@@ -1,3 +1,4 @@
+import process from 'node:process'
 import { defineManifestConfig } from '@uni-helper/vite-plugin-uni-manifest'
 import { version, versionCode } from './package.json'
 
@@ -53,7 +54,7 @@ export default defineManifestConfig({
   'quickapp': {},
   /* 小程序特有相关 */
   'mp-weixin': {
-    appid: '',
+    appid: process.env.UNI_MP_WEIXIN_APPID?.trim() || '',
     setting: {
       urlCheck: false,
     },

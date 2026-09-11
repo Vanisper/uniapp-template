@@ -9,6 +9,11 @@ import { copyDir } from './plugins/common'
  * 更多配置请参考：https://uni-helper.js.org/unh/
  */
 export default defineConfig({
+  // 加载环境变量配置
+  env: {
+    root: 'envs',
+    dts: false,
+  },
   platform: {
     // 默认平台
     default: 'h5',
