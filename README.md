@@ -68,9 +68,11 @@ src/
 
 开发与构建启动时自动发现 `src/packages` 下非隐藏的直属目录，只扫描各包的 `pages`。例如 `demo/pages/index.vue` 会生成分包根 `packages/demo` 和页面路径 `pages/index`，完整跳转路径为 `/packages/demo/pages/index`。没有页面的包不会写入分包配置。
 
-分包扫描配置集中在 [plugins/vite/pages.ts](plugins/vite/pages.ts)。创建其他插件前，先通过 uni-pages 生成完整的 `pages.json`，同时更新路由类型；后续页面变化由同一份配置下的 UniPages 插件处理。
+分包扫描配置集中在 [plugins/vite/pages.ts](plugins/vite/pages.ts)，使用 `src/packages/*/pages` 匹配页面目录，再由 `root` 函数计算分包根。glob 扫描与插件的 `prepare()` 接口由项目维护的 [uni-pages 补丁](docs/dependencies/dependency-upgrade-2026-09-12.md#uni-pages分包扫描与提前准备)提供。
 
-包内组件、composables 等资源使用显式导入；公共组件与公共逻辑继续使用现有自动导入规则。新增、删除或重命名整个分包后，需要重启开发命令以重新发现目录；已有分包内的页面增删继续由页面插件监听。
+创建其他插件前，先等待 `pages.prepare()` 生成完整的 `pages.json` 和路由类型；Vite 随后接管同一个插件实例，复用已准备的上下文。项目显式启用 `platformSuffix`，使准备阶段就能确定平台文件规则。
+
+包内组件、composables 等资源使用显式导入；公共组件与公共逻辑继续使用现有自动导入规则。页面插件会自动发现分包新增、删除和重建。由于本项目的分包优化插件在初始化时读取包结构，新增或重命名整个分包后仍需重启开发命令；已有分包内的页面增删继续由页面插件监听。
 
 ## TabBar 与页面导航
 

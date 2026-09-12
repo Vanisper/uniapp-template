@@ -2,9 +2,8 @@
 import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { dirname, join } from 'node:path'
-import { generateAll } from '@uni-helper/vite-plugin-uni-pages'
-import { normalizePath } from 'vite'
-import { afterEach, beforeEach, describe, expect, it } from 'vitest'
+import UniPages from '@uni-helper/vite-plugin-uni-pages'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { getPagesOptions } from './pages'
 
 interface GeneratedPages {
@@ -23,13 +22,11 @@ async function addFile(path: string, content = '<template><view /></template>') 
 async function generate(expectedRoutes: string[]) {
   const options = getPagesOptions(root)
   const declarationPath = join(root, 'src/typings/uni-pages.d.ts')
-  await generateAll(options, { root, platform: 'mp-weixin' })
+  await UniPages(options).prepare({ root, platform: 'mp-weixin' })
 
-  // 插件的声明文件写入独立于 pages.json 完成，等待实际产物
-  await expect.poll(async () => {
-    const declaration = await readFile(declarationPath, 'utf8').catch(() => '')
-    return Array.from(declaration.matchAll(/"(\/[^"\n]+)"/g), match => match[1]).sort()
-  }).toEqual(expectedRoutes.toSorted())
+  const declaration = await readFile(declarationPath, 'utf8')
+  expect(Array.from(declaration.matchAll(/"(\/[^"\n]+)"/g), match => match[1]).sort())
+    .toEqual(expectedRoutes.toSorted())
 
   const pages = await readFile(join(root, 'src/pages.json'), 'utf8')
   return JSON.parse(pages.replace(/^\s*\/\/.*$/gm, '')) as GeneratedPages
@@ -37,26 +34,32 @@ async function generate(expectedRoutes: string[]) {
 
 beforeEach(async () => {
   root = await mkdtemp(join(tmpdir(), 'uni-pages-packages-'))
+  vi.stubEnv('VITE_ROOT_DIR', root)
   await addFile('src/pages/index.vue')
 })
 
 afterEach(async () => {
+  vi.unstubAllEnvs()
   await rm(root, { recursive: true, force: true })
 })
 
 describe('分包目录约定', () => {
-  it('允许缺少分包目录，只按名称排序发现非隐藏的直接子目录', async () => {
-    expect(getPagesOptions(root).subPackages).toEqual([])
+  it('缺少分包目录时仅生成主包，分包按非隐藏的直属目录名称排序', async () => {
+    expect((await generate(['/pages/index'])).subPackages ?? []).toEqual([])
 
-    await addFile('src/packages/zeta/components/Card.vue')
-    await addFile('src/packages/alpha/nested/pages/index.vue')
+    await addFile('src/packages/zeta/pages/index.vue')
+    await addFile('src/packages/alpha/pages/index.vue')
+    await addFile('src/packages/empty/components/Card.vue')
     await addFile('src/packages/.hidden/pages/index.vue')
     await addFile('src/packages/readme.md', '# packages')
 
-    expect(getPagesOptions(root).subPackages).toEqual([
-      { dir: normalizePath(join(root, 'src/packages/alpha/pages')), root: 'packages/alpha' },
-      { dir: normalizePath(join(root, 'src/packages/zeta/pages')), root: 'packages/zeta' },
+    const pages = await generate([
+      '/pages/index',
+      '/packages/alpha/pages/index',
+      '/packages/zeta/pages/index',
     ])
+    expect(pages.subPackages?.map(packageConfig => packageConfig.root))
+      .toEqual(['packages/alpha', 'packages/zeta'])
   })
 
   it('只注册包内 pages 页面并保留路径层级，组件和嵌套包不成为页面', async () => {

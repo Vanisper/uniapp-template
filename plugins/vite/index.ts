@@ -6,7 +6,7 @@ import Components from '@uni-helper/vite-plugin-uni-components'
 import { ZPagingResolver } from '@uni-helper/vite-plugin-uni-components/resolvers'
 import UniLayouts from '@uni-helper/vite-plugin-uni-layouts'
 import UniManifest from '@uni-helper/vite-plugin-uni-manifest'
-import UniPages, { generateAll } from '@uni-helper/vite-plugin-uni-pages'
+import UniPages from '@uni-helper/vite-plugin-uni-pages'
 import UniPlatform from '@uni-helper/vite-plugin-uni-platform'
 import Optimization from '@uni-ku/bundle-optimizer'
 import UniRoot from '@uni-ku/root'
@@ -17,9 +17,9 @@ import AutoImport from 'unplugin-auto-import/vite'
 import { getPagesOptions } from './pages'
 
 export default async function createPlugins(mode: string, isBuild = false) {
-  const pagesOptions = getPagesOptions()
+  const pages = UniPages(getPagesOptions())
   // 根组件与分包优化插件在创建时读取 pages.json
-  await generateAll(pagesOptions)
+  await pages.prepare()
 
   const Plugins: (PluginOption | PluginOption[])[] = [
     // https://uni-helper.js.org/vite-plugin-uni-components
@@ -31,7 +31,7 @@ export default async function createPlugins(mode: string, isBuild = false) {
       resolvers: [UniEchartsResolver(), ZPagingResolver()],
     }),
     // https://github.com/uni-helper/vite-plugin-uni-pages
-    UniPages(pagesOptions),
+    pages,
     // https://github.com/uni-helper/vite-plugin-uni-layouts
     UniLayouts(),
     // https://github.com/uni-helper/vite-plugin-uni-manifest
