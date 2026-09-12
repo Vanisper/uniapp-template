@@ -4,17 +4,9 @@
 
 ## 选择样式
 
-在 `src/configs/theme.ts` 的 `createThemeConfig()` 中配置：
+在 `src/configs/theme.ts` 中通过 `tabbar.mode` 选择原生或自定义 TabBar；`tabbar.variant` 支持 `basic`（基础版）和 `animated`（动画版），仅对自定义 TabBar 生效。
 
-```ts
-const tabbar = {
-  mode: 'custom',
-  variant: 'animated', // 可改为 'basic'
-  height: 50,
-}
-```
-
-`mode` 决定使用原生还是自定义 TabBar；`variant` 仅选择自定义组件的样式。当前配置使用动画版，两个页面布局共用 `AppPageTabbar`，切换样式无需修改布局。
+两个页面布局共用 `AppPageTabbar`，切换样式无需修改布局。
 
 ## 目录与职责
 

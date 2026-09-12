@@ -50,7 +50,7 @@ unh 的环境变量类型生成功能已关闭（`env.dts: false`）；构建配
 
 ## TabBar 与页面导航
 
-自定义 TabBar 当前使用动画版，可在 `src/configs/theme.ts` 中将 `tabbar.variant` 改为 `basic` 使用基础版。通用基础与动画扩展归入 `components/Tabbar/`，布局通过 `AppPageTabbar` 接入页面导航。目录层级、组件契约、取消规则与页面同步机制见 [TabBar 与页面导航](docs/tabbar.md)。
+自定义 TabBar 提供基础版和动画版。配置方式、组件层级与页面接入约定见 [TabBar 与页面导航](docs/tabbar.md)。
 
 ## TODO
 
