@@ -1,5 +1,5 @@
 import { THEME_CONFIG } from '@/configs/theme'
-import { usePageRoute } from './usePageRoute'
+import { usePageRoute } from '../usePageRoute'
 
 /**
  * 获取默认 navbar 高度

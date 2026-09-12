@@ -2,7 +2,7 @@ import type { Component } from 'vue'
 import { flushPromises, mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { defineAsyncComponent, defineComponent, getCurrentInstance, h, nextTick, shallowRef } from 'vue'
-import { usePageRoute } from './usePageRoute'
+import { usePageRoute } from './index'
 
 const wrappers: ReturnType<typeof mount>[] = []
 

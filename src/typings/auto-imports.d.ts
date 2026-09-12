@@ -83,7 +83,7 @@ declare global {
   const shallowReadonly: typeof import('vue').shallowReadonly
   const shallowRef: typeof import('vue').shallowRef
   const storeToRefs: typeof import('pinia').storeToRefs
-  const syncPageStack: typeof import('../composables/usePages').syncPageStack
+  const syncPageStack: typeof import('../composables/usePages/index').syncPageStack
   const toRaw: typeof import('vue').toRaw
   const toRef: typeof import('vue').toRef
   const toRefs: typeof import('vue').toRefs
@@ -91,27 +91,27 @@ declare global {
   const triggerRef: typeof import('vue').triggerRef
   const unref: typeof import('vue').unref
   const useAttrs: typeof import('vue').useAttrs
-  const useCount: typeof import('../composables/useCount').useCount
+  const useCount: typeof import('../composables/useCount/index').useCount
   const useCounterStore: typeof import('../stores/modules/counter').useCounterStore
   const useCssModule: typeof import('vue').useCssModule
   const useCssVars: typeof import('vue').useCssVars
-  const useExpose: typeof import('../composables/useExpose').useExpose
-  const useExposeReceiver: typeof import('../composables/useExpose').useExposeReceiver
-  const useLayout: typeof import('../composables/useLayout').useLayout
-  const useMixedOnShow: typeof import('../composables/usePageShowSignal').useMixedOnShow
+  const useExpose: typeof import('../composables/useExpose/index').useExpose
+  const useExposeReceiver: typeof import('../composables/useExpose/index').useExposeReceiver
+  const useLayout: typeof import('../composables/useLayout/index').useLayout
+  const useMixedOnShow: typeof import('../composables/usePageShowSignal/index').useMixedOnShow
   const useModel: typeof import('vue').useModel
-  const useOnPageShow: typeof import('../composables/usePageShowSignal').useOnPageShow
-  const usePageRoute: typeof import('../composables/usePageRoute').usePageRoute
-  const usePageShowProvider: typeof import('../composables/usePageShowSignal').usePageShowProvider
-  const usePageShowSignal: typeof import('../composables/usePageShowSignal').usePageShowSignal
-  const usePageShowSignalEffect: typeof import('../composables/usePageShowSignal').usePageShowSignalEffect
-  const usePages: typeof import('../composables/usePages').usePages
-  const useQuery: typeof import('../composables/useQuery').useQuery
-  const useRefReady: typeof import('../composables/useRefReady').useRefReady
+  const useOnPageShow: typeof import('../composables/usePageShowSignal/index').useOnPageShow
+  const usePageRoute: typeof import('../composables/usePageRoute/index').usePageRoute
+  const usePageShowProvider: typeof import('../composables/usePageShowSignal/index').usePageShowProvider
+  const usePageShowSignal: typeof import('../composables/usePageShowSignal/index').usePageShowSignal
+  const usePageShowSignalEffect: typeof import('../composables/usePageShowSignal/index').usePageShowSignalEffect
+  const usePages: typeof import('../composables/usePages/index').usePages
+  const useQuery: typeof import('../composables/useQuery/index').useQuery
+  const useRefReady: typeof import('../composables/useRefReady/index').useRefReady
   const useSlots: typeof import('vue').useSlots
-  const useTheme: typeof import('../composables/useTheme').useTheme
+  const useTheme: typeof import('../composables/useTheme/index').useTheme
   const useThemeStore: typeof import('../stores/modules/theme').useThemeStore
-  const useWindowInfo: typeof import('../composables/useWindowInfo').useWindowInfo
+  const useWindowInfo: typeof import('../composables/useWindowInfo/index').useWindowInfo
   const watch: typeof import('vue').watch
   const watchEffect: typeof import('vue').watchEffect
   const watchPostEffect: typeof import('vue').watchPostEffect
@@ -123,14 +123,14 @@ declare global {
   export type { Component, Slot, Slots, ComponentPublicInstance, ComputedRef, DirectiveBinding, ExtractDefaultPropTypes, ExtractPropTypes, ExtractPublicPropTypes, InjectionKey, PropType, Ref, ShallowRef, MaybeRef, MaybeRefOrGetter, VNode, WritableComputedRef } from 'vue'
   import('vue')
   // @ts-ignore
-  export type { ExposeReceiver, ComponentExposed, RefReadyGetter } from '../composables/useExpose'
-  import('../composables/useExpose')
+  export type { ExposeReceiver, ComponentExposed, RefReadyGetter } from '../composables/useExpose/index'
+  import('../composables/useExpose/index')
   // @ts-ignore
-  export type { PageShowSignal, PageShowHook, PageShowSignalHandler, PageShowSignalEffectOptions } from '../composables/usePageShowSignal'
-  import('../composables/usePageShowSignal')
+  export type { PageShowSignal, PageShowHook, PageShowSignalHandler, PageShowSignalEffectOptions } from '../composables/usePageShowSignal/index'
+  import('../composables/usePageShowSignal/index')
   // @ts-ignore
-  export type { NavigateToOptions, PagePath, ActualKeys } from '../composables/usePages'
-  import('../composables/usePages')
+  export type { NavigateToOptions, PagePath, ActualKeys } from '../composables/usePages/index'
+  import('../composables/usePages/index')
 }
 
 // for vue template auto import
@@ -213,7 +213,7 @@ declare module 'vue' {
     readonly shallowReadonly: UnwrapRef<typeof import('vue')['shallowReadonly']>
     readonly shallowRef: UnwrapRef<typeof import('vue')['shallowRef']>
     readonly storeToRefs: UnwrapRef<typeof import('pinia')['storeToRefs']>
-    readonly syncPageStack: UnwrapRef<typeof import('../composables/usePages')['syncPageStack']>
+    readonly syncPageStack: UnwrapRef<typeof import('../composables/usePages/index')['syncPageStack']>
     readonly toRaw: UnwrapRef<typeof import('vue')['toRaw']>
     readonly toRef: UnwrapRef<typeof import('vue')['toRef']>
     readonly toRefs: UnwrapRef<typeof import('vue')['toRefs']>
@@ -221,27 +221,27 @@ declare module 'vue' {
     readonly triggerRef: UnwrapRef<typeof import('vue')['triggerRef']>
     readonly unref: UnwrapRef<typeof import('vue')['unref']>
     readonly useAttrs: UnwrapRef<typeof import('vue')['useAttrs']>
-    readonly useCount: UnwrapRef<typeof import('../composables/useCount')['useCount']>
+    readonly useCount: UnwrapRef<typeof import('../composables/useCount/index')['useCount']>
     readonly useCounterStore: UnwrapRef<typeof import('../stores/modules/counter')['useCounterStore']>
     readonly useCssModule: UnwrapRef<typeof import('vue')['useCssModule']>
     readonly useCssVars: UnwrapRef<typeof import('vue')['useCssVars']>
-    readonly useExpose: UnwrapRef<typeof import('../composables/useExpose')['useExpose']>
-    readonly useExposeReceiver: UnwrapRef<typeof import('../composables/useExpose')['useExposeReceiver']>
-    readonly useLayout: UnwrapRef<typeof import('../composables/useLayout')['useLayout']>
-    readonly useMixedOnShow: UnwrapRef<typeof import('../composables/usePageShowSignal')['useMixedOnShow']>
+    readonly useExpose: UnwrapRef<typeof import('../composables/useExpose/index')['useExpose']>
+    readonly useExposeReceiver: UnwrapRef<typeof import('../composables/useExpose/index')['useExposeReceiver']>
+    readonly useLayout: UnwrapRef<typeof import('../composables/useLayout/index')['useLayout']>
+    readonly useMixedOnShow: UnwrapRef<typeof import('../composables/usePageShowSignal/index')['useMixedOnShow']>
     readonly useModel: UnwrapRef<typeof import('vue')['useModel']>
-    readonly useOnPageShow: UnwrapRef<typeof import('../composables/usePageShowSignal')['useOnPageShow']>
-    readonly usePageRoute: UnwrapRef<typeof import('../composables/usePageRoute')['usePageRoute']>
-    readonly usePageShowProvider: UnwrapRef<typeof import('../composables/usePageShowSignal')['usePageShowProvider']>
-    readonly usePageShowSignal: UnwrapRef<typeof import('../composables/usePageShowSignal')['usePageShowSignal']>
-    readonly usePageShowSignalEffect: UnwrapRef<typeof import('../composables/usePageShowSignal')['usePageShowSignalEffect']>
-    readonly usePages: UnwrapRef<typeof import('../composables/usePages')['usePages']>
-    readonly useQuery: UnwrapRef<typeof import('../composables/useQuery')['useQuery']>
-    readonly useRefReady: UnwrapRef<typeof import('../composables/useRefReady')['useRefReady']>
+    readonly useOnPageShow: UnwrapRef<typeof import('../composables/usePageShowSignal/index')['useOnPageShow']>
+    readonly usePageRoute: UnwrapRef<typeof import('../composables/usePageRoute/index')['usePageRoute']>
+    readonly usePageShowProvider: UnwrapRef<typeof import('../composables/usePageShowSignal/index')['usePageShowProvider']>
+    readonly usePageShowSignal: UnwrapRef<typeof import('../composables/usePageShowSignal/index')['usePageShowSignal']>
+    readonly usePageShowSignalEffect: UnwrapRef<typeof import('../composables/usePageShowSignal/index')['usePageShowSignalEffect']>
+    readonly usePages: UnwrapRef<typeof import('../composables/usePages/index')['usePages']>
+    readonly useQuery: UnwrapRef<typeof import('../composables/useQuery/index')['useQuery']>
+    readonly useRefReady: UnwrapRef<typeof import('../composables/useRefReady/index')['useRefReady']>
     readonly useSlots: UnwrapRef<typeof import('vue')['useSlots']>
-    readonly useTheme: UnwrapRef<typeof import('../composables/useTheme')['useTheme']>
+    readonly useTheme: UnwrapRef<typeof import('../composables/useTheme/index')['useTheme']>
     readonly useThemeStore: UnwrapRef<typeof import('../stores/modules/theme')['useThemeStore']>
-    readonly useWindowInfo: UnwrapRef<typeof import('../composables/useWindowInfo')['useWindowInfo']>
+    readonly useWindowInfo: UnwrapRef<typeof import('../composables/useWindowInfo/index')['useWindowInfo']>
     readonly watch: UnwrapRef<typeof import('vue')['watch']>
     readonly watchEffect: UnwrapRef<typeof import('vue')['watchEffect']>
     readonly watchPostEffect: UnwrapRef<typeof import('vue')['watchPostEffect']>

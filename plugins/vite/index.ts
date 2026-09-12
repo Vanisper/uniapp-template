@@ -74,7 +74,7 @@ export default async function createPlugins(mode: string, isBuild = false) {
       ignore: ['getCurrentWatcher', 'onWatcherCleanup', 'useId', 'useTemplateRef'],
       dts: 'src/typings/auto-imports.d.ts',
       dtsMode: 'overwrite',
-      dirs: ['src/composables', 'src/stores/modules', 'src/utils'],
+      dirs: ['src/composables/*/index.ts', 'src/stores/modules', 'src/utils'],
       vueTemplate: true,
     }),
   ]

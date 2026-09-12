@@ -253,6 +253,6 @@ flowchart TD
 
 相关源码：
 
-- [`src/composables/usePageShowSignal.ts`](https://github.com/Vanisper/uniapp-template/blob/main/src/composables/usePageShowSignal.ts)
-- [`src/composables/useExpose.ts`](https://github.com/Vanisper/uniapp-template/blob/main/src/composables/useExpose.ts)
-- [`src/composables/useRefReady.ts`](https://github.com/Vanisper/uniapp-template/blob/main/src/composables/useRefReady.ts)
+- [`src/composables/usePageShowSignal/index.ts`](https://github.com/Vanisper/uniapp-template/blob/main/src/composables/usePageShowSignal/index.ts)
+- [`src/composables/useExpose/index.ts`](https://github.com/Vanisper/uniapp-template/blob/main/src/composables/useExpose/index.ts)
+- [`src/composables/useRefReady/index.ts`](https://github.com/Vanisper/uniapp-template/blob/main/src/composables/useRefReady/index.ts)

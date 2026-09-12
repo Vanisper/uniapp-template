@@ -77,7 +77,7 @@ describe('usePages', () => {
   it('启动时页面栈为空也能安全查询', async () => {
     const { pageStack } = createRuntime()
     pageStack.length = 0
-    const { usePages } = await import('./usePages')
+    const { usePages } = await import('./index')
     const pages = usePages()
 
     expect(pages.currentPages.value).toEqual([])
@@ -89,7 +89,7 @@ describe('usePages', () => {
 
   it('显式同步会更新所有调用方的真实页面状态', async () => {
     const { pageStack } = createRuntime()
-    const { usePages } = await import('./usePages')
+    const { usePages } = await import('./index')
     const first = usePages()
     const second = usePages()
     expect(first.currentRoute.value).toBe('pages/index')
@@ -112,14 +112,14 @@ describe('usePages', () => {
         throw new Error('不应枚举页面组件实例')
       },
     })
-    const { usePages } = await import('./usePages')
+    const { usePages } = await import('./index')
 
     expect(usePages().currentPage.value?.route).toBe('pages/index')
   })
 
   it('导航成功前保持真实路由，成功后同步页面栈', async () => {
     const runtime = createRuntime()
-    const { usePages } = await import('./usePages')
+    const { usePages } = await import('./index')
     const pages = usePages()
     const result = pages.go('pages/about', true)
 
@@ -133,7 +133,7 @@ describe('usePages', () => {
 
   it('导航失败返回 false 且不改变真实路由', async () => {
     const runtime = createRuntime()
-    const { usePages } = await import('./usePages')
+    const { usePages } = await import('./index')
     const pages = usePages()
     const result = pages.go('/pages/about', true)
     runtime.finish(0, false)
@@ -148,14 +148,14 @@ describe('usePages', () => {
     uni.navigateTo.mockImplementation(() => {
       throw new Error('平台导航失败')
     })
-    const { usePages } = await import('./usePages')
+    const { usePages } = await import('./index')
 
     await expect(usePages().go('pages/detail')).resolves.toBe(false)
   })
 
   it('普通页面使用根路径导航并保留查询参数', async () => {
     const runtime = createRuntime()
-    const { usePages } = await import('./usePages')
+    const { usePages } = await import('./index')
     const pages = usePages()
     const result = pages.go('/pages/detail?id=3')
     expect(runtime.requests[0]).toMatchObject({ method: 'navigateTo', options: { url: '/pages/detail?id=3' } })
@@ -168,7 +168,7 @@ describe('usePages', () => {
 
   it('较早导航的晚到失败不能覆盖后来成功的真实路由', async () => {
     const runtime = createRuntime()
-    const { usePages } = await import('./usePages')
+    const { usePages } = await import('./index')
     const pages = usePages()
     const first = pages.go('pages/about', true)
     const second = pages.go('pages/detail')
@@ -183,7 +183,7 @@ describe('usePages', () => {
   it('返回成功后同步真实路由', async () => {
     const runtime = createRuntime()
     runtime.pageStack.push({ options: {}, route: 'pages/detail' })
-    const { usePages } = await import('./usePages')
+    const { usePages } = await import('./index')
     const pages = usePages()
     expect(pages.currentRoute.value).toBe('pages/detail')
     const result = pages.goBack()
@@ -197,7 +197,7 @@ describe('usePages', () => {
   it('单页返回时按要求前往首页兜底', async () => {
     const runtime = createRuntime()
     runtime.pageStack[0] = { options: {}, route: 'pages/about' }
-    const { usePages } = await import('./usePages')
+    const { usePages } = await import('./index')
     const result = usePages().goBack(true)
     expect(runtime.requests[0]).toMatchObject({ method: 'switchTab', options: { url: '/pages/index' } })
     expect(runtime.uni.navigateBack).not.toHaveBeenCalled()
@@ -209,7 +209,7 @@ describe('usePages', () => {
   it('返回失败时可使用首页兜底的结果', async () => {
     const runtime = createRuntime()
     runtime.pageStack.push({ options: {}, route: 'pages/detail' })
-    const { usePages } = await import('./usePages')
+    const { usePages } = await import('./index')
     const result = usePages().goBack(true)
     runtime.finish(0, false)
     await Promise.resolve()
@@ -221,7 +221,7 @@ describe('usePages', () => {
 
   it('未启用首页兜底时返回失败只返回 false', async () => {
     const runtime = createRuntime()
-    const { usePages } = await import('./usePages')
+    const { usePages } = await import('./index')
     const result = usePages().goBack()
     runtime.finish(0, false)
 
@@ -235,7 +235,7 @@ describe('setupPages', () => {
     '外部直接调用 %s 完成后同步页面栈',
     async (method) => {
       const runtime = createRuntime()
-      const { usePages } = await import('./usePages')
+      const { usePages } = await import('./index')
       const { setupPages } = await import('@/plugins/pages')
       setupPages(createApplication().app)
       const pages = usePages()
@@ -250,7 +250,7 @@ describe('setupPages', () => {
 
   it('原生 tab 切换触发 onShow 时回到真实路由', async () => {
     const runtime = createRuntime()
-    const { usePages } = await import('./usePages')
+    const { usePages } = await import('./index')
     const { setupPages } = await import('@/plugins/pages')
     const { app, mixin } = createApplication()
     setupPages(app)
@@ -271,7 +271,7 @@ describe('setupPages', () => {
   it('首次显示时栈未就绪可在 onReady 同步', async () => {
     const runtime = createRuntime()
     runtime.pageStack.length = 0
-    const { usePages } = await import('./usePages')
+    const { usePages } = await import('./index')
     const { setupPages } = await import('@/plugins/pages')
     const { app, mixin } = createApplication()
     setupPages(app)
@@ -289,7 +289,7 @@ describe('setupPages', () => {
   it('返回 API 先成功时等待页面 onShow 同步真实返回结果', async () => {
     const runtime = createRuntime()
     runtime.pageStack.push({ options: {}, route: 'pages/detail' })
-    const { usePages } = await import('./usePages')
+    const { usePages } = await import('./index')
     const { setupPages } = await import('@/plugins/pages')
     const { app, mixin } = createApplication()
     setupPages(app)

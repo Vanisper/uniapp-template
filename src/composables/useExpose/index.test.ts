@@ -1,6 +1,6 @@
 import type { VueWrapper } from '@vue/test-utils'
 import type { ShallowUnwrapRef } from 'vue'
-import type { ExposeReceiver } from './useExpose'
+import type { ExposeReceiver } from './index'
 import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import {
@@ -13,7 +13,7 @@ import {
   shallowRef,
   watchEffect,
 } from 'vue'
-import { useExpose, useExposeReceiver } from './useExpose'
+import { useExpose, useExposeReceiver } from './index'
 
 const wrappers: VueWrapper[] = []
 

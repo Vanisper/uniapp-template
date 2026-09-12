@@ -6,7 +6,7 @@ import {
   proxyRefs,
   shallowRef,
 } from 'vue'
-import { useRefReady } from './useRefReady'
+import { useRefReady } from '../useRefReady'
 
 /**
  * expose 容器

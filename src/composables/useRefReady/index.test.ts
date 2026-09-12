@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
 import { effectScope, nextTick, shallowRef } from 'vue'
-import { useRefReady } from './useRefReady'
+import { useRefReady } from './index'
 
 describe('useRefReady', () => {
   it('立即返回已经就绪的值', async () => {

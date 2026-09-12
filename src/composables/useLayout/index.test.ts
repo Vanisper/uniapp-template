@@ -1,12 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { nextTick, shallowRef } from 'vue'
-import { useLayout } from './useLayout'
+import { useLayout } from './index'
 
 const mocks = vi.hoisted(() => ({
   usePageRoute: vi.fn<() => string | undefined>(),
 }))
 
-vi.mock('./usePageRoute', () => ({ usePageRoute: mocks.usePageRoute }))
+vi.mock('../usePageRoute', () => ({ usePageRoute: mocks.usePageRoute }))
 vi.mock('@/configs/theme', () => ({
   THEME_CONFIG: {
     navbar: { height: 48 },
