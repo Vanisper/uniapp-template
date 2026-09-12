@@ -58,15 +58,12 @@ unh 的环境变量类型生成功能已关闭（`env.dts: false`）；构建配
 src/
 ├── pages/
 └── packages/
-    ├── demo/
-    │   ├── pages/
-    │   │   ├── index.vue
-    │   │   └── hi.vue
-    │   └── components/
-    └── lib/
+    └── demo/
         ├── pages/
-        │   └── index.vue
+        │   ├── index.vue
+        │   └── hi.vue
         └── components/
+            └── Demo.vue
 ```
 
 开发与构建启动时自动发现 `src/packages` 下非隐藏的直属目录，只扫描各包的 `pages`。例如 `demo/pages/index.vue` 会生成分包根 `packages/demo` 和页面路径 `pages/index`，完整跳转路径为 `/packages/demo/pages/index`。没有页面的包不会写入分包配置。

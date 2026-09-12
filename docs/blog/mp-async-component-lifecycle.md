@@ -110,7 +110,7 @@ defineExpose(exposed)
 
 ```vue
 <script setup lang="ts">
-import Demo from '@/packages/lib/components/Demo.vue'
+import Demo from '@/packages/demo/components/Demo.vue'
 
 defineOptions({
   componentPlaceholder: {
@@ -149,7 +149,7 @@ onShow(async () => {
 
 `getRef()` 返回的是公开 API 代理。它解包顶层 ref，缓存该代理后仍能读取这些 ref 的最新值；深层响应式行为由原始的 `ref`、`shallowRef` 或 `reactive` 决定。子组件卸载重建后，需要重新调用 `getRef()` 获取新实例的 API。
 
-完整的单实例与列表接入示例见 [首页](../../src/pages/index.vue) 和 [Demo 组件](../../src/packages/lib/components/Demo.vue)。
+完整的单实例与列表接入示例见 [首页](../../src/pages/index.vue) 和 [Demo 组件](../../src/packages/demo/components/Demo.vue)。
 
 ### 接口就绪与渲染就绪
 

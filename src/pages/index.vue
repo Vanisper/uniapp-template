@@ -1,6 +1,6 @@
 <!-- eslint-disable no-console -->
 <script setup lang="ts">
-import Demo from '@/packages/lib/components/Demo.vue'
+import Demo from '@/packages/demo/components/Demo.vue'
 
 defineOptions({
   componentPlaceholder: {
