@@ -7,11 +7,11 @@ export interface TabbarSelection {
 /** 标签栏输入 */
 export interface TabbarProps<I extends Record<string, any> = Record<string, any>> {
   /**
-   * 当前选中值，沿用历史属性名，实际为受控属性
+   * 受控选中值
    *
    * @description 字符串匹配 valueField，整数作为索引；未传或无效时选中首项
    */
-  defaultValue?: string | number
+  value?: string | number
   /** 标签栏高度，单位 px */
   height: number
   /** 未选中文字颜色 */

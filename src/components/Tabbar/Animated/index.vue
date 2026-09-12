@@ -136,7 +136,7 @@ function handleChange(selection: TabbarSelection, item: I) {
   }, duration.value)
 }
 
-watch(() => props.defaultValue, () => {
+watch(() => props.value, () => {
   // 回调引起的受控值确认仍可发出成功事件；其他外部更新使请求失效
   if (confirming && pending?.index === currentIndex.value) {
     syncVisualIndex()
@@ -189,7 +189,7 @@ onBeforeUnmount(() => {
 
 <template>
   <Tabbar
-    :default-value="visualIndex"
+    :value="visualIndex"
     :list="list"
     :height="height"
     :color="color"

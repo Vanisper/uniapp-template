@@ -45,7 +45,7 @@ src/components/
 
 ## 组件契约
 
-两种组件都保留 `list`、`defaultValue`、`valueField`、`textField`、`height`、`color`、`activeColor`。`defaultValue` 沿用旧名称，但实际是受控选中值：字符串按 `valueField` 匹配，数字表示索引；无效值回退到首项，空列表没有选中项。列表项应提供唯一、稳定的值。
+两种组件共有 `list`、`value`、`valueField`、`textField`、`height`、`color`、`activeColor`。`value` 是受控选中值：字符串按 `valueField` 匹配，数字表示索引；无效值回退到首项，空列表没有选中项。列表项应提供唯一、稳定的值。
 
 基础版点击非活动项立即发出 `change(selection, item)`，其中 `selection` 包含映射后的 `value` 和 `text`。它不会自行改变选中值，父级应更新受控值。`indicator` 插槽可取得当前索引与项数，`item` 插槽可取得列表项、索引、激活状态及映射后的值和文本。
 
@@ -53,7 +53,7 @@ src/components/
 
 只有用户点击发起的视觉预选播放过渡；外部受控值同步、取消、失败和状态恢复直接就位，避免缓存页面再次显示时补播动画。
 
-`change` 是选择请求，最终选中仍由 `defaultValue` 决定；事件发出后父级没有更新受控值时，动画版会回到原选中项。
+`change` 是选择请求，最终选中仍由 `value` 决定；事件发出后父级没有更新受控值时，动画版会回到原选中项。
 
 动画版可以传入 `beforeChange(selection, item)`：
 

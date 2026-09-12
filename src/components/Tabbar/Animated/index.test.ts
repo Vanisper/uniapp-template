@@ -17,7 +17,7 @@ function mountTabbar(props: Partial<TabbarAnimatedProps<Item>> = {}) {
     props: {
       height: 50,
       list,
-      defaultValue: 'pages/index',
+      value: 'pages/index',
       valueField: 'pagePath',
       textField: 'text',
       ...props,
@@ -67,7 +67,7 @@ describe('animatedTabbar', () => {
     const wrapper = mountTabbar()
     expect(wrapper.find('.animated-tabbar__indicator').attributes('style')).toContain('transition-duration: 0ms')
 
-    await wrapper.setProps({ defaultValue: 'pages/about' })
+    await wrapper.setProps({ value: 'pages/about' })
 
     expect(wrapper.find('.animated-tabbar__indicator').attributes('style')).toContain('translateX(100%)')
     expect(wrapper.find('.animated-tabbar__indicator').attributes('style')).toContain('transition-duration: 0ms')
@@ -159,7 +159,7 @@ describe('animatedTabbar', () => {
     const wrapper = mountTabbar({ beforeChange: () => guard.promise })
     await wrapper.findAll('.tabbar__item')[1].trigger('click')
     await vi.advanceTimersByTimeAsync(260)
-    await wrapper.setProps({ defaultValue: 'pages/about' })
+    await wrapper.setProps({ value: 'pages/about' })
     expect(wrapper.find('.animated-tabbar__indicator').attributes('style')).toContain('transition-duration: 0ms')
     guard.resolve(true)
     await vi.advanceTimersByTimeAsync(0)
@@ -183,7 +183,7 @@ describe('animatedTabbar', () => {
     const beforeChange = vi.fn()
     const wrapper = mountTabbar({ beforeChange })
     await wrapper.findAll('.tabbar__item')[1].trigger('click')
-    await wrapper.setProps({ defaultValue: 'pages/settings' })
+    await wrapper.setProps({ value: 'pages/settings' })
     expect(wrapper.find('.animated-tabbar__indicator').attributes('style')).toContain('transition-duration: 0ms')
     await vi.advanceTimersByTimeAsync(260)
 
@@ -215,7 +215,7 @@ describe('animatedTabbar', () => {
     const wrapper = mountTabbar({ beforeChange })
     await wrapper.findAll('.tabbar__item')[1].trigger('click')
     await vi.advanceTimersByTimeAsync(260)
-    await wrapper.setProps({ defaultValue: 'pages/settings' })
+    await wrapper.setProps({ value: 'pages/settings' })
     await wrapper.findAll('.tabbar__item')[0].trigger('click')
     await vi.advanceTimersByTimeAsync(260)
     expect(beforeChange).toHaveBeenCalledTimes(1)
@@ -282,7 +282,7 @@ describe('animatedTabbar', () => {
     const beforeChange = vi.fn(() => true)
     const wrapper = mount(defineComponent({
       setup: () => () => h(KeepAlive, {}, () => shown.value
-        ? h(TabbarAnimated<Item>, { height: 50, list, defaultValue: 'pages/index', valueField: 'pagePath', beforeChange })
+        ? h(TabbarAnimated<Item>, { height: 50, list, value: 'pages/index', valueField: 'pagePath', beforeChange })
         : null),
     }))
     await wrapper.findAll('.tabbar__item')[1].trigger('click')

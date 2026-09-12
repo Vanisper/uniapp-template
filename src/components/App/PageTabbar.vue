@@ -72,7 +72,7 @@ onBeforeUnmount(() => {
   <TabbarAnimated
     v-if="THEME_CONFIG.tabbar.variant === 'animated'"
     ref="animatedTabbar"
-    :default-value="pageRoute"
+    :value="pageRoute"
     :list="list"
     value-field="pagePath"
     :height="height"
@@ -80,7 +80,7 @@ onBeforeUnmount(() => {
   />
   <Tabbar
     v-else
-    :default-value="pageRoute"
+    :value="pageRoute"
     :list="list"
     value-field="pagePath"
     :height="height"

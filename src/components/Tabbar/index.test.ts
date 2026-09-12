@@ -8,12 +8,12 @@ const list = [
   { text: '关于', pagePath: 'pages/about' },
 ]
 
-function mountTabbar(defaultValue?: string | number, items = list) {
+function mountTabbar(value?: string | number, items = list) {
   return mount(Tabbar, {
     props: {
       activeColor: '#0165ff',
       color: '#8c8c8c',
-      defaultValue,
+      value,
       height: 50,
       list: items,
       textField: 'text',
@@ -55,7 +55,7 @@ describe('tabbar', () => {
     ]])
     expect(wrapper.findAll('.tabbar__item')[0].classes()).toContain('tabbar__item--active')
 
-    await wrapper.setProps({ defaultValue: 'pages/about' })
+    await wrapper.setProps({ value: 'pages/about' })
     expect(wrapper.findAll('.tabbar__item')[1].classes()).toContain('tabbar__item--active')
   })
 
@@ -68,7 +68,7 @@ describe('tabbar', () => {
 
   it('插槽获得字段映射和选中态，替换内容后仍可点击', async () => {
     const wrapper = mount(Tabbar, {
-      props: { height: 50, list, defaultValue: 'pages/about', valueField: 'pagePath' },
+      props: { height: 50, list, value: 'pages/about', valueField: 'pagePath' },
       slots: {
         indicator: ({ index, count }) => h('text', { class: 'custom-indicator' }, `${index}/${count}`),
         item: ({ text, active }) => h('text', {}, `${text}${active ? ' 已选' : ''}`),
