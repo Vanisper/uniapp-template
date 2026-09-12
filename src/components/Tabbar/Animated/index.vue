@@ -1,6 +1,6 @@
 <script lang="ts" setup generic="I extends Record<string, any>">
 import type { TabbarSelection } from '../type'
-import type { TabbarAnimatedExpose, TabbarAnimatedProps } from './type'
+import type { TabbarAnimatedCancelOptions, TabbarAnimatedExpose, TabbarAnimatedProps } from './type'
 import { computed, nextTick, onActivated, onBeforeUnmount, onDeactivated, onMounted, shallowRef, watch } from 'vue'
 import Tabbar from '../index.vue'
 import { resolveTabbarIndex } from '../selection'
@@ -59,11 +59,13 @@ function syncVisualIndex() {
   visualIndex.value = currentIndex.value
 }
 
-function cancelPendingChange() {
+function cancelPendingChange({ restore = true }: TabbarAnimatedCancelOptions = {}) {
   version += 1
   clearChangeTimer()
   pending = undefined
-  syncVisualIndex()
+  if (restore) {
+    syncVisualIndex()
+  }
 }
 
 defineExpose<TabbarAnimatedExpose>({ cancel: cancelPendingChange })
@@ -145,8 +147,8 @@ watch(() => props.value, () => {
   cancelPendingChange()
 }, { flush: 'sync' })
 
-watch(() => props.list, cancelPendingChange, { deep: true, flush: 'sync' })
-watch(() => [props.valueField, props.textField, props.beforeChange], cancelPendingChange, { flush: 'sync' })
+watch(() => props.list, () => cancelPendingChange(), { deep: true, flush: 'sync' })
+watch(() => [props.valueField, props.textField, props.beforeChange], () => cancelPendingChange(), { flush: 'sync' })
 
 watch(reducedMotion, (reduce) => {
   if (reduce && pending && changeTimer !== undefined) {

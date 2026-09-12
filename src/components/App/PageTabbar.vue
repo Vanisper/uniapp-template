@@ -39,8 +39,11 @@ async function navigate({ value }: TabbarSelection) {
   const requestVersion = pageVersion
   try {
     const succeeded = await go(value, true)
-    if (!succeeded && requestVersion === pageVersion) {
-      uni.showToast({ title: '切换失败，请重试', icon: 'none' })
+    if (!succeeded) {
+      animatedTabbar.value?.cancel()
+      if (requestVersion === pageVersion) {
+        uni.showToast({ title: '切换失败，请重试', icon: 'none' })
+      }
     }
     return succeeded
   }
@@ -49,22 +52,43 @@ async function navigate({ value }: TabbarSelection) {
   }
 }
 
-function hideNativeTabbar() {
-  // #ifndef MP-WEIXIN
-  uni.hideTabBar()
-  // #endif
-}
-
-onMounted(hideNativeTabbar)
-onShow(hideNativeTabbar)
+onShow(() => {
+  animatedTabbar.value?.cancel()
+})
 onHide(() => {
   // H5 同 tab 导航可能只触发 onHide，页面可见性仍交给页面容器
   pageVersion += 1
-  animatedTabbar.value?.cancel()
+  // 导航交接期间旧页面仍可能可见，保留已到达的目标位置
+  animatedTabbar.value?.cancel({ restore: !navigating })
 })
 onBeforeUnmount(() => {
   pageVersion += 1
 })
+
+// #ifndef MP-WEIXIN
+function hideNativeTabbar() {
+  uni.hideTabBar()
+}
+
+onMounted(hideNativeTabbar)
+onShow(hideNativeTabbar)
+// #endif
+
+// #ifdef MP-WEIXIN
+if (THEME_CONFIG.tabbar.variant === 'animated'
+  && typeof wx !== 'undefined'
+  && wx.canIUse('onAppRouteDone')
+  && wx.canIUse('offAppRouteDone')) {
+  const restoreInactiveSelection: WechatMiniprogram.OnAppRouteDoneCallback = (event) => {
+    // 转场结束后准备隐藏页的缓存；迟到事件不能打断当前页的预选
+    if (event?.path === currentRoute.value && event.path !== pageRoute) {
+      animatedTabbar.value?.cancel()
+    }
+  }
+  onMounted(() => wx.onAppRouteDone(restoreInactiveSelection))
+  onBeforeUnmount(() => wx.offAppRouteDone(restoreInactiveSelection))
+}
+// #endif
 </script>
 
 <template>

@@ -1,8 +1,10 @@
 import type { TabbarAnimatedExpose, TabbarAnimatedProps } from './type'
 import { enableAutoUnmount, mount } from '@vue/test-utils'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, inject, it, vi } from 'vitest'
 import { defineComponent, h, KeepAlive, nextTick, reactive, shallowRef } from 'vue'
 import TabbarAnimated from './index.vue'
+
+const isH5 = inject('uniPlatform') === 'h5'
 
 const list = [
   { text: '首页', pagePath: 'pages/index' },
@@ -226,6 +228,25 @@ describe('animatedTabbar', () => {
     expect(wrapper.findAll('.tabbar__item')[2].classes()).toContain('tabbar__item--active')
   })
 
+  it.each([true, false])('保留视觉位置取消后，确认结果 %s 不再恢复旧选中项', async (accepted) => {
+    const guard = deferred()
+    const wrapper = mountTabbar({ beforeChange: () => guard.promise })
+    await wrapper.findAll('.tabbar__item')[1].trigger('click')
+    await vi.advanceTimersByTimeAsync(260)
+    ;(wrapper.vm as unknown as TabbarAnimatedExpose).cancel({ restore: false })
+    guard.resolve(accepted)
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(wrapper.emitted('change')).toBeUndefined()
+    expect(wrapper.find('.tabbar__item--active').text()).toBe('关于')
+    expect(wrapper.find('.animated-tabbar__indicator').attributes('style')).toContain('translateX(100%)')
+
+    ;(wrapper.vm as unknown as TabbarAnimatedExpose).cancel()
+    await nextTick()
+    expect(wrapper.find('.tabbar__item--active').text()).toBe('首页')
+    expect(wrapper.find('.animated-tabbar__indicator').attributes('style')).toContain('transition-duration: 0ms')
+  })
+
   it('替换列表会取消动画，即使字段值相同', async () => {
     const beforeChange = vi.fn()
     const wrapper = mountTabbar({ beforeChange })
@@ -251,7 +272,7 @@ describe('animatedTabbar', () => {
     expect(wrapper.findAll('.tabbar__item')[0].classes()).toContain('tabbar__item--active')
   })
 
-  it('卸载时取消尚未执行的切换并清理动态效果监听', async () => {
+  it('卸载时取消尚未执行的切换，并清理当前平台的动态效果监听', async () => {
     const { media } = mockMotion(false)
     const beforeChange = vi.fn()
     const wrapper = mountTabbar({ beforeChange })
@@ -260,7 +281,8 @@ describe('animatedTabbar', () => {
     await vi.advanceTimersByTimeAsync(260)
 
     expect(beforeChange).not.toHaveBeenCalled()
-    expect(media.removeEventListener).toHaveBeenCalledOnce()
+    expect(media.addEventListener).toHaveBeenCalledTimes(isH5 ? 1 : 0)
+    expect(media.removeEventListener).toHaveBeenCalledTimes(isH5 ? 1 : 0)
   })
 
   it('卸载后忽略已经发出的确认结果', async () => {
@@ -300,7 +322,7 @@ describe('animatedTabbar', () => {
     expect(beforeChange).toHaveBeenCalledTimes(1)
   })
 
-  it('减少动态效果时 CSS 与切换请求都不等待', async () => {
+  it.runIf(isH5)('减少动态效果时 CSS 与切换请求都不等待', async () => {
     mockMotion(true)
     const beforeChange = vi.fn(() => true)
     const wrapper = mountTabbar({ beforeChange })
@@ -311,7 +333,7 @@ describe('animatedTabbar', () => {
     expect(wrapper.find('.animated-tabbar__indicator').attributes('style')).toContain('transition-duration: 0ms')
   })
 
-  it('动画期间开启减少动态效果会立即完成等待', async () => {
+  it.runIf(isH5)('动画期间开启减少动态效果会立即完成等待', async () => {
     const { setReduced } = mockMotion(false)
     const beforeChange = vi.fn(() => true)
     const wrapper = mountTabbar({ beforeChange })

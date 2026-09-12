@@ -1,9 +1,15 @@
 import type { TabbarProps, TabbarSelection } from '../type'
 
+/** 取消选择时的视觉处理 */
+export interface TabbarAnimatedCancelOptions {
+  /** 是否恢复受控值，默认 true；false 保留当前视觉选中项 */
+  restore?: boolean
+}
+
 /** 动画标签栏的交互控制 */
 export interface TabbarAnimatedExpose {
-  /** 取消待提交选择并恢复受控值，已开始的回调副作用不会被撤销 */
-  cancel: () => void
+  /** 取消待提交选择，已开始的回调副作用不会被撤销 */
+  cancel: (options?: TabbarAnimatedCancelOptions) => void
 }
 
 /** 带切换动画的标签栏输入 */

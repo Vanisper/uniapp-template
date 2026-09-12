@@ -46,6 +46,8 @@ unh 的环境变量类型生成功能已关闭（`env.dts: false`）；构建配
 
 测试运行器位于 `tools/testing` 工作区，使用 Vitest 4.1.11 和 Vite 6.4.3；应用构建继续使用 DCloud 配套的 Vite 5.2.8。`pnpm test` 保持为统一入口，测试文件仍与被测代码放在一起。测试配置中的模块别名与 `tsconfig.test.json` 的路径映射共同保证它们加载同一套测试依赖。
 
+测试使用 DCloud 预处理器执行平台条件编译：H5 项目运行全部用例，微信项目补充运行 TabBar 及页面接入用例。可通过 `pnpm test --project h5` 或 `pnpm test --project mp-weixin` 单独验证；平台专有用例只在对应项目运行。
+
 业务配置未显式加载 Node 类型，但 uni-pages 的声明会间接引入部分 Node 全局；配置拆分不等于禁止传递依赖引入类型。业务代码仍应使用 uni-app 的平台 API。
 
 ## TabBar 与页面导航
