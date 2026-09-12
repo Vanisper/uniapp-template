@@ -1,6 +1,6 @@
 <!-- eslint-disable no-console -->
 <script setup lang="ts">
-import Demo from '@/pages-lib/components/Demo.vue'
+import Demo from '@/packages/lib/components/Demo.vue'
 
 defineOptions({
   componentPlaceholder: {
@@ -53,7 +53,7 @@ async function callItem(getRef: RefReadyGetter<DemoCompExposed>, msg = '') {
 
 function goDemo() {
   uni.navigateTo({
-    url: '/pages-demo/index',
+    url: '/packages/demo/pages/index',
   })
 }
 </script>

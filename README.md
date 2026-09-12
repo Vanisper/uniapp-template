@@ -50,6 +50,31 @@ unh 的环境变量类型生成功能已关闭（`env.dts: false`）；构建配
 
 业务配置未显式加载 Node 类型，但 uni-pages 的声明会间接引入部分 Node 全局；配置拆分不等于禁止传递依赖引入类型。业务代码仍应使用 uni-app 的平台 API。
 
+## 分包目录
+
+主包页面放在 `src/pages`，分包按 `src/packages/<包名>/pages` 组织：
+
+```text
+src/
+├── pages/
+└── packages/
+    ├── demo/
+    │   ├── pages/
+    │   │   ├── index.vue
+    │   │   └── hi.vue
+    │   └── components/
+    └── lib/
+        ├── pages/
+        │   └── index.vue
+        └── components/
+```
+
+开发与构建启动时自动发现 `src/packages` 下非隐藏的直属目录，只扫描各包的 `pages`。例如 `demo/pages/index.vue` 会生成分包根 `packages/demo` 和页面路径 `pages/index`，完整跳转路径为 `/packages/demo/pages/index`。没有页面的包不会写入分包配置。
+
+分包扫描配置集中在 [plugins/vite/pages.ts](plugins/vite/pages.ts)。创建其他插件前，先通过 uni-pages 生成完整的 `pages.json`，同时更新路由类型；后续页面变化由同一份配置下的 UniPages 插件处理。
+
+包内组件、composables 等资源使用显式导入；公共组件与公共逻辑继续使用现有自动导入规则。新增、删除或重命名整个分包后，需要重启开发命令以重新发现目录；已有分包内的页面增删继续由页面插件监听。
+
 ## TabBar 与页面导航
 
 自定义 TabBar 提供基础版和动画版。配置方式、组件层级与页面接入约定见 [TabBar 与页面导航](docs/tabbar.md)。

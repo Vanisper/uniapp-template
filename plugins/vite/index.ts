@@ -6,7 +6,7 @@ import Components from '@uni-helper/vite-plugin-uni-components'
 import { ZPagingResolver } from '@uni-helper/vite-plugin-uni-components/resolvers'
 import UniLayouts from '@uni-helper/vite-plugin-uni-layouts'
 import UniManifest from '@uni-helper/vite-plugin-uni-manifest'
-import UniPages from '@uni-helper/vite-plugin-uni-pages'
+import UniPages, { generateAll } from '@uni-helper/vite-plugin-uni-pages'
 import UniPlatform from '@uni-helper/vite-plugin-uni-platform'
 import Optimization from '@uni-ku/bundle-optimizer'
 import UniRoot from '@uni-ku/root'
@@ -14,8 +14,13 @@ import { UniEchartsResolver } from 'uni-echarts/resolver'
 import { UniEcharts } from 'uni-echarts/vite'
 import UnoCSS from 'unocss/vite'
 import AutoImport from 'unplugin-auto-import/vite'
+import { getPagesOptions } from './pages'
 
 export default async function createPlugins(mode: string, isBuild = false) {
+  const pagesOptions = getPagesOptions()
+  // 根组件与分包优化插件在创建时读取 pages.json
+  await generateAll(pagesOptions)
+
   const Plugins: (PluginOption | PluginOption[])[] = [
     // https://uni-helper.js.org/vite-plugin-uni-components
     Components({
@@ -26,14 +31,7 @@ export default async function createPlugins(mode: string, isBuild = false) {
       resolvers: [UniEchartsResolver(), ZPagingResolver()],
     }),
     // https://github.com/uni-helper/vite-plugin-uni-pages
-    UniPages({
-      dts: 'src/typings/uni-pages.d.ts',
-      exclude: ['_*.*', '**/components/**/*.*', '**/_components/**/*.*'],
-      subPackages: [
-        'src/pages-demo',
-        'src/pages-lib',
-      ],
-    }),
+    UniPages(pagesOptions),
     // https://github.com/uni-helper/vite-plugin-uni-layouts
     UniLayouts(),
     // https://github.com/uni-helper/vite-plugin-uni-manifest

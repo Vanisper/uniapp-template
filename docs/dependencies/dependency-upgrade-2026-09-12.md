@@ -139,7 +139,7 @@ uni-pages 0.4 移除了 `<route>` 自定义块与旧 Volar 服务；0.5 转为 E
 
 路由扫描从 fast-glob 转向 tinyglobby，0.5 还引入生成标记、平台条件合并和过期分包清理。回归范围包含 H5 与微信构建后的首页、tabBar、分包 root 和重复页面，具体结果见文末。已有 `_*.*` 排除模式也不应被理解为任意层级的下划线文件规则；新增这类页面时需按实际扫描范围处理。
 
-保留 unh 的页面预生成。DCloud 在 Vite 的 `config` 阶段读取并缓存 `pages.json`，而路由插件在较晚的 `configResolved` 阶段生成文件；已有 `UniPages()` 不代表可以移除 `autoGenerate.pages`。[uni-pages 生成时序说明](https://github.com/uni-helper/vite-plugin-uni-pages/blob/v0.5.0/packages/core/README.md)
+unh 0.3.2 的 `autoGenerate.pages` 只在文件缺失时创建占位配置。项目在创建 Vite 插件前调用 uni-pages 的 `generateAll()`，再将同一份扫描配置交给 `UniPages()`：根组件与分包优化插件在创建时即可读取完整路由，后续页面变化由路由插件监听处理。
 
 ### CLI hook、配置加载与自动导入
 

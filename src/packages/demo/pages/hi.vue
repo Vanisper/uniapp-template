@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import AppFooter from './components/AppFooter.vue'
-import HiCounter from './components/HiCounter.vue'
+import AppFooter from '../components/AppFooter.vue'
+import HiCounter from '../components/HiCounter.vue'
 
 definePage({
   layout: 'demo',
