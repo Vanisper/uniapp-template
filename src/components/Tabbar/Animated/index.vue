@@ -28,7 +28,8 @@ const emit = defineEmits<{
 const animationDuration = 260
 const reducedMotion = shallowRef(false)
 const duration = computed(() => reducedMotion.value ? 0 : animationDuration)
-const motionStyle = computed(() => ({ transitionDuration: `${duration.value}ms` }))
+const animateSelection = shallowRef(false)
+const motionStyle = computed(() => ({ transitionDuration: `${animateSelection.value ? duration.value : 0}ms` }))
 const currentIndex = computed(() => resolveTabbarIndex(props))
 const visualIndex = shallowRef(currentIndex.value)
 
@@ -52,11 +53,17 @@ function clearChangeTimer() {
   }
 }
 
+function syncVisualIndex() {
+  // 受控同步与恢复直接就位，只有点击预选启用过渡
+  animateSelection.value = false
+  visualIndex.value = currentIndex.value
+}
+
 function cancelPendingChange() {
   version += 1
   clearChangeTimer()
   pending = undefined
-  visualIndex.value = currentIndex.value
+  syncVisualIndex()
 }
 
 defineExpose<TabbarAnimatedExpose>({ cancel: cancelPendingChange })
@@ -85,7 +92,7 @@ async function confirmChange(request: PendingChange) {
     emit('change', request.selection, request.item)
     await nextTick()
     if (isCurrentRequest(request)) {
-      visualIndex.value = currentIndex.value
+      syncVisualIndex()
     }
   }
   catch {
@@ -110,6 +117,7 @@ function handleChange(selection: TabbarSelection, item: I) {
   }
 
   cancelPendingChange()
+  animateSelection.value = true
   visualIndex.value = index
   if (index === currentIndex.value) {
     return
@@ -131,7 +139,7 @@ function handleChange(selection: TabbarSelection, item: I) {
 watch(() => props.defaultValue, () => {
   // 回调引起的受控值确认仍可发出成功事件；其他外部更新使请求失效
   if (confirming && pending?.index === currentIndex.value) {
-    visualIndex.value = currentIndex.value
+    syncVisualIndex()
     return
   }
   cancelPendingChange()

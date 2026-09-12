@@ -1,4 +1,4 @@
-import type { TabbarAnimatedProps } from './type'
+import type { TabbarAnimatedExpose, TabbarAnimatedProps } from './type'
 import { enableAutoUnmount, mount } from '@vue/test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { defineComponent, h, KeepAlive, nextTick, reactive, shallowRef } from 'vue'
@@ -63,12 +63,28 @@ afterEach(() => {
 })
 
 describe('animatedTabbar', () => {
+  it('初始选中和外部受控更新直接就位，不播放点击动画', async () => {
+    const wrapper = mountTabbar()
+    expect(wrapper.find('.animated-tabbar__indicator').attributes('style')).toContain('transition-duration: 0ms')
+
+    await wrapper.setProps({ defaultValue: 'pages/about' })
+
+    expect(wrapper.find('.animated-tabbar__indicator').attributes('style')).toContain('translateX(100%)')
+    expect(wrapper.find('.animated-tabbar__indicator').attributes('style')).toContain('transition-duration: 0ms')
+    for (const label of wrapper.findAll('.animated-tabbar__label')) {
+      expect(label.attributes('style')).toContain('transition-duration: 0ms')
+    }
+    expect(wrapper.emitted('change')).toBeUndefined()
+  })
+
   it('先显示目标动画，260ms 后才确认并发出 change', async () => {
     const beforeChange = vi.fn(() => true)
     const wrapper = mountTabbar({ beforeChange })
     await wrapper.findAll('.tabbar__item')[1].trigger('click')
 
     expect(wrapper.find('.animated-tabbar__indicator').attributes('style')).toContain('translateX(100%)')
+    expect(wrapper.find('.animated-tabbar__indicator').attributes('style')).toContain('transition-duration: 260ms')
+    expect(wrapper.find('.animated-tabbar__label').attributes('style')).toContain('transition-duration: 260ms')
     expect(beforeChange).not.toHaveBeenCalled()
     expect(wrapper.emitted('change')).toBeUndefined()
 
@@ -89,6 +105,7 @@ describe('animatedTabbar', () => {
     await items[2].trigger('click')
     await items[2].trigger('click')
     expect(wrapper.find('.animated-tabbar__indicator').attributes('style')).toContain('translateX(200%)')
+    expect(wrapper.find('.animated-tabbar__indicator').attributes('style')).toContain('transition-duration: 260ms')
     await vi.advanceTimersByTimeAsync(260)
 
     expect(beforeChange).toHaveBeenCalledExactlyOnceWith({ text: '设置', value: 'pages/settings' }, list[2])
@@ -100,6 +117,7 @@ describe('animatedTabbar', () => {
     const items = wrapper.findAll('.tabbar__item')
     await items[1].trigger('click')
     await items[0].trigger('click')
+    expect(wrapper.find('.animated-tabbar__indicator').attributes('style')).toContain('transition-duration: 260ms')
     await vi.advanceTimersByTimeAsync(260)
 
     expect(beforeChange).not.toHaveBeenCalled()
@@ -115,6 +133,7 @@ describe('animatedTabbar', () => {
 
     expect(wrapper.emitted('change')).toBeUndefined()
     expect(wrapper.findAll('.tabbar__item')[0].classes()).toContain('tabbar__item--active')
+    expect(wrapper.find('.animated-tabbar__indicator').attributes('style')).toContain('transition-duration: 0ms')
   })
 
   it('等待确认时忽略重复及其他目标点击', async () => {
@@ -141,6 +160,7 @@ describe('animatedTabbar', () => {
     await wrapper.findAll('.tabbar__item')[1].trigger('click')
     await vi.advanceTimersByTimeAsync(260)
     await wrapper.setProps({ defaultValue: 'pages/about' })
+    expect(wrapper.find('.animated-tabbar__indicator').attributes('style')).toContain('transition-duration: 0ms')
     guard.resolve(true)
     await vi.advanceTimersByTimeAsync(0)
 
@@ -156,6 +176,7 @@ describe('animatedTabbar', () => {
     expect(wrapper.emitted('change')).toHaveLength(1)
     expect(wrapper.findAll('.tabbar__item')[0].classes()).toContain('tabbar__item--active')
     expect(wrapper.find('.animated-tabbar__indicator').attributes('style')).toContain('translateX(0%)')
+    expect(wrapper.find('.animated-tabbar__indicator').attributes('style')).toContain('transition-duration: 0ms')
   })
 
   it('外部选中值更新会取消尚未执行的切换', async () => {
@@ -163,10 +184,29 @@ describe('animatedTabbar', () => {
     const wrapper = mountTabbar({ beforeChange })
     await wrapper.findAll('.tabbar__item')[1].trigger('click')
     await wrapper.setProps({ defaultValue: 'pages/settings' })
+    expect(wrapper.find('.animated-tabbar__indicator').attributes('style')).toContain('transition-duration: 0ms')
     await vi.advanceTimersByTimeAsync(260)
 
     expect(beforeChange).not.toHaveBeenCalled()
     expect(wrapper.findAll('.tabbar__item')[2].classes()).toContain('tabbar__item--active')
+  })
+
+  it('显式取消直接恢复当前项，后续点击仍播放动画', async () => {
+    const beforeChange = vi.fn()
+    const wrapper = mountTabbar({ beforeChange })
+    await wrapper.findAll('.tabbar__item')[1].trigger('click')
+    ;(wrapper.vm as unknown as TabbarAnimatedExpose).cancel()
+    await nextTick()
+
+    expect(wrapper.find('.animated-tabbar__indicator').attributes('style')).toContain('translateX(0%)')
+    expect(wrapper.find('.animated-tabbar__indicator').attributes('style')).toContain('transition-duration: 0ms')
+    await vi.advanceTimersByTimeAsync(260)
+    expect(beforeChange).not.toHaveBeenCalled()
+
+    await wrapper.findAll('.tabbar__item')[2].trigger('click')
+    expect(wrapper.find('.animated-tabbar__indicator').attributes('style')).toContain('transition-duration: 260ms')
+    await vi.advanceTimersByTimeAsync(260)
+    expect(beforeChange).toHaveBeenCalledExactlyOnceWith({ text: '设置', value: 'pages/settings' }, list[2])
   })
 
   it.each([true, false])('过期确认结果 %s 不覆盖外部选中态', async (accepted) => {
@@ -253,6 +293,8 @@ describe('animatedTabbar', () => {
 
     shown.value = true
     await nextTick()
+    expect(wrapper.find('.animated-tabbar__indicator').attributes('style')).toContain('translateX(0%)')
+    expect(wrapper.find('.animated-tabbar__indicator').attributes('style')).toContain('transition-duration: 0ms')
     await wrapper.findAll('.tabbar__item')[1].trigger('click')
     await vi.advanceTimersByTimeAsync(260)
     expect(beforeChange).toHaveBeenCalledTimes(1)

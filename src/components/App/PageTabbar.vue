@@ -5,6 +5,7 @@ import { onHide, onShow } from '@dcloudio/uni-app'
 import { onBeforeUnmount, onMounted, shallowRef } from 'vue'
 import TabbarAnimated from '@/components/Tabbar/Animated/index.vue'
 import Tabbar from '@/components/Tabbar/index.vue'
+import { usePageRoute } from '@/composables/usePageRoute'
 import { usePages } from '@/composables/usePages'
 import { THEME_CONFIG } from '@/configs/theme'
 
@@ -23,6 +24,7 @@ withDefaults(defineProps<{
 })
 
 const { pagesJson, currentRoute, go } = usePages()
+const pageRoute = usePageRoute()
 const list = pagesJson.tabBar?.list
 const animatedTabbar = shallowRef<TabbarAnimatedExpose>()
 let navigating = false
@@ -70,7 +72,7 @@ onBeforeUnmount(() => {
   <TabbarAnimated
     v-if="THEME_CONFIG.tabbar.variant === 'animated'"
     ref="animatedTabbar"
-    :default-value="currentRoute"
+    :default-value="pageRoute"
     :list="list"
     value-field="pagePath"
     :height="height"
@@ -78,7 +80,7 @@ onBeforeUnmount(() => {
   />
   <Tabbar
     v-else
-    :default-value="currentRoute"
+    :default-value="pageRoute"
     :list="list"
     value-field="pagePath"
     :height="height"

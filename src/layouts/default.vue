@@ -4,6 +4,7 @@ import NavbarCapsule from '@/components/Navbar/capsule.vue'
 import Navbar from '@/components/Navbar/index.vue'
 import StatusBar from '@/components/StatusBar/index.vue'
 import { useLayout } from '@/composables/useLayout'
+import { usePageRoute } from '@/composables/usePageRoute'
 
 defineOptions({
   options: {
@@ -16,22 +17,22 @@ defineOptions({
 const {
   goBack,
   goHome,
-  currentRoute,
   isTabBarPage,
   getNavigationBarTitleText,
 } = usePages()
 const { hasNavbar, hasTabbar, navbarHeight, tabbarHeight, statusBarHeight } = useLayout()
+const pageRoute = usePageRoute() ?? ''
 
 const { navigationBarColor } = useTheme()
 
-const navbarTitle = computed(() => getNavigationBarTitleText(currentRoute.value))
+const navbarTitle = computed(() => getNavigationBarTitleText(pageRoute))
 </script>
 
 <template>
   <StatusBar v-if="hasNavbar" :height="statusBarHeight" :bg-color="navigationBarColor.backgroundColor" />
   <Navbar
     v-if="hasNavbar"
-    :left-arrow="!isTabBarPage(currentRoute)"
+    :left-arrow="!isTabBarPage(pageRoute)"
     :title="navbarTitle"
     :height="navbarHeight"
     :top="statusBarHeight"

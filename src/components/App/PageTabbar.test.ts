@@ -5,6 +5,7 @@ import AppPageTabbar from './PageTabbar.vue'
 
 const mocks = vi.hoisted(() => ({
   usePages: vi.fn(),
+  usePageRoute: vi.fn(),
   go: vi.fn(),
   show: [] as (() => void)[],
   hide: [] as (() => void)[],
@@ -16,6 +17,7 @@ vi.mock('@dcloudio/uni-app', () => ({
   onHide: (callback: () => void) => mocks.hide.push(callback),
 }))
 vi.mock('@/composables/usePages', () => ({ usePages: mocks.usePages }))
+vi.mock('@/composables/usePageRoute', () => ({ usePageRoute: mocks.usePageRoute }))
 vi.mock('@/configs/theme', () => ({ THEME_CONFIG: mocks.config }))
 
 const list = [
@@ -29,6 +31,7 @@ const showToast = vi.fn()
 beforeEach(() => {
   vi.useFakeTimers()
   currentRoute = shallowRef('pages/index')
+  mocks.usePageRoute.mockImplementation(() => currentRoute.value)
   mocks.config.tabbar.variant = 'basic'
   mocks.show.length = 0
   mocks.hide.length = 0
@@ -53,6 +56,34 @@ afterEach(() => {
 })
 
 describe('页面 TabBar 接入', () => {
+  it.each(['basic', 'animated'] as const)('%s 缓存页保留所属页面的选中项，重新显示前不被其他 tab 污染', async (variant) => {
+    mocks.config.tabbar.variant = variant
+    wrapper = mount(AppPageTabbar)
+    const homeHide = [...mocks.hide]
+    mocks.go.mockImplementation(async (route: string) => {
+      homeHide.forEach(callback => callback())
+      currentRoute.value = route
+      return true
+    })
+
+    await wrapper.findAll('.tabbar__item')[1].trigger('click')
+    await vi.advanceTimersByTimeAsync(260)
+
+    const about = mount(AppPageTabbar)
+    try {
+      expect(about.find('.tabbar__item--active').text()).toBe('关于')
+      expect(wrapper.find('.tabbar__item--active').text()).toBe('首页')
+
+      currentRoute.value = 'pages/index'
+      await nextTick()
+      expect(wrapper.find('.tabbar__item--active').text()).toBe('首页')
+      expect(about.find('.tabbar__item--active').text()).toBe('关于')
+    }
+    finally {
+      about.unmount()
+    }
+  })
+
   it.each(['basic', 'animated'] as const)('%s 同页导航只触发 onHide 时仍保留底栏，并可继续切换', async (variant) => {
     mocks.config.tabbar.variant = variant
     wrapper = mount(AppPageTabbar)
@@ -78,13 +109,14 @@ describe('页面 TabBar 接入', () => {
     expect(showToast).toHaveBeenCalledWith({ title: '切换失败，请重试', icon: 'none' })
   })
 
-  it('基础版立即导航，活动项仍由真实路由驱动', async () => {
+  it('基础版立即导航，所属页仍保留自己的选中项', async () => {
     wrapper = mount(AppPageTabbar)
 
     await wrapper.findAll('.tabbar__item')[1].trigger('click')
 
     expect(mocks.go).toHaveBeenCalledExactlyOnceWith('pages/about', true)
-    expect(wrapper.find('.tabbar__item--active').text()).toBe('关于')
+    expect(currentRoute.value).toBe('pages/about')
+    expect(wrapper.find('.tabbar__item--active').text()).toBe('首页')
   })
 
   it('动画版在过渡结束后导航一次，不重复消费 change 事件', async () => {
@@ -96,7 +128,8 @@ describe('页面 TabBar 接入', () => {
     await vi.advanceTimersByTimeAsync(260)
 
     expect(mocks.go).toHaveBeenCalledExactlyOnceWith('pages/about', true)
-    expect(wrapper.find('.tabbar__item--active').text()).toBe('关于')
+    expect(currentRoute.value).toBe('pages/about')
+    expect(wrapper.find('.tabbar__item--active').text()).toBe('首页')
   })
 
   it('导航失败时动画版回到真实选中项，并允许重试', async () => {
@@ -130,7 +163,7 @@ describe('页面 TabBar 接入', () => {
     currentRoute.value = 'pages/about'
     mocks.show.forEach(callback => callback())
     await nextTick()
-    expect(wrapper.find('.tabbar__item--active').text()).toBe('关于')
+    expect(wrapper.find('.tabbar__item--active').text()).toBe('首页')
   })
 
   it('页面隐藏会使进行中导航的失败提示失效', async () => {

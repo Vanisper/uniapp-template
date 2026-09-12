@@ -1,6 +1,6 @@
 # TabBar 与页面导航
 
-自定义 TabBar 分为基础组件、动画组件和页面接入层。页面状态来自真实页面栈，动画中的预选项只保存在动画组件内部。
+自定义 TabBar 分为基础组件、动画组件和页面接入层。活动路由来自真实页面栈，各页面按自身路由渲染，动画中的预选项只保存在动画组件内部。
 
 ## 选择样式
 
@@ -36,7 +36,8 @@ src/components/
 | 通用扩展 | `TabbarAnimated` | 组合 `Tabbar`，管理胶囊与文字过渡、视觉预选、延迟请求和取消 |
 | 应用接入 | `AppPageTabbar` | 从页面配置取得列表、选择底栏样式、绑定真实路由、执行导航并反馈失败，隐藏原生栏，处理缓存页隐藏 |
 | 页面能力 | `usePages` | 页面查询、真实页面栈同步和导航结果 |
-| 布局能力 | `useLayout` | 根据页面配置计算导航栏与 TabBar 的显隐、尺寸 |
+| 页面上下文 | `usePageRoute` | 从组件所属页面取得固定路由，缓存页与异步子组件不受活动路由影响 |
+| 布局能力 | `useLayout` | 根据所属页面配置计算导航栏与 TabBar 的显隐、尺寸 |
 
 布局统一使用 `AppPageTabbar`，由它选择 `Tabbar` 或 `TabbarAnimated`；动画版再通过基础组件的属性、事件与插槽完成组合。依赖从应用接入层指向通用组件，动画扩展指向基础组件。
 
@@ -49,6 +50,8 @@ src/components/
 基础版点击非活动项立即发出 `change(selection, item)`，其中 `selection` 包含映射后的 `value` 和 `text`。它不会自行改变选中值，父级应更新受控值。`indicator` 插槽可取得当前索引与项数，`item` 插槽可取得列表项、索引、激活状态及映射后的值和文本。
 
 动画版先预览目标，经过 260ms 过渡后提交选择。该等待属于动画版的交互策略。H5 系统设置为减少动态效果时，视觉过渡和提交等待都关闭。
+
+只有用户点击发起的视觉预选播放过渡；外部受控值同步、取消、失败和状态恢复直接就位，避免缓存页面再次显示时补播动画。
 
 `change` 是选择请求，最终选中仍由 `defaultValue` 决定；事件发出后父级没有更新受控值时，动画版会回到原选中项。
 
@@ -68,7 +71,15 @@ src/components/
 
 页面可见性由页面容器负责，`AppPageTabbar` 不通过 `onHide/onShow` 另行控制组件显隐。H5 对当前 tab 再次执行 `switchTab` 时可能只触发 `onHide`，不能依赖随后一定出现 `onShow` 来恢复底栏。
 
-导航失败由 `AppPageTabbar` 提示并允许重试。基础版始终展示受控值；动画版回到真实选中项，不把失败目标写入全局路由。
+导航失败由 `AppPageTabbar` 提示并允许重试。基础版始终展示所属页面的选中项；动画版失败后回到该选中项，不把失败目标写入全局路由。
+
+## 小程序缓存页面
+
+`currentRoute` 表示当前活动页面，不能作为所有缓存页面的展示状态。`usePageRoute()` 在 setup 中沿 Vue 父级找到所属页面并读取固定路由，没有页面上下文时返回 `undefined`。底栏选中项、导航栏标题和布局显隐都使用所属页面路由；活动路由只用于导航判断。异步子组件也按父级页面归属取值，不读取挂载时的全局栈顶。
+
+这样后台首页不会跟着关于页改选中项，也不会在进入普通页面时卸载自己的底栏。重新显示缓存页时，底栏已经处于该页的正确状态。
+
+当前底栏仍是页面内的 view，页面切换会交接不同渲染实例。修复缓存状态与重复动画不能等同于提供跨页持久渲染层。DCloud 对普通 view 自定义底栏的持续显示建议采用单页方式，微信官方 custom-tab-bar 也为每个 tab 页创建不同实例。若要求跨页始终连续绘制，需要另行评估单页内容容器，或 Skyline 的 app-bar；后者涉及渲染引擎与兼容范围。[DCloud 自定义 tabBar](https://uniapp.dcloud.net.cn/collocation/pages.html#custom-tab-bar)、[微信自定义 tabBar](https://developers.weixin.qq.com/miniprogram/dev/framework/ability/custom-tabbar.html)、[Skyline 全局工具栏](https://developers.weixin.qq.com/miniprogram/dev/framework/runtime/skyline/appbar.html)
 
 ## 页面状态同步
 

@@ -101,6 +101,7 @@ declare global {
   const useMixedOnShow: typeof import('../composables/usePageShowSignal').useMixedOnShow
   const useModel: typeof import('vue').useModel
   const useOnPageShow: typeof import('../composables/usePageShowSignal').useOnPageShow
+  const usePageRoute: typeof import('../composables/usePageRoute').usePageRoute
   const usePageShowProvider: typeof import('../composables/usePageShowSignal').usePageShowProvider
   const usePageShowSignal: typeof import('../composables/usePageShowSignal').usePageShowSignal
   const usePageShowSignalEffect: typeof import('../composables/usePageShowSignal').usePageShowSignalEffect
@@ -230,6 +231,7 @@ declare module 'vue' {
     readonly useMixedOnShow: UnwrapRef<typeof import('../composables/usePageShowSignal')['useMixedOnShow']>
     readonly useModel: UnwrapRef<typeof import('vue')['useModel']>
     readonly useOnPageShow: UnwrapRef<typeof import('../composables/usePageShowSignal')['useOnPageShow']>
+    readonly usePageRoute: UnwrapRef<typeof import('../composables/usePageRoute')['usePageRoute']>
     readonly usePageShowProvider: UnwrapRef<typeof import('../composables/usePageShowSignal')['usePageShowProvider']>
     readonly usePageShowSignal: UnwrapRef<typeof import('../composables/usePageShowSignal')['usePageShowSignal']>
     readonly usePageShowSignalEffect: UnwrapRef<typeof import('../composables/usePageShowSignal')['usePageShowSignalEffect']>

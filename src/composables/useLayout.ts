@@ -1,4 +1,5 @@
 import { THEME_CONFIG } from '@/configs/theme'
+import { usePageRoute } from './usePageRoute'
 
 /**
  * 获取默认 navbar 高度
@@ -15,7 +16,8 @@ function getNavbarHeight(statusBarHeight: number) {
 }
 
 export function useLayout() {
-  const { currentRoute, isCustomNavigationStyle, isTabBarPage } = usePages()
+  const { isCustomNavigationStyle, isTabBarPage } = usePages()
+  const pageRoute = usePageRoute() ?? ''
   const { safeBottom, statusBarHeight } = useWindowInfo()
 
   /**
@@ -29,8 +31,7 @@ export function useLayout() {
    * @description 自定义 navbar
    */
   const hasNavbar = computed(() => {
-    const route = currentRoute.value
-    return !!route && isCustomNavigationStyle(route)
+    return !!pageRoute && isCustomNavigationStyle(pageRoute)
   })
 
   /**
@@ -38,7 +39,7 @@ export function useLayout() {
    * @description 自定义 tabbar
    */
   const hasTabbar = computed(() =>
-    customTabbar && isTabBarPage(currentRoute.value),
+    customTabbar && isTabBarPage(pageRoute),
   )
 
   /** navbar 高度 */
