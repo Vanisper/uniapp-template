@@ -1,96 +1,70 @@
 # TabBar 与页面导航
 
-自定义 TabBar 分为基础组件、动画组件和页面接入层。活动路由来自真实页面栈，各页面按自身路由渲染，动画中的预选项只保存在动画组件内部。
+自定义 TabBar 由基础组件、动画扩展和页面接入层组成。页面展示使用所属页面的固定路由，导航判断使用真实活动路由，视觉预选保存在动画组件内部。
 
-## 选择样式
+## 配置与接入
 
-在 `src/configs/theme.ts` 中通过 `tabbar.mode` 选择原生或自定义 TabBar；`tabbar.variant` 支持 `basic`（基础版）和 `animated`（动画版），仅对自定义 TabBar 生效。
+在 `src/configs/theme.ts` 中通过 `tabbar.mode` 选择原生或自定义 TabBar。自定义模式下，`tabbar.variant` 支持 `basic`（基础版）和 `animated`（动画版）。
 
-两个页面布局共用 `AppPageTabbar`，切换样式无需修改布局。
+`default` 与 `tabbar` 布局统一使用 `AppPageTabbar`，由它选择具体样式；`TabbarAnimated` 通过组合 `Tabbar` 实现动画。
 
-## 目录与职责
+## 模块职责
 
-`Tabbar/` 归集通用标签栏及其扩展，`App/` 放置应用接入组件。动画版有独立的实现、类型和测试，集中在 `Tabbar/Animated/` 中。
-
-```text
-src/components/
-├── Tabbar/
-│   ├── index.vue          # 基础入口：Tabbar
-│   ├── type.ts            # 基础属性、事件与插槽契约
-│   ├── selection.ts       # 选中项解析
-│   ├── index.test.ts
-│   └── Animated/
-│       ├── index.vue      # 动画扩展：TabbarAnimated
-│       ├── type.ts        # 动画属性与取消接口
-│       └── index.test.ts
-└── App/
-    ├── PageTabbar.vue      # 应用接入：AppPageTabbar
-    └── PageTabbar.test.ts
-```
-
-项目使用目录命名空间生成组件名，显式导入也沿用 `Tabbar`、`TabbarAnimated`、`AppPageTabbar`，让模板中的名称与目录归属一致。
-
-| 层级 | 模块 | 职责 |
+| 模块 | 位置 | 职责 |
 | --- | --- | --- |
-| 通用基础 | `Tabbar` | 等分排列、字段映射、受控选中、选择事件，提供指示器和标签内容插槽 |
-| 通用扩展 | `TabbarAnimated` | 组合 `Tabbar`，管理胶囊与文字过渡、视觉预选、延迟请求和取消 |
-| 应用接入 | `AppPageTabbar` | 从页面配置取得列表、选择底栏样式、绑定真实路由、执行导航并反馈失败，隐藏原生栏，处理缓存页隐藏 |
-| 页面能力 | `usePages` | 页面查询、真实页面栈同步和导航结果 |
-| 页面上下文 | `usePageRoute` | 从组件所属页面取得固定路由，缓存页与异步子组件不受活动路由影响 |
-| 布局能力 | `useLayout` | 根据所属页面配置计算导航栏与 TabBar 的显隐、尺寸 |
+| `Tabbar` | `src/components/Tabbar/` | 等分排列、字段映射、受控选择，以及装饰和内容插槽 |
+| `TabbarAnimated` | `src/components/Tabbar/Animated/` | 胶囊与文字过渡、视觉预选、延迟确认和取消 |
+| `AppPageTabbar` | `src/components/App/PageTabbar.vue` | 读取配置、绑定所属页路由、执行导航、反馈失败及处理页面隐藏 |
+| `usePages` | `src/composables/usePages/` | 查询页面配置、真实页面栈与活动路由，执行导航 |
+| `usePageRoute` | `src/composables/usePageRoute/` | 获取组件所属页面的固定路由 |
+| `useLayout` | `src/composables/useLayout/` | 按所属页面配置计算导航栏、底栏和内容区域尺寸 |
 
-布局统一使用 `AppPageTabbar`，由它选择 `Tabbar` 或 `TabbarAnimated`；动画版再通过基础组件的属性、事件与插槽完成组合。依赖从应用接入层指向通用组件，动画扩展指向基础组件。
+组件名与目录命名空间一致，类型和测试放在对应模块内。依赖从页面接入层指向通用组件、从动画扩展指向基础组件；通用组件的输入通过属性、事件和插槽传递。
 
-基础组件与动画组件均不依赖 `uni`、应用主题、页面配置或路由模块。基础类型只描述基础契约，动画类型在 `Animated/type.ts` 中继承基础属性并增加切换确认与取消接口。`usePages`、`useLayout` 不保存动画索引，也不读取动画时长。
+## 受控选择
 
-## 组件契约
+两种组件共用 `list`、`value`、`valueField`、`textField`、`height`、`color` 和 `activeColor`。
 
-两种组件共有 `list`、`value`、`valueField`、`textField`、`height`、`color`、`activeColor`。`value` 是受控选中值：字符串按 `valueField` 匹配，数字表示索引；无效值回退到首项，空列表没有选中项。列表项应提供唯一、稳定的值。
+- `value` 为字符串时，按 `valueField` 匹配；为整数时，作为列表索引
+- 未传或无效的 `value` 选中首项；空列表的选中索引为 `-1`
+- `valueField`、`textField` 默认分别为 `value`、`text`，列表项的值应唯一且稳定
+- `height` 单位为 px，安全区由页面布局处理
 
-基础版点击非活动项立即发出 `change(selection, item)`，其中 `selection` 包含映射后的 `value` 和 `text`。它不会自行改变选中值，父级应更新受控值。`indicator` 插槽可取得当前索引与项数，`item` 插槽可取得列表项、索引、激活状态及映射后的值和文本。
+基础版点击非活动项立即发出 `change(selection, item)`。`selection` 包含映射后的 `value` 和 `text`，`item` 是原始列表项；最终选中由父级更新 `value` 确认。
 
-动画版先预览目标，经过 260ms 过渡后提交选择。该等待属于动画版的交互策略。H5 系统设置为减少动态效果时，视觉过渡和提交等待都关闭。
+基础组件提供两个插槽：
 
-只有用户点击发起的视觉预选播放过渡；外部受控值同步、取消、失败和状态恢复直接就位，避免缓存页面再次显示时补播动画。
+- `indicator`：底栏装饰，取得当前索引 `index` 和标签数量 `count`
+- `item`：标签内容，取得原始项、索引、活动状态及映射后的值和文字
 
-`change` 是选择请求，最终选中仍由 `value` 决定；事件发出后父级没有更新受控值时，动画版会回到原选中项。
+## 动画交互
 
-动画版可以传入 `beforeChange(selection, item)`：
+动画版按以下顺序处理选择：
 
-- 返回 `false` 或 Promise 拒绝时，取消选择并恢复受控值
-- 返回其他值或 Promise 成功时，发出 `change` 事件
-- 异步处理期间不提交新请求，避免重复操作
+1. 用户点击非活动项，预览目标并播放 260ms 胶囊与文字过渡
+2. 过渡结束后执行可选的 `beforeChange(selection, item)`，等待返回结果
+3. 确认通过后发出 `change`，随后同步到父级提供的受控值
 
-`AppPageTabbar` 将导航作为动画版的 `beforeChange`。导航已经在该回调中执行，不能再通过动画版的 `change` 重复导航。
+`beforeChange` 返回 `false`、抛出异常或 Promise 拒绝时取消选择；返回 `true`、`undefined` 或对应的 Promise 结果时确认选择。等待确认期间忽略新的点击请求。
 
-## 取消与失败
+动画等待期间，连续选择以最后一次为准，点回实际当前项取消选择。确认期间 `value` 同步为本次目标时保留请求，其余 `value` 更新以及列表、字段映射或确认回调变化会使请求失效。组件停用、卸载及调用 `cancel()` 也会取消请求并恢复受控值。已经开始的回调操作由调用方负责，动画组件只忽略其过期结果。
 
-动画等待期间，点回实际当前项会取消请求，连续选择以最后一次为准。外部选中值、列表或字段映射变化会使过期选择失效；卸载同样取消尚未提交的请求。
+只有用户发起的视觉预选播放过渡。初始化、受控同步、取消和恢复直接就位；H5 开启减少动态效果时，同时关闭过渡与提交等待。
 
-异步回调已经发出的操作不能由动画组件撤销。组件会忽略过期结果，防止其覆盖后续受控状态。动画组件提供 `cancel()` 方法，取消待提交选择并恢复受控值。`AppPageTabbar` 在页面隐藏时调用该方法，并使旧导航的失败提示失效。
+## 页面接入
 
-页面可见性由页面容器负责，`AppPageTabbar` 不通过 `onHide/onShow` 另行控制组件显隐。H5 对当前 tab 再次执行 `switchTab` 时可能只触发 `onHide`，不能依赖随后一定出现 `onShow` 来恢复底栏。
+`AppPageTabbar` 使用 `pages.json` 中的 `tabBar.list`，以 `pagePath` 映射标签值，并通过 `usePageRoute()` 绑定所属页面。
 
-导航失败由 `AppPageTabbar` 提示并允许重试。基础版始终展示所属页面的选中项；动画版失败后回到该选中项，不把失败目标写入全局路由。
+基础版在 `change` 中导航；动画版将导航交给 `beforeChange`，每次选择只执行一次导航。导航进行中忽略重复请求，失败时提示重试；页面隐藏或卸载后，进行中请求的失败提示失效。页面隐藏同时调用动画组件的 `cancel()`。
 
-## 小程序缓存页面
+页面容器负责底栏的展示与生命周期。H5 同 tab 导航可能只触发 `onHide`，因此该钩子只用于交互清理，底栏显示由所属页面的布局配置决定。微信通过页面配置启用自定义底栏，其他平台在组件挂载和页面显示时调用 `hideTabBar()`。
 
-`currentRoute` 表示当前活动页面，不能作为所有缓存页面的展示状态。`usePageRoute()` 在 setup 中沿 Vue 父级找到所属页面并读取固定路由，没有页面上下文时返回 `undefined`。底栏选中项、导航栏标题和布局显隐都使用所属页面路由；活动路由只用于导航判断。异步子组件也按父级页面归属取值，不读取挂载时的全局栈顶。
+## 页面归属与状态同步
 
-这样后台首页不会跟着关于页改选中项，也不会在进入普通页面时卸载自己的底栏。重新显示缓存页时，底栏已经处于该页的正确状态。
+`usePageRoute()` 在 setup 中沿 Vue 父级读取所属页面的固定路由，没有页面上下文时返回 `undefined`。底栏选中项、导航栏标题和布局尺寸使用该路由，缓存页面和异步子组件都保持各自的页面状态。
 
-当前底栏仍是页面内的 view，页面切换会交接不同渲染实例。修复缓存状态与重复动画不能等同于提供跨页持久渲染层。DCloud 对普通 view 自定义底栏的持续显示建议采用单页方式，微信官方 custom-tab-bar 也为每个 tab 页创建不同实例。若要求跨页始终连续绘制，需要另行评估单页内容容器，或 Skyline 的 app-bar；后者涉及渲染引擎与兼容范围。[DCloud 自定义 tabBar](https://uniapp.dcloud.net.cn/collocation/pages.html#custom-tab-bar)、[微信自定义 tabBar](https://developers.weixin.qq.com/miniprogram/dev/framework/ability/custom-tabbar.html)、[Skyline 全局工具栏](https://developers.weixin.qq.com/miniprogram/dev/framework/runtime/skyline/appbar.html)
+`usePages().currentRoute` 表示真实页面栈的活动路由。`main.ts` 在应用创建时调用 `setupPages(app)`，通过页面显示、就绪生命周期及导航 API 完成拦截器刷新页面栈。两类入口分别覆盖原生 tab 点击、系统返回和程序导航等场景。
 
-## 页面状态同步
+`go()`、`goHome()`、`goBack()` 返回 `Promise<boolean>`，表示导航 API 的成功或失败；页面显示状态由实际页面栈反映。导航目标使用应用根路径，有无前导 `/` 均可，普通页面可以携带查询参数。
 
-`main.ts` 在应用创建时调用 `setupPages(app)`，集中注册页面显示、就绪生命周期及导航 API 完成拦截器。布局不再调用 `syncPageStack()`。
-
-保留两类同步入口是因为它们覆盖不同场景：API 拦截器处理程序导航，页面生命周期处理原生 tab 点击、返回及页面再次显示。微信原生 tab 点击不一定调用 `uni.switchTab`，详见 [uni-app 拦截器文档](https://uniapp.dcloud.net.cn/api/interceptor)。
-
-`currentRoute` 始终派生自真实页面栈，不使用待完成目标覆盖。`go()`、`goHome()`、`goBack()` 返回 `Promise<boolean>`，表示对应导航 API 的成功或失败；实际页面变化由页面栈同步反映。导航目标使用应用根路径，有无前导 `/` 均可。
-
-## 与旧动画案例的关系
-
-`ad94557` 的设计记录保存在 `docs/superpowers`，用于说明当时实现。当前实现保留页面栈刷新的通用修复，将动画从基础组件分离，移除了共享目标路由对当前页面的覆盖。
-
-若需要点击立即导航、同时保留跨页连续动画，应另外验证持久 TabBar 容器在各端的承载方式。当前动画版采用组件内部先过渡、后提交的方式，不依赖跨页保留实例。
+当前自定义底栏是所属页面内的 `view`，随页面渲染实例切换，不提供跨页持久渲染层。小程序各页面实例的交接仍需在目标设备上验证。[DCloud 自定义 tabBar](https://uniapp.dcloud.net.cn/collocation/pages.html#custom-tab-bar)、[微信自定义 tabBar](https://developers.weixin.qq.com/miniprogram/dev/framework/ability/custom-tabbar.html)

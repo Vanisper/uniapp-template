@@ -43,7 +43,7 @@ export interface TabbarItemSlotProps<I extends Record<string, any>> extends Tabb
 
 /** 标签栏的装饰与内容插槽 */
 export interface TabbarSlots<I extends Record<string, any>> {
-  /** 指示器所在容器与标签等宽排列，空列表时 index 为 -1 */
+  /** 底栏装饰插槽，提供选中索引与标签数量；空列表时 index 为 -1 */
   indicator?: (props: { index: number, count: number }) => any
   /** 替换标签文字，点击与选中状态仍由标签栏处理 */
   item?: (props: TabbarItemSlotProps<I>) => any

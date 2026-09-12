@@ -28,8 +28,7 @@ const pageRoute = usePageRoute()
 const list = pagesJson.tabBar?.list
 const animatedTabbar = shallowRef<TabbarAnimatedExpose>()
 let navigating = false
-let disposed = false
-let visibilityVersion = 0
+let pageVersion = 0
 
 async function navigate({ value }: TabbarSelection) {
   if (navigating || typeof value !== 'string' || value === currentRoute.value) {
@@ -37,10 +36,10 @@ async function navigate({ value }: TabbarSelection) {
   }
 
   navigating = true
-  const requestVersion = visibilityVersion
+  const requestVersion = pageVersion
   try {
     const succeeded = await go(value, true)
-    if (!succeeded && !disposed && requestVersion === visibilityVersion) {
+    if (!succeeded && requestVersion === pageVersion) {
       uni.showToast({ title: '切换失败，请重试', icon: 'none' })
     }
     return succeeded
@@ -60,11 +59,11 @@ onMounted(hideNativeTabbar)
 onShow(hideNativeTabbar)
 onHide(() => {
   // H5 同 tab 导航可能只触发 onHide，页面可见性仍交给页面容器
-  visibilityVersion += 1
+  pageVersion += 1
   animatedTabbar.value?.cancel()
 })
 onBeforeUnmount(() => {
-  disposed = true
+  pageVersion += 1
 })
 </script>
 

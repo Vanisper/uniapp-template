@@ -21,7 +21,7 @@ const props = withDefaults(defineProps<TabbarAnimatedProps<I>>(), {
 })
 
 const emit = defineEmits<{
-  /** 动画与切换确认完成后发出；beforeChange 已负责导航时，此事件仅用于观察 */
+  /** 动画与切换确认通过后发出，由调用方更新受控值 */
   change: [selection: TabbarSelection, item: I]
 }>()
 

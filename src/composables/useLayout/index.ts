@@ -1,10 +1,7 @@
 import { THEME_CONFIG } from '@/configs/theme'
 import { usePageRoute } from '../usePageRoute'
 
-/**
- * 获取默认 navbar 高度
- */
-function getNavbarHeight(statusBarHeight: number) {
+function getNativeNavbarHeight(statusBarHeight: number) {
   try {
     const rectRes = uni.getMenuButtonBoundingClientRect()
     const padding = rectRes.top - statusBarHeight
@@ -15,56 +12,40 @@ function getNavbarHeight(statusBarHeight: number) {
   }
 }
 
+/**
+ * 获取所属页面的导航栏、底栏与内容区域尺寸
+ *
+ * @description 高度单位均为 px
+ */
 export function useLayout() {
   const { isCustomNavigationStyle, isTabBarPage } = usePages()
   const pageRoute = usePageRoute() ?? ''
   const { safeBottom, statusBarHeight } = useWindowInfo()
 
-  /**
-   * 是否自定义 tabbar
-   */
   const customTabbar = THEME_CONFIG.tabbar.mode === 'custom'
-  const defaultNavbarHeight = computed(() => getNavbarHeight(statusBarHeight.value))
+  const nativeNavbarHeight = computed(() => getNativeNavbarHeight(statusBarHeight.value))
 
-  /**
-   * 是否显示 navbar
-   * @description 自定义 navbar
-   */
-  const hasNavbar = computed(() => {
-    return !!pageRoute && isCustomNavigationStyle(pageRoute)
-  })
-
-  /**
-   * 是否显示 tabbar
-   * @description 自定义 tabbar
-   */
+  /** 是否显示自定义导航栏 */
+  const hasNavbar = computed(() => !!pageRoute && isCustomNavigationStyle(pageRoute))
+  /** 是否显示自定义底栏 */
   const hasTabbar = computed(() =>
     customTabbar && isTabBarPage(pageRoute),
   )
 
-  /** navbar 高度 */
   const navbarHeight = computed(() =>
-    hasNavbar.value ? THEME_CONFIG.navbar.height : defaultNavbarHeight.value,
+    hasNavbar.value ? THEME_CONFIG.navbar.height : nativeNavbarHeight.value,
   )
 
-  /** tabbar 高度 */
   const tabbarHeight = computed(() =>
     hasTabbar.value ? THEME_CONFIG.tabbar.height : 0,
   )
 
-  /**
-   * 页面理论高度
-   * - `pageHeight = safeBottom - statusBarHeight - navbarHeight - tabbarHeight`
-   * @description
-   */
+  /** 安全区域内扣除状态栏、导航栏与底栏后的内容高度 */
   const pageHeight = computed(() =>
     safeBottom.value - statusBarHeight.value - navbarHeight.value - tabbarHeight.value,
   )
 
-  /**
-   * 页面容器样式
-   * @description 用于 PageWrapper 等组件
-   */
+  /** 页面容器使用的尺寸变量 */
   const pageWrapperStyle = computed(() => ({
     '--status-bar-height': `${statusBarHeight.value}px`,
     '--navbar-height': `${navbarHeight.value}px`,

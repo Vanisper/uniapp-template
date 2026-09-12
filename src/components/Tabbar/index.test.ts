@@ -26,11 +26,11 @@ enableAutoUnmount(afterEach)
 afterEach(() => vi.useRealTimers())
 
 describe('tabbar', () => {
-  it('根据字符串值选择标签，默认不渲染动画指示器', () => {
+  it('根据字符串值选择对应的唯一活动项', () => {
     const wrapper = mountTabbar('pages/about')
 
     expect(wrapper.findAll('.tabbar__item')[1].classes()).toContain('tabbar__item--active')
-    expect(wrapper.find('.animated-tabbar__indicator').exists()).toBe(false)
+    expect(wrapper.findAll('.tabbar__item--active')).toHaveLength(1)
   })
 
   it.each([
