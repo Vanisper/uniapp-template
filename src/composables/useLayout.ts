@@ -70,18 +70,6 @@ export function useLayout() {
     '--tabbar-height': `${tabbarHeight.value}px`,
   }))
 
-  /**
-   * 隐藏原生 tabbar
-   * @description 非微信小程序端
-   */
-  function hideNativeTabbar() {
-    // #ifndef MP-WEIXIN
-    if (hasTabbar.value) {
-      uni.hideTabBar()
-    }
-    // #endif
-  }
-
   return {
     customTabbar,
     statusBarHeight,
@@ -91,7 +79,6 @@ export function useLayout() {
     tabbarHeight,
     pageHeight,
     pageWrapperStyle,
-    hideNativeTabbar,
   }
 }
 

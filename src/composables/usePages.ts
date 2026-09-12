@@ -1,7 +1,6 @@
 import type { GlobalStyle, InternalPageItem, UserPagesConfig } from '@uni-helper/vite-plugin-uni-pages'
 import { computed, shallowRef } from 'vue'
 import pagesData from '@/pages.json'
-// import { pages, subPackages } from 'virtual:uni-pages'
 
 export type NavigateToOptions = UniApp.NavigateToOptions & globalThis.NavigateToOptions
 export type PagePath = NavigateToOptions['url']
@@ -13,8 +12,34 @@ export type ActualKeys<T> = keyof {
 const pagesJson = pagesData as unknown as UserPagesConfig
 const { pages, subPackages, tabBar, globalStyle } = pagesJson
 const pageStackVersion = shallowRef(0)
-const activeTabbarPath = shallowRef<string>()
 
+/** 使所有页面状态在下次读取时重新获取真实页面栈 */
+export function syncPageStack() {
+  pageStackVersion.value += 1
+}
+
+interface NavigationCallbacks {
+  success: () => void
+  fail: () => void
+}
+
+function navigate(invoke: (callbacks: NavigationCallbacks) => void): Promise<boolean> {
+  return new Promise((resolve) => {
+    function finish(success: boolean) {
+      syncPageStack()
+      resolve(success)
+    }
+
+    try {
+      invoke({ success: () => finish(true), fail: () => finish(false) })
+    }
+    catch {
+      finish(false)
+    }
+  })
+}
+
+/** 查询真实页面状态和页面配置，并执行导航 */
 export function usePages() {
   /** 全局标题栏配置 */
   const globalNavigationStyle = globalStyle?.navigationStyle ?? 'default'
@@ -80,92 +105,62 @@ export function usePages() {
     return [..._getCurrentPages()]
   })
 
-  /** 重新读取当前页面栈 */
-  function syncPageStack() {
-    pageStackVersion.value += 1
-  }
-
+  /** 获取栈顶页面及其配置，空栈时返回 undefined */
   function getCurrentPage() {
-    const pages = currentPages.value // 获取页面堆栈
-    const currentPage = pages[pages.length - 1] // 获取当前页面的对象
-    const route = currentPage.route! // 获取当前页面的路由
+    const pages = currentPages.value
+    const currentPage = pages[pages.length - 1]
+    if (!currentPage) {
+      return undefined
+    }
 
-    return Object.assign(currentPage, getPageOptions(route))
+    return Object.assign(currentPage, getPageOptions(currentPage.route ?? ''))
   }
 
+  /** 真实栈顶页面，空栈时为 undefined */
   const currentPage = computed(() => getCurrentPage())
-  const currentTabbarPath = computed(() => activeTabbarPath.value ?? currentPage.value.route ?? '')
-  const currentRoute = computed(() => {
-    const route = currentPage.value.route ?? ''
-    return isTabBarPage(route) ? currentTabbarPath.value : route
-  })
+  /** 真实栈顶路由，空栈时为空字符串 */
+  const currentRoute = computed(() => currentPage.value?.route ?? '')
 
-  function go(pagePath: string, switchTab = false) {
-    if (switchTab === true) {
-      const previousTabbarPath = activeTabbarPath.value
-      activeTabbarPath.value = pagePath.replace(/^\/+/, '')
-
-      uni.switchTab({
-        url: pagePath,
-        fail(error) {
-          if (pagePath.startsWith('/')) {
-            activeTabbarPath.value = previousTabbarPath
-            // todo: try navigateTo
-            throw error
-          }
-          uni.switchTab({
-            url: `/${pagePath}`,
-            fail(retryError) {
-              activeTabbarPath.value = previousTabbarPath
-              throw retryError
-            },
-          })
-        },
-      })
-    }
-    else {
-      uni.navigateTo({
-        url: pagePath,
-        fail(error) {
-          if (pagePath.startsWith('/')) {
-            // todo: try switchTab
-            throw error
-          }
-          uni.navigateTo({ url: `/${pagePath}` })
-        },
-      })
-    }
+  /**
+   * 前往指定页面
+   *
+   * @param pagePath 应用根路径，可省略开头的 /，普通页面可携带查询参数
+   * @param switchTab 是否使用 switchTab 切换底栏页面
+   * @returns 导航 API 报告成功时返回 true，失败返回 false；不表示页面已显示完成
+   */
+  function go(pagePath: string, switchTab = false): Promise<boolean> {
+    const url = `/${pagePath.replace(/^\/+/, '')}`
+    return navigate(callbacks => switchTab
+      ? uni.switchTab({ url, ...callbacks })
+      : uni.navigateTo({ url, ...callbacks }))
   }
 
-  /** 前往首页 */
-  function goHome() {
+  /**
+   * 前往配置中标记为 home 的页面
+   *
+   * @returns 导航 API 报告成功时返回 true，首页未配置或导航失败返回 false；不表示页面已显示完成
+   */
+  function goHome(): Promise<boolean> {
     const homePath = pages?.find(i => i.type === 'home')?.path
     if (!homePath) {
-      return console.warn('找不到首页')
+      return Promise.resolve(false)
     }
-    go(homePath, true)
+    return go(homePath, isTabBarPage(homePath))
   }
 
   /**
    * 返回上一页
    *
-   * @param [home] 在页面栈只有一个的情况下，前往首页兜底
+   * @param home 页面栈不足两页或返回失败时，是否前往首页兜底
+   * @returns 返回或首页兜底的 API 报告成功时返回 true，否则返回 false；不表示页面已显示完成
    */
-  function goBack(home = false) {
-    if (typeof home !== 'boolean') {
-      home = false
-    }
-    if (home && currentPages.value.length <= 1) {
-      console.warn('[usePages]', '页面栈不大于1，goHome 兜底')
+  async function goBack(home = false): Promise<boolean> {
+    syncPageStack()
+    if (home === true && currentPages.value.length <= 1) {
       return goHome()
     }
-    uni.navigateBack({}).catch(() => {
-      if (!home) {
-        return
-      }
-      console.warn('[usePages]', 'navigateBack 错误，goHome 兜底')
-      goHome()
-    })
+    const success = await navigate(callbacks => uni.navigateBack(callbacks))
+    return !success && home === true ? goHome() : success
   }
 
   return {
@@ -173,7 +168,6 @@ export function usePages() {
     currentPage,
     currentPages,
     currentRoute,
-    currentTabbarPath,
     syncPageStack,
     isTabBarPage,
     isCustomNavigationStyle,

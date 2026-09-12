@@ -11,10 +11,12 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    AppPageTabbar: typeof import('./../components/App/PageTabbar.vue')['default']
     AppPageWrapper: typeof import('./../components/App/PageWrapper.vue')['default']
     Navbar: typeof import('./../components/Navbar/index.vue')['default']
     NavbarCapsule: typeof import('./../components/Navbar/capsule.vue')['default']
     StatusBar: typeof import('./../components/StatusBar/index.vue')['default']
     Tabbar: typeof import('./../components/Tabbar/index.vue')['default']
+    TabbarAnimated: typeof import('./../components/Tabbar/Animated/index.vue')['default']
   }
 }

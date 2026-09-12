@@ -24,6 +24,8 @@ interface IThemeConfig<T extends Record<string, any> = Record<string, any>> {
   tabbar: {
     /** tabbar 模式，默认值为 default */
     mode: 'default' | 'custom'
+    /** 自定义 TabBar 样式 */
+    variant: 'basic' | 'animated'
     /**
      * tabbar 高度 - 单位 `px`
      * @default 50
@@ -62,6 +64,7 @@ export function createThemeConfig(): IThemeConfig {
     },
     tabbar: {
       mode: 'custom',
+      variant: 'animated',
       height: 50,
     },
     navbar: {

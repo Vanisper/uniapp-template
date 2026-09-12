@@ -48,6 +48,10 @@ unh 的环境变量类型生成功能已关闭（`env.dts: false`）；构建配
 
 业务配置未显式加载 Node 类型，但 uni-pages 的声明会间接引入部分 Node 全局；配置拆分不等于禁止传递依赖引入类型。业务代码仍应使用 uni-app 的平台 API。
 
+## TabBar 与页面导航
+
+自定义 TabBar 当前使用动画版，可在 `src/configs/theme.ts` 中将 `tabbar.variant` 改为 `basic` 使用基础版。通用基础与动画扩展归入 `components/Tabbar/`，布局通过 `AppPageTabbar` 接入页面导航。目录层级、组件契约、取消规则与页面同步机制见 [TabBar 与页面导航](docs/tabbar.md)。
+
 ## TODO
 
 ### Basic

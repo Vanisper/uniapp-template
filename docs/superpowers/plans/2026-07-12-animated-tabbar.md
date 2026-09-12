@@ -1,5 +1,7 @@
 # Animated TabBar Implementation Plan
 
+> 本文是历史实施记录。当前组件拆分和页面状态契约见 [TabBar 与页面导航](../../tabbar.md)。
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** 在现有自定义 TabBar 中增加全端可用的滑动胶囊指示器、文字上浮动画和可验证的切换行为

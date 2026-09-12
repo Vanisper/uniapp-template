@@ -1,5 +1,6 @@
-import { mount } from '@vue/test-utils'
-import { describe, expect, it, vi } from 'vitest'
+import { enableAutoUnmount, mount } from '@vue/test-utils'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { h } from 'vue'
 import Tabbar from './index.vue'
 
 const list = [
@@ -21,119 +22,67 @@ function mountTabbar(defaultValue?: string | number, items = list) {
   })
 }
 
+enableAutoUnmount(afterEach)
+afterEach(() => vi.useRealTimers())
+
 describe('tabbar', () => {
-  it('根据字符串值移动指示器并激活对应标签', () => {
+  it('根据字符串值选择标签，默认不渲染动画指示器', () => {
     const wrapper = mountTabbar('pages/about')
 
-    expect(wrapper.find('.tabbar__indicator').attributes('style')).toContain('translateX(100%)')
+    expect(wrapper.findAll('.tabbar__item')[1].classes()).toContain('tabbar__item--active')
+    expect(wrapper.find('.animated-tabbar__indicator').exists()).toBe(false)
+  })
+
+  it.each([
+    [1, 1],
+    ['pages/missing', 0],
+    [-1, 0],
+    [0.5, 0],
+    [Number.NaN, 0],
+  ])('选中值 %s 对应索引 %s', (value, index) => {
+    const wrapper = mountTabbar(value)
+    expect(wrapper.findAll('.tabbar__item')[Number(index)].classes()).toContain('tabbar__item--active')
+  })
+
+  it('点击立即发出映射后的 change，选中态等待父级更新', async () => {
+    vi.useFakeTimers()
+    const wrapper = mountTabbar('pages/index')
+    await wrapper.findAll('.tabbar__item')[1].trigger('click')
+
+    expect(wrapper.emitted('change')).toEqual([[
+      { text: '关于', value: 'pages/about' },
+      list[1],
+    ]])
+    expect(wrapper.findAll('.tabbar__item')[0].classes()).toContain('tabbar__item--active')
+
+    await wrapper.setProps({ defaultValue: 'pages/about' })
     expect(wrapper.findAll('.tabbar__item')[1].classes()).toContain('tabbar__item--active')
   })
 
-  it('支持数字索引并在无效值时回退到首项', () => {
-    const selected = mountTabbar(1)
-    const fallback = mountTabbar('pages/missing')
-
-    expect(selected.findAll('.tabbar__item')[1].classes()).toContain('tabbar__item--active')
-    expect(fallback.findAll('.tabbar__item')[0].classes()).toContain('tabbar__item--active')
-  })
-
-  it('先移动指示器再发出一次结构正确的 change 事件', async () => {
-    vi.useFakeTimers()
-
-    try {
-      const wrapper = mountTabbar('pages/index')
-      await wrapper.findAll('.tabbar__item')[1].trigger('click')
-
-      expect(wrapper.find('.tabbar__indicator').attributes('style')).toContain('translateX(100%)')
-      expect(wrapper.emitted('change')).toBeUndefined()
-
-      vi.advanceTimersByTime(260)
-
-      expect(wrapper.emitted('change')).toEqual([[
-        { text: '关于', value: 'pages/about' },
-        list[1],
-      ]])
-    }
-    finally {
-      vi.useRealTimers()
-    }
-  })
-
-  it('点击活动项不重复发出 change 事件', async () => {
+  it('点击当前项不重复请求切换', async () => {
     const wrapper = mountTabbar('pages/index')
     await wrapper.findAll('.tabbar__item')[0].trigger('click')
 
     expect(wrapper.emitted('change')).toBeUndefined()
   })
 
-  it('动画期间点回当前项会取消待执行的 change 事件', async () => {
-    vi.useFakeTimers()
+  it('插槽获得字段映射和选中态，替换内容后仍可点击', async () => {
+    const wrapper = mount(Tabbar, {
+      props: { height: 50, list, defaultValue: 'pages/about', valueField: 'pagePath' },
+      slots: {
+        indicator: ({ index, count }) => h('text', { class: 'custom-indicator' }, `${index}/${count}`),
+        item: ({ text, active }) => h('text', {}, `${text}${active ? ' 已选' : ''}`),
+      },
+    })
 
-    try {
-      const wrapper = mountTabbar('pages/index')
-      const items = wrapper.findAll('.tabbar__item')
-
-      await items[1].trigger('click')
-      await items[0].trigger('click')
-      vi.advanceTimersByTime(260)
-
-      expect(wrapper.find('.tabbar__indicator').attributes('style')).toContain('translateX(0%)')
-      expect(wrapper.emitted('change')).toBeUndefined()
-    }
-    finally {
-      vi.useRealTimers()
-    }
+    expect(wrapper.find('.custom-indicator').text()).toBe('1/2')
+    expect(wrapper.findAll('.tabbar__item')[1].text()).toBe('关于 已选')
+    await wrapper.findAll('.tabbar__item')[0].trigger('click')
+    expect(wrapper.emitted('change')?.[0]).toEqual([{ value: 'pages/index', text: '首页' }, list[0]])
   })
 
-  it('连续点击同一目标只发出一次 change 事件', async () => {
-    vi.useFakeTimers()
-
-    try {
-      const wrapper = mountTabbar('pages/index')
-      const target = wrapper.findAll('.tabbar__item')[1]
-
-      for (let index = 0; index < 10; index += 1) {
-        await target.trigger('click')
-      }
-      vi.advanceTimersByTime(260)
-
-      expect(wrapper.emitted('change')).toEqual([[
-        { text: '关于', value: 'pages/about' },
-        list[1],
-      ]])
-    }
-    finally {
-      vi.useRealTimers()
-    }
-  })
-
-  it('快速交替点击只导航到最后一个目标', async () => {
-    vi.useFakeTimers()
-
-    try {
-      const wrapper = mountTabbar('pages/index')
-      const items = wrapper.findAll('.tabbar__item')
-
-      for (let index = 0; index < 9; index += 1) {
-        await items[index % 2 === 0 ? 1 : 0].trigger('click')
-      }
-      vi.advanceTimersByTime(260)
-
-      expect(wrapper.find('.tabbar__indicator').attributes('style')).toContain('translateX(100%)')
-      expect(wrapper.emitted('change')).toEqual([[
-        { text: '关于', value: 'pages/about' },
-        list[1],
-      ]])
-    }
-    finally {
-      vi.useRealTimers()
-    }
-  })
-
-  it('空列表不渲染活动指示器', () => {
+  it('空列表不渲染标签', () => {
     const wrapper = mountTabbar(undefined, [])
-
-    expect(wrapper.find('.tabbar__indicator').exists()).toBe(false)
     expect(wrapper.findAll('.tabbar__item')).toHaveLength(0)
   })
 })
