@@ -47,7 +47,7 @@ const navbarTitle = computed(() => getNavigationBarTitleText(pageRoute))
       />
     </template>
   </Navbar>
-  <view class="flex-1 overflow-auto">
+  <view class="min-h-0 flex-1 overflow-auto">
     <slot />
   </view>
   <AppPageTabbar v-if="hasTabbar" :height="tabbarHeight" />

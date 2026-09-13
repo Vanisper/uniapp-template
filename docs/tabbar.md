@@ -15,11 +15,20 @@
 | `Tabbar` | `src/components/Tabbar/` | 等分排列、字段映射、受控选择，以及装饰和内容插槽 |
 | `TabbarAnimated` | `src/components/Tabbar/Animated/` | 胶囊与文字过渡、视觉预选、延迟确认和取消 |
 | `AppPageTabbar` | `src/components/App/PageTabbar.vue` | 读取配置、绑定所属页路由、执行导航、反馈失败及适配页面生命周期 |
+| `PageWrapper` | `src/components/App/PageWrapper.vue` | 确定页面可用高度，统一处理窗口偏移与安全区 |
 | `usePages` | `src/composables/usePages/` | 查询页面配置、真实页面栈与活动路由，执行导航 |
 | `usePageRoute` | `src/composables/usePageRoute/` | 获取组件所属页面的固定路由 |
 | `useLayout` | `src/composables/useLayout/` | 按所属页面配置计算导航栏、底栏和内容区域尺寸 |
 
 组件名与目录命名空间一致，类型和测试放在对应模块内。依赖从页面接入层指向通用组件、从动画扩展指向基础组件；通用组件的输入通过属性、事件和插槽传递。
+
+## 页面布局
+
+`PageWrapper` 使用所属页面的 CSS 视口确定高度。自定义导航页在容器内部放置状态栏和导航栏占位，顶部安全区由这部分内容处理；使用默认导航时，顶部空间由平台或框架提供。
+
+微信小程序只从视口高度中预留底部安全区。H5 使用框架的窗口偏移变量，它们已经包含安全区；自定义导航页的顶部偏移设为零，默认导航页保留框架的顶部偏移。H5 优先使用 `100dvh` 跟随可见视口变化，不支持时回退到 `100vh`。
+
+默认布局的内容区使用 `flex: 1`、`min-height: 0` 和内部滚动。导航栏与 Tabbar 的占位保持各自配置的高度，Tabbar 相对页面容器底部定位，长内容滚动时位置不变。
 
 ## 受控选择
 
