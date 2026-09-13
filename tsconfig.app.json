@@ -18,6 +18,7 @@
       "miniprogram-api-typings",
       "@uni-helper/vite-plugin-uni-pages/client",
       "uni-echarts/global",
+      "@wot-ui/ui/global",
       "z-paging/types",
       "@uni-helper/uni-types",
       "@uni-ku/bundle-optimizer/client"
