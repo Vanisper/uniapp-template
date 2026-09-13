@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import AppPageTabbar from '@/components/App/PageTabbar.vue'
+import { useLayout } from '@/composables/useLayout'
 
 defineOptions({
   options: {
@@ -8,9 +9,10 @@ defineOptions({
     styleIsolation: 'shared',
   },
 })
+const { hasTabbar, tabbarHeight } = useLayout()
 </script>
 
 <template>
   <slot />
-  <AppPageTabbar />
+  <AppPageTabbar v-if="hasTabbar" :height="tabbarHeight" />
 </template>

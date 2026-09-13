@@ -30,7 +30,7 @@ const { hasNavbar, hasNativeTabbar, pageWrapperStyle } = useLayout()
 
     height: calc(var(--page-viewport-height) - var(--page-top) - var(--page-bottom));
     box-sizing: border-box;
-    background: #f9f9f9;
+    background: var(--app-bg, #f5f6f3);
 
     position: relative;
     display: flex;

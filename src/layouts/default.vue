@@ -32,22 +32,20 @@ const navbarTitle = computed(() => getNavigationBarTitleText(pageRoute))
   <StatusBar v-if="hasNavbar" :height="statusBarHeight" :bg-color="navigationBarColor.backgroundColor" />
   <Navbar
     v-if="hasNavbar"
-    :left-arrow="!isTabBarPage(pageRoute)"
     :title="navbarTitle"
     :height="navbarHeight"
     :top="statusBarHeight"
     :bg-color="navigationBarColor.backgroundColor"
     :text-color="navigationBarColor.frontColor"
-    @click-left="goBack(true)"
   >
-    <template #left>
+    <template v-if="!isTabBarPage(pageRoute)" #left>
       <NavbarCapsule
         @click-back="goBack(true)"
         @click-home="goHome()"
       />
     </template>
   </Navbar>
-  <view class="min-h-0 flex-1 overflow-auto">
+  <view class="min-h-0 flex flex-1 flex-col overflow-auto">
     <slot />
   </view>
   <AppPageTabbar v-if="hasTabbar" :height="tabbarHeight" />
