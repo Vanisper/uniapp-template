@@ -13,6 +13,9 @@ const { go } = usePages()
 const opening = shallowRef(false)
 const entries = [
   { path: '/packages/demo/pages/wot', icon: 'i-carbon-color-palette', title: 'Wot UI 组件', description: '表单校验、按钮反馈与确认弹窗', label: 'WOT UI' },
+  { path: '/packages/demo/pages/paging-basic', icon: 'i-carbon-list', title: '基础分页', description: '下拉刷新、加载更多与没有更多', label: 'Z-PAGING · 01' },
+  { path: '/packages/demo/pages/paging-filter', icon: 'i-carbon-filter', title: '搜索与筛选', description: '关键词搜索、分类切换与分页重置', label: 'Z-PAGING · 02' },
+  { path: '/packages/demo/pages/paging-states', icon: 'i-carbon-renew', title: '空态与失败重试', description: '空列表、首屏失败与加载更多失败', label: 'Z-PAGING · 03' },
 ] as const satisfies readonly { path: PagePath, icon: string, title: string, description: string, label: string }[]
 
 async function openExample(path: PagePath) {

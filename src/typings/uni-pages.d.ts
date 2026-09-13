@@ -9,6 +9,9 @@ type _LocationUrl =
   "/pages/tests/refs" |
   "/packages/demo/pages/hi" |
   "/packages/demo/pages/index" |
+  "/packages/demo/pages/paging-basic" |
+  "/packages/demo/pages/paging-filter" |
+  "/packages/demo/pages/paging-states" |
   "/packages/demo/pages/wot" |
   "/packages/journal/pages/appearance" |
   "/packages/journal/pages/info" |

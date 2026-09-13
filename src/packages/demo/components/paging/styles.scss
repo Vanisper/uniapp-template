@@ -1,0 +1,56 @@
+.paging-screen {
+  --wot-primary-1: #eef5f0;
+  --wot-primary-2: #dcece2;
+  --wot-primary-6: #257864;
+  --wot-primary-7: #1d6251;
+  --wot-tabs-nav-item-font-size: 14px;
+  --wot-tabs-nav-item-line-height: 20px;
+  --wot-tabs-nav-item-padding: 12px 8px;
+  --paging-gutter: 20px;
+  --paging-intro-top: 22px;
+  --paging-intro-bottom: 16px;
+  --paging-title-size: 25px;
+  --paging-title-gap: 10px;
+  --paging-description-size: 13px;
+  --paging-description-gap: 8px;
+  --paging-source-gap: 13px;
+  --paging-toolbar-height: 42px;
+  --paging-scenario-note-height: 38px;
+
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+  height: 100%;
+  overflow: hidden;
+  background: #f5f6f3;
+}
+
+@media (max-height: 600px) {
+  .paging-screen {
+    --wot-tabs-nav-item-padding: 10px 4px;
+    --paging-gutter: 16px;
+    --paging-intro-top: 14px;
+    --paging-intro-bottom: 8px;
+    --paging-title-size: 22px;
+    --paging-title-gap: 6px;
+    --paging-description-size: 12px;
+    --paging-description-gap: 6px;
+    --paging-source-gap: 8px;
+    --paging-toolbar-height: 36px;
+    --paging-scenario-note-height: 28px;
+  }
+}
+
+@media (max-height: 420px) {
+  .paging-screen {
+    --paging-intro-top: 8px;
+    --paging-intro-bottom: 6px;
+    --paging-eyebrow-display: none;
+    --paging-title-size: 18px;
+    --paging-title-gap: 0;
+    --paging-description-display: none;
+    --paging-source-gap: 4px;
+    --paging-toolbar-height: 32px;
+  }
+}
