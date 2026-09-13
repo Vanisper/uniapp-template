@@ -2,6 +2,7 @@
 import type { ConfigProviderThemeVars } from '@wot-ui/ui'
 import { appEnv } from '@/config/env'
 import { isMockEnabled } from '@/http'
+import RequestAuth from './RequestAuth.vue'
 import RequestEcho from './RequestEcho.vue'
 import RequestResult from './RequestResult.vue'
 import { useRequestDemo } from './useRequestDemo'
@@ -52,7 +53,8 @@ const themeVars: ConfigProviderThemeVars = {
         @cancel="cancel"
       />
       <RequestEcho :enabled="enabled" />
-      <view class="footer-note">alova · 加载状态 · 场景切换 · 取消 · 提交回显</view>
+      <RequestAuth />
+      <view class="footer-note">alova · 状态与取消 · 提交回显 · Token 鉴权</view>
     </view>
   </wd-config-provider>
 </template>

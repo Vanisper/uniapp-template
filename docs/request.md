@@ -7,15 +7,19 @@
 | 位置 | 职责 |
 | --- | --- |
 | `src/config/env.ts` | 解析 API 地址、超时、鉴权格式、Mock 开关与延迟 |
+| `src/auth/token.ts` | 按环境配置的 key 读取、保存与清除 Token |
 | `src/http/index.ts` | 提供公共 `http` 客户端和当前 `isMockEnabled` |
 | `src/http/client.ts` | 创建独立客户端，配置传输、认证与全局响应处理 |
 | `src/http/response.ts` | 检查 HTTP 状态、解包业务响应、处理上传与下载 |
 | `src/http/error.ts` | 提供统一 `RequestError` 和错误分类 |
 | `src/mock/index.ts` | 创建 Mock 适配器并配置真实请求回退 |
 | `src/mock/demo.ts` | 请求示例的 Mock 分组 |
+| `src/mock/auth.ts` | Mock 登录、受保护接口与匿名接口 |
+| `src/mock/logger.ts` | Mock／真实请求标记及日志脱敏 |
 | `src/packages/demo/api/request.ts` | GET 场景与 POST 回显接口 |
+| `src/packages/demo/api/auth.ts` | 登录、个人信息与匿名接口 |
 
-测试中心的「请求与 Mock」页面位于 `/packages/demo/pages/request`，可操作成功、空态、业务失败、HTTP 失败、取消和提交回显场景。
+测试中心的「请求与 Mock」页面位于 `/packages/demo/pages/request`，可操作成功、空态、业务失败、HTTP 失败、取消、提交回显和登录鉴权场景。
 
 默认请求超时为 10 秒，关闭响应缓存和相同请求共享，错误交给调用方展示。Method 保留 alova 的配置能力，可按接口显式启用缓存或其他策略。环境模板、命令和加载优先级见[环境变量说明](../envs/README.md)。
 
@@ -104,9 +108,12 @@ catch (error) {
 
 ## 认证与不同响应格式
 
-有登录状态后，通过 `createHttpClient` 注入读取 Token 的函数。每次实际发送时都会读取最新值，重复发送同一个 Method 也会清理此前注入的认证头。所有实例默认使用 `appEnv.authHeaderName` 和 `appEnv.authTokenPrefix`，无需逐个传入环境配置。
+公共 `http` 已绑定 `src/auth/token.ts` 的 `getToken`，按 `VITE_AUTH_TOKEN_KEY` 读取 uni 同步存储。登录成功后调用 `setToken(token)`，退出时调用 `clearToken()`。每次实际发送时都会读取最新值，重复发送同一个 Method 也会清理此前注入的认证头。
+
+创建独立客户端时可显式注入相同的 `getToken`，或替换为自己的登录状态来源。所有实例默认使用 `appEnv.authHeaderName` 和 `appEnv.authTokenPrefix`，无需逐个传入环境配置。
 
 ```ts
+import { getToken } from '@/auth/token'
 import { appEnv } from '@/config/env'
 import { createHttpClient } from '@/http'
 
@@ -114,7 +121,7 @@ const accountHttp = createHttpClient({
   baseURL: appEnv.apiBaseURL,
   timeout: appEnv.requestTimeout,
   successCode: 200,
-  getToken: () => uni.getStorageSync('access_token') || undefined,
+  getToken,
 })
 
 accountHttp.Get('/public', { meta: { auth: false } })
@@ -125,6 +132,7 @@ accountHttp.Get('/public', { meta: { auth: false } })
 ```dotenv
 VITE_AUTH_HEADER_NAME=X-Token
 VITE_AUTH_TOKEN_PREFIX=
+VITE_AUTH_TOKEN_KEY=my-project:development:token
 ```
 
 请求头名称和前缀都会移除首尾空白；前缀非空时与 Token 之间自动加入一个空格，空字符串表示直接发送 Token。需要对接不同鉴权协议的服务时，可在单个客户端覆盖环境默认值：
@@ -134,13 +142,13 @@ const legacyHttp = createHttpClient({
   baseURL: 'https://legacy-api.example.com',
   authHeaderName: 'X-Session',
   authTokenPrefix: '',
-  getToken: () => uni.getStorageSync('legacy_token') || undefined,
+  getToken,
 })
 ```
 
 注入 Token 前，仅清理名称与配置相同的旧请求头，比较时忽略大小写；其他请求头保持原样。`getToken` 返回空值时也会清理该目标头，避免退出登录后重复发送旧 Token。`auth: false` 跳过读取与清理，保留调用方主动设置的认证头。
 
-公共客户端暂未绑定登录存储，环境变量只控制鉴权格式，Token 来源仍需运行时注入。独立客户端默认使用真实 uni 适配器，需要模拟时可通过 `requestAdapter` 显式传入适配器。环境变量加载与优先级见[请求环境配置](../envs/README.md#请求环境配置)。
+`meta.auth` 只控制自动注入，不会检查登录状态或阻止无 Token 请求。未配置 `getToken` 的独立客户端不会自动读缓存；它默认使用真实 uni 适配器，需要模拟时可通过 `requestAdapter` 显式传入适配器。环境变量加载与优先级见[请求环境配置](../envs/README.md#请求环境配置)。
 
 单个请求可通过 `meta.responseMode` 选择返回层级，三个模式均检查 HTTP 状态：
 
@@ -178,7 +186,46 @@ http.Get('/demo/request', { params: { scenario: 'empty' } })
 
 现有 GET 示例支持成功、`empty`、`business-error`、`http-error`；POST 示例回显非空 `message`，空消息返回业务失败。取消和超时由适配器根据请求操作与配置处理。
 
-新增 mock 时，按业务域新增工厂函数，并在 `createMockAdapter` 中注册：
+### Mock 鉴权流程
+
+在测试中心的「请求与 Mock」页面，使用账号 `demo`、密码 `demo123` 体验以下流程；鉴权示例仅在 Mock 开启时允许执行。
+
+1. 未登录时请求个人信息，收到 HTTP 401。
+2. 登录请求设置 `meta.auth: false`，Mock 返回 Token，调用方通过 `setToken` 写入缓存。
+3. 再次请求个人信息，公共 `http` 通过 `getToken` 读取缓存并注入配置的认证头，Mock 校验实际请求头后返回用户信息。
+4. 保持登录态请求匿名接口，`meta.auth: false` 跳过自动注入，响应的 `hasAuthHeader` 为 `false`。
+5. 清除本地 Token 后再次请求个人信息，重新收到 HTTP 401。
+
+下面展示实际调用顺序，界面事件中还应捕获失败结果：
+
+```ts
+import { clearToken, setToken } from '@/auth/token'
+import { http } from '@/http'
+
+const result = await http.Post<{ token: string }>('/demo/auth/login', {
+  username: 'demo',
+  password: 'demo123',
+}, { meta: { auth: false } })
+setToken(result.token)
+
+await http.Get('/demo/auth/profile')
+await http.Get('/demo/auth/public', { meta: { auth: false } })
+clearToken()
+```
+
+Mock 使用固定的演示 Token，不读取客户端缓存判断登录态。退出示例只清除本地缓存，不模拟服务端会话吊销。页面退出或清除 Token 时会取消在途操作并隔离旧结果，避免延迟的登录响应重新写入缓存。真实服务应使用自己的登录、过期与退出协议。
+
+### Mock 请求日志
+
+命中 Mock 的请求由适配器在本地返回，不会出现在浏览器 Network 面板中。默认通过控制台的 `[Mock]` 日志查看方法、地址、请求参数与返回数据；未匹配的请求输出 `[HTTP]` 转发提示，其网络结果通过平台的网络调试工具查看。
+
+日志保留请求头与响应头的名称并隐藏全部头值，参数与响应正文中的密码、Token、Cookie 等常见敏感字段也会脱敏，不修改实际请求或响应。`VITE_MOCK_LOG_ENABLED=false` 可关闭这些日志；Mock 关闭时不安装此日志回调。
+
+日志使用官方适配器回调：Mock 回调完成后输出结果，真实请求在转发时输出提示。它不提供完整的耗时、取消或超时追踪，取消或超时的结果仍通过调用方的错误状态处理。
+
+### 新增 Mock 分组
+
+新增 Mock 时，按业务域新增工厂函数，并在 `createMockAdapter` 中注册：
 
 ```ts
 import { defineMock } from '@alova/mock'

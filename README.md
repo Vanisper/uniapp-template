@@ -85,9 +85,9 @@ src/
 
 ## 请求与 Mock
 
-请求层接入 alova v3、官方 uni-app 适配器与 `@alova/mock`，提供类型化 Method、业务响应解包、统一错误、可注入 Token 的客户端，以及上传、下载支持。环境变量通过 `appEnv` 统一解析，默认超时 10 秒。
+请求层接入 alova v3、官方 uni-app 适配器与 `@alova/mock`，提供类型化 Method、业务响应解包、统一错误、Token 缓存与自动鉴权，以及上传、下载支持。环境变量通过 `appEnv` 统一解析，默认超时 10 秒；鉴权头、Token 前缀与缓存 key 均可配置。
 
-development 和 test 模板默认开启 Mock，未匹配接口转发真实服务；production 模式强制关闭 Mock。接口定义、hooks、错误处理与联调配置见[请求层与 Mock](docs/request.md)。
+development 和 test 模板默认开启 Mock，未匹配接口转发真实服务；production 模式强制关闭 Mock。测试中心提供登录、受保护接口、匿名请求和退出示例，控制台默认输出脱敏后的 Mock 日志，可通过 `VITE_MOCK_LOG_ENABLED` 关闭。接口定义、hooks、错误处理与联调配置见[请求层与 Mock](docs/request.md)。
 
 ## TODO
 
