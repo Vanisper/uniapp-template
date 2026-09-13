@@ -1,10 +1,8 @@
 <script setup lang="ts">
-import type { TabbarAnimatedExpose } from '@/components/Tabbar/Animated/type'
-import type { TabbarSelection } from '@/components/Tabbar/type'
+import type { TabbarExpose, TabbarSelection } from '@/components/Tabbar/type'
 import { onHide, onShow } from '@dcloudio/uni-app'
 import { onBeforeUnmount, onMounted, shallowRef } from 'vue'
-import TabbarAnimated from '@/components/Tabbar/Animated/index.vue'
-import Tabbar from '@/components/Tabbar/index.vue'
+import Tabbar from '@/components/Tabbar/Raised/index.vue'
 import { usePageRoute } from '@/composables/usePageRoute'
 import { usePages } from '@/composables/usePages'
 import { THEME_CONFIG } from '@/configs/theme'
@@ -26,7 +24,7 @@ withDefaults(defineProps<{
 const { pagesJson, getCurrentPage, go } = usePages()
 const pageRoute = usePageRoute()
 const list = pagesJson.tabBar?.list
-const animatedTabbar = shallowRef<TabbarAnimatedExpose>()
+const tabbar = shallowRef<TabbarExpose>()
 let navigating = false
 let pageVersion = 0
 
@@ -40,7 +38,7 @@ async function navigate({ value }: TabbarSelection) {
   try {
     const succeeded = await go(value, true)
     if (!succeeded) {
-      animatedTabbar.value?.cancel()
+      tabbar.value?.cancel()
       if (requestVersion === pageVersion) {
         uni.showToast({ title: '切换失败，请重试', icon: 'none' })
       }
@@ -53,13 +51,13 @@ async function navigate({ value }: TabbarSelection) {
 }
 
 onShow(() => {
-  animatedTabbar.value?.cancel()
+  tabbar.value?.cancel()
 })
 onHide(() => {
   // H5 同 tab 导航可能只触发 onHide，页面可见性仍交给页面容器
   pageVersion += 1
   // 导航交接期间旧页面仍可能可见，保留已到达的目标位置
-  animatedTabbar.value?.cancel({ restore: !navigating })
+  tabbar.value?.cancel({ restore: !navigating })
 })
 onBeforeUnmount(() => {
   pageVersion += 1
@@ -75,14 +73,13 @@ onShow(hideNativeTabbar)
 // #endif
 
 // #ifdef MP-WEIXIN
-if (THEME_CONFIG.tabbar.variant === 'animated'
-  && typeof wx !== 'undefined'
+if (typeof wx !== 'undefined'
   && wx.canIUse('onAppRouteDone')
   && wx.canIUse('offAppRouteDone')) {
   const restoreInactiveSelection: WechatMiniprogram.OnAppRouteDoneCallback = (event) => {
     // 转场结束后准备隐藏页的缓存；迟到事件不能打断当前页的预选
     if (event?.path && event.path === getCurrentPage()?.route && event.path !== pageRoute) {
-      animatedTabbar.value?.cancel()
+      tabbar.value?.cancel()
     }
   }
   onMounted(() => wx.onAppRouteDone(restoreInactiveSelection))
@@ -92,21 +89,14 @@ if (THEME_CONFIG.tabbar.variant === 'animated'
 </script>
 
 <template>
-  <TabbarAnimated
-    v-if="THEME_CONFIG.tabbar.variant === 'animated'"
-    ref="animatedTabbar"
+  <Tabbar
+    ref="tabbar"
     :value="pageRoute"
     :list="list"
     value-field="pagePath"
     :height="height"
     :before-change="navigate"
-  />
-  <Tabbar
-    v-else
-    :value="pageRoute"
-    :list="list"
-    value-field="pagePath"
-    :height="height"
-    @change="navigate"
+    color="#89948f"
+    active-color="#257864"
   />
 </template>

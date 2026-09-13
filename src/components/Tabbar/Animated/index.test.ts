@@ -98,6 +98,68 @@ describe('animatedTabbar', () => {
     expect(wrapper.emitted('change')).toEqual([[{ text: '关于', value: 'pages/about' }, list[1]]])
   })
 
+  it('图标跟随动画预选，确认拒绝后恢复受控项', async () => {
+    const items = list.map((item, index) => ({ ...item, icon: `/tab-${index}.png`, activeIcon: `/tab-${index}-active.png` }))
+    const wrapper = mount(TabbarAnimated<(typeof items)[number]>, {
+      props: {
+        height: 56,
+        list: items,
+        value: 'pages/index',
+        valueField: 'pagePath',
+        iconField: 'icon',
+        activeIconField: 'activeIcon',
+        beforeChange: () => false,
+      },
+    })
+
+    expect(wrapper.findAll('image').map(icon => icon.attributes('src'))).toEqual([
+      '/tab-0-active.png',
+      '/tab-1.png',
+      '/tab-2.png',
+    ])
+    await wrapper.findAll('.tabbar__item')[1].trigger('click')
+    expect(wrapper.findAll('image').map(icon => icon.attributes('src'))).toEqual([
+      '/tab-0.png',
+      '/tab-1-active.png',
+      '/tab-2.png',
+    ])
+    expect(wrapper.findAll('image')[1].attributes('style')).toContain('transition-duration: 260ms')
+
+    await vi.advanceTimersByTimeAsync(260)
+    expect(wrapper.findAll('image').map(icon => icon.attributes('src'))).toEqual([
+      '/tab-0-active.png',
+      '/tab-1.png',
+      '/tab-2.png',
+    ])
+    expect(wrapper.emitted('change')).toBeUndefined()
+  })
+
+  it('自定义图文插槽保留动画选择和切换确认', async () => {
+    const beforeChange = vi.fn(() => true)
+    const items = list.map(item => ({ ...item, iconPath: '/icon.png' }))
+    const wrapper = mount(TabbarAnimated, {
+      props: { height: 56, list: items, value: 'pages/index', valueField: 'pagePath', beforeChange },
+      slots: {
+        item: ({ text, icon, active, index, value, item }) => h('text', {
+          'data-index': index,
+          'data-value': value,
+          'data-page-path': item.pagePath,
+        }, `${text} ${icon}${active ? ' 已选' : ''}`),
+      },
+    })
+
+    expect(wrapper.find('.tabbar__item').text()).toBe('首页 /icon.png 已选')
+    expect(wrapper.find('.tabbar__item text').attributes()).toMatchObject({
+      'data-index': '0',
+      'data-value': 'pages/index',
+      'data-page-path': 'pages/index',
+    })
+    expect(wrapper.find('image').exists()).toBe(false)
+    await wrapper.findAll('.tabbar__item')[1].trigger('click')
+    await vi.advanceTimersByTimeAsync(260)
+    expect(beforeChange).toHaveBeenCalledExactlyOnceWith({ text: '关于', value: 'pages/about' }, items[1])
+  })
+
   it('连续点击只处理最后一个目标', async () => {
     const beforeChange = vi.fn(() => true)
     const wrapper = mountTabbar({ beforeChange })

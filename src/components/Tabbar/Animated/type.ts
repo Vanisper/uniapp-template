@@ -1,16 +1,19 @@
-import type { TabbarProps, TabbarSelection } from '../type'
+import type { CSSProperties } from 'vue'
+import type { TabbarCancelOptions, TabbarExpose, TabbarItemSlotProps, TabbarProps, TabbarSelection } from '../type'
+
+/** 动画标签栏的装饰与内容插槽 */
+export interface TabbarAnimatedSlots<I extends Record<string, any>> {
+  /** 预选位置与当前过渡样式；同步或取消时过渡时长为零 */
+  indicator?: (props: { index: number, count: number, motionStyle: CSSProperties }) => any
+  /** 替换标签图文，并沿用当前选择的过渡时长 */
+  item?: (props: TabbarItemSlotProps<I> & { motionStyle: CSSProperties }) => any
+}
 
 /** 取消选择时的视觉处理 */
-export interface TabbarAnimatedCancelOptions {
-  /** 是否恢复受控值，默认 true；false 保留当前视觉选中项 */
-  restore?: boolean
-}
+export type TabbarAnimatedCancelOptions = TabbarCancelOptions
 
 /** 动画标签栏的交互控制 */
-export interface TabbarAnimatedExpose {
-  /** 取消待提交选择，已开始的回调副作用不会被撤销 */
-  cancel: (options?: TabbarAnimatedCancelOptions) => void
-}
+export type TabbarAnimatedExpose = TabbarExpose
 
 /** 带切换动画的标签栏输入 */
 export interface TabbarAnimatedProps<I extends Record<string, any> = Record<string, any>> extends TabbarProps<I> {

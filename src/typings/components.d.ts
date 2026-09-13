@@ -18,5 +18,6 @@ declare module 'vue' {
     StatusBar: typeof import('./../components/StatusBar/index.vue')['default']
     Tabbar: typeof import('./../components/Tabbar/index.vue')['default']
     TabbarAnimated: typeof import('./../components/Tabbar/Animated/index.vue')['default']
+    TabbarRaised: typeof import('./../components/Tabbar/Raised/index.vue')['default']
   }
 }

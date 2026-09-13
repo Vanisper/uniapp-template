@@ -1,6 +1,6 @@
 <script lang="ts" setup generic="I extends Record<string, any>">
 import type { TabbarSelection } from '../type'
-import type { TabbarAnimatedCancelOptions, TabbarAnimatedExpose, TabbarAnimatedProps } from './type'
+import type { TabbarAnimatedCancelOptions, TabbarAnimatedExpose, TabbarAnimatedProps, TabbarAnimatedSlots } from './type'
 import { computed, nextTick, onActivated, onBeforeUnmount, onDeactivated, onMounted, shallowRef, watch } from 'vue'
 import Tabbar from '../index.vue'
 import { resolveTabbarIndex } from '../selection'
@@ -18,12 +18,16 @@ const props = withDefaults(defineProps<TabbarAnimatedProps<I>>(), {
   activeColor: '#0165ff',
   valueField: 'value',
   textField: 'text',
+  iconField: 'iconPath',
+  activeIconField: 'selectedIconPath',
 })
 
 const emit = defineEmits<{
   /** 动画与切换确认通过后发出，由调用方更新受控值 */
   change: [selection: TabbarSelection, item: I]
 }>()
+
+defineSlots<TabbarAnimatedSlots<I>>()
 
 const animationDuration = 260
 const reducedMotion = shallowRef(false)
@@ -198,25 +202,50 @@ onBeforeUnmount(() => {
     :active-color="activeColor"
     :value-field="valueField"
     :text-field="textField"
+    :icon-field="iconField"
+    :active-icon-field="activeIconField"
     @change="handleChange"
   >
     <template #indicator="{ index, count }">
-      <view
-        v-if="count"
-        class="animated-tabbar__indicator"
-        :style="{ ...motionStyle, transform: `translateX(${index * 100}%)`, width: `${100 / count}%` }"
-      >
-        <view class="animated-tabbar__surface" :style="{ backgroundColor: activeColor }" />
-      </view>
+      <slot name="indicator" :index="index" :count="count" :motion-style="motionStyle">
+        <view
+          v-if="count"
+          class="animated-tabbar__indicator"
+          :style="{ ...motionStyle, transform: `translateX(${index * 100}%)`, width: `${100 / count}%` }"
+        >
+          <view class="animated-tabbar__surface" :style="{ backgroundColor: activeColor }" />
+        </view>
+      </slot>
     </template>
-    <template #item="{ text, active }">
-      <text
-        class="animated-tabbar__label"
-        :class="{ 'animated-tabbar__label--active': active }"
-        :style="motionStyle"
+    <template #item="entry">
+      <slot
+        name="item"
+        :item="entry.item"
+        :index="entry.index"
+        :active="entry.active"
+        :value="entry.value"
+        :text="entry.text"
+        :icon="entry.icon"
+        :motion-style="motionStyle"
       >
-        {{ text }}
-      </text>
+        <view class="animated-tabbar__content">
+          <image
+            v-if="entry.icon"
+            class="animated-tabbar__icon"
+            :class="{ 'animated-tabbar__icon--active': entry.active }"
+            :style="motionStyle"
+            :src="entry.icon"
+            mode="aspectFit"
+          />
+          <text
+            class="animated-tabbar__label"
+            :class="{ 'animated-tabbar__label--active': entry.active }"
+            :style="motionStyle"
+          >
+            {{ entry.text }}
+          </text>
+        </view>
+      </slot>
     </template>
   </Tabbar>
 </template>
@@ -251,6 +280,23 @@ onBeforeUnmount(() => {
   transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+.animated-tabbar__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.animated-tabbar__icon {
+  display: block;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  transition-property: transform;
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.animated-tabbar__icon--active,
 .animated-tabbar__label--active {
   transform: translateY(-2px);
 }

@@ -16,6 +16,8 @@ const props = withDefaults(defineProps<TabbarProps<I>>(), {
   activeColor: '#0165ff',
   valueField: 'value',
   textField: 'text',
+  iconField: 'iconPath',
+  activeIconField: 'selectedIconPath',
 })
 
 const emit = defineEmits<{
@@ -26,13 +28,22 @@ const emit = defineEmits<{
 defineSlots<TabbarSlots<I>>()
 
 const currentIndex = computed(() => resolveTabbarIndex(props))
-const entries = computed(() => props.list?.map((item, index) => ({
-  item,
-  index,
-  active: index === currentIndex.value,
-  value: item[props.valueField],
-  text: item[props.textField],
-})) ?? [])
+const entries = computed(() => props.list?.map((item, index) => {
+  const active = index === currentIndex.value
+  const source = (active && item[props.activeIconField]) || item[props.iconField]
+  const icon = typeof source === 'string' && source
+    ? source.startsWith('static/') ? `/${source}` : source
+    : undefined
+
+  return {
+    item,
+    index,
+    active,
+    icon,
+    value: item[props.valueField],
+    text: item[props.textField],
+  }
+}) ?? [])
 
 function handleChange(index: number) {
   const entry = entries.value[index]
@@ -64,10 +75,14 @@ function handleChange(index: number) {
           :active="entry.active"
           :value="entry.value"
           :text="entry.text"
+          :icon="entry.icon"
         >
-          <text class="tabbar__label">
-            {{ entry.text }}
-          </text>
+          <view class="tabbar__default">
+            <image v-if="entry.icon" class="tabbar__icon" :src="entry.icon" mode="aspectFit" />
+            <text class="tabbar__label">
+              {{ entry.text }}
+            </text>
+          </view>
         </slot>
       </view>
     </view>
@@ -116,5 +131,19 @@ function handleChange(index: number) {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.tabbar__default {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.tabbar__icon {
+  display: block;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
 }
 </style>
