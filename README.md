@@ -26,7 +26,7 @@ pnpm build mp-weixin
 
 平台名是 unh 的位置参数；测试环境构建使用 `pnpm build:test`。主要依赖的兼容范围、迁移原因与验证结果见[依赖升级记录](docs/dependencies/dependency-upgrade-2026-09-12.md)。
 
-微信开发使用 `pnpm dev wx`，编译完成后会自动打开微信开发者工具。请先复制 `envs/.env` 为 `envs/.env.local`，填写 `UNI_MP_WEIXIN_APPID`，然后启动开发服务。本机环境文件已被 Git 忽略；环境变量及多环境配置见 [envs/README.md](envs/README.md)。未配置 AppID 时，产物使用 `touristappid`，当前开发者工具的自动打开流程会报 AppID 不存在。
+微信开发使用 `pnpm dev wx`，编译完成后会自动打开微信开发者工具。请先复制 `envs/.env.local.example` 为 `envs/.env.local`，填写 `UNI_MP_WEIXIN_APPID`，然后启动开发服务。本机环境文件已被 Git 忽略；项目提供 development、test、production 环境模板，变量定义与覆盖方式见 [envs/README.md](envs/README.md)。未配置 AppID 时，产物使用 `touristappid`，当前开发者工具的自动打开流程会报 AppID 不存在。
 
 H5 开发时，UnoCSS Inspector 地址为 <http://localhost:13000/__unocss/>，端口以开发服务实际输出为准。当前版本不会自动打印入口地址；未授权浏览器打开该页面后，在运行 `pnpm dev` 的终端查看 `Devframe` 提示框中的 `auth code`，输入页面完成授权。授权按浏览器保存；已授权浏览器可以直接进入。验证码过期时提交或刷新页面，再查看终端中的新码。
 

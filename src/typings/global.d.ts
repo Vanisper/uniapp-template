@@ -11,7 +11,7 @@ declare global {
    * 当前运行环境
    * @description 如：`development`、`production`、`test` - 与 `import.meta.env.MODE` 相同
    */
-  const __NODE_ENV__: 'development' | 'production' | 'test'
+  const __NODE_ENV__: string
   /**
    * 当前应用版本号
    * @description 与 `package.json` 的 `version` 相同
