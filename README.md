@@ -83,6 +83,12 @@ src/
 
 底栏的组件选择、共用参数、受控交互和平台接入见 [TabBar 接入与组件契约](docs/tabbar.md)。图片和图标来源单独记录在[静态资源说明](src/static/README.md)。
 
+## 请求与 Mock
+
+请求层接入 alova v3、官方 uni-app 适配器与 `@alova/mock`，提供类型化 Method、业务响应解包、统一错误、可注入 Token 的客户端，以及上传、下载支持。环境变量通过 `appEnv` 统一解析，默认超时 10 秒。
+
+development 和 test 模板默认开启 Mock，未匹配接口转发真实服务；production 模式强制关闭 Mock。接口定义、hooks、错误处理与联调配置见[请求层与 Mock](docs/request.md)。
+
 ## TODO
 
 ### Basic
@@ -111,13 +117,13 @@ src/
 - [x] [uni-echarts](https://github.com/xiaohe0601/uni-echarts): 适用于 uni-app 的 Apache ECharts 组件
 - [x] pinia + [pinia-plugin-persistedstate](https://praz.codeberg.page/pinia-plugin-persistedstate): 全局状态管理及持久化
 - [ ] 路由管理
-- [ ] [alova](https://alova.js.org/zh-CN/tutorial/getting-started/introduce) 请求库的支持
+- [x] [alova](https://alova.js.org/zh-CN/tutorial/getting-started/introduce) 请求库与官方 uni-app、Mock 适配器
 
 ### 业务增强
 
 - [ ] layouts 的建设：自定义 tabbar、navbar，以及实现布局的动态切换
 - [ ] 全局样式、主题的建设
-- [ ] 网络请求封装
+- [x] 网络请求封装：业务响应、错误分类、认证注入、上传下载与环境配置
 - [ ] 业务模型声明
 - [ ] 可复用组件：echarts 图表的封装；常用组件、具体业务模块的组件封装以及分包优化的考虑
 - [ ] 国际化支持

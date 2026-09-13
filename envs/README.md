@@ -53,9 +53,9 @@ mode 和开发/构建命令是两个维度。`build:test` 会生成优化后的�
 | `VITE_MOCK_DELAY` | `500` | Mock 响应延迟毫秒数，有限正数 |
 | `VITE_MOCK_ENABLED` | `false` | 只接受字符串 `true` 或 `false`；development、test 模板覆盖为 `true` |
 
-客户端环境变量由 [`src/config/env.ts`](../src/config/env.ts) 的 `appEnv` 统一解析。缺失变量使用上述默认值；显式配置的空时间、无效数字、无效地址、鉴权格式或开关会抛出带变量名的配置错误。地址首尾空白及末尾斜杠会被移除。
+公共客户端从 [`src/config/env.ts`](../src/config/env.ts) 的 `appEnv` 读取解析后的配置。缺失变量使用上述默认值；显式配置的空时间、无效数字、无效地址、鉴权格式或开关会抛出带变量名的配置错误。地址首尾空白及末尾斜杠会被移除。
 
-API 地址允许留空。接入真实服务时应填写完整 HTTP(S) 地址；小程序部署使用 HTTPS 并配置请求域名。
+API 地址保留空值时仍可运行匹配到的 Mock；未匹配的接口会转发真实请求，调用前必须填写服务地址。空值不会在导入配置时阻断页面。跨端统一使用完整地址；部署小程序时使用 HTTPS 地址并配置平台请求域名。
 
 本地开发联调可复制现有模板：
 
@@ -64,7 +64,7 @@ cp envs/.env.development.local.example envs/.env.development.local
 pnpm dev
 ```
 
-先把模板中的 `https://dev-api.example.com/api` 替换为实际服务地址，模板设置 `VITE_MOCK_ENABLED=false` 用于接口联调。测试环境可将同一模板复制为 `envs/.env.test.local`，填写测试服务地址并运行 `pnpm dev:test`。正式环境在 `envs/.env.production.local` 或构建流水线环境变量中填写 `VITE_API_BASE_URL`；production 模式即使被覆盖为 `VITE_MOCK_ENABLED=true`，解析后的 Mock 开关也始终为 false。
+先把模板中的 `https://dev-api.example.com/api` 替换为实际服务地址。模板同时设置 `VITE_MOCK_ENABLED=false`，因此所有接口都请求该服务。测试环境可将同一模板复制为 `envs/.env.test.local`，填写测试服务地址并运行 `pnpm dev:test`。正式环境在 `envs/.env.production.local` 或构建流水线环境变量中填写 `VITE_API_BASE_URL`；production 模式即使被覆盖为 `VITE_MOCK_ENABLED=true`，实际也不会启用 Mock。
 
 服务端要求 `X-Token: <token>` 时，在对应的 `envs/.env.[mode].local` 中配置：
 
@@ -73,9 +73,11 @@ VITE_AUTH_HEADER_NAME=X-Token
 VITE_AUTH_TOKEN_PREFIX=
 ```
 
-鉴权格式默认为 `Authorization: Bearer <token>`，前缀为空时表示直接使用 Token。解析后的值分别为 `appEnv.authHeaderName` 和 `appEnv.authTokenPrefix`。
+默认配置发送 `Authorization: Bearer <token>`。前缀非空时与 Token 之间自动加入一个空格，配置中无需保留末尾空格。解析后的值分别为 `appEnv.authHeaderName` 和 `appEnv.authTokenPrefix`；所有 `createHttpClient` 实例默认继承这两个值，也可通过实例参数覆盖。
 
-这些变量只定义鉴权格式，Token 由运行时提供。修改配置后重启当前开发或构建命令。
+这些变量只定义鉴权格式，Token 仍由运行时注入的 `getToken` 函数提供。公共 `http` 客户端尚未绑定 Token 来源，仅修改环境变量不会自动读取登录状态。修改配置后重启当前开发或构建命令。
+
+客户端使用与接口分层见[请求层与 Mock](../docs/request.md)。
 
 `UNI_` 前缀用于构建配置，通过 `process.env` 读取；需要在业务代码中通过 `import.meta.env` 读取的变量使用 `VITE_` 前缀，其值会进入客户端产物。
 
