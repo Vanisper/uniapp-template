@@ -15,6 +15,7 @@
 | `src/mock/index.ts` | 创建 Mock 适配器并配置真实请求回退 |
 | `src/mock/demo.ts` | 请求示例的 Mock 分组 |
 | `src/mock/auth.ts` | Mock 登录、受保护接口与匿名接口 |
+| `src/mock/headers.ts` | 从实际请求头回显当前租户 ID |
 | `src/mock/logger.ts` | Mock／真实请求标记及日志脱敏 |
 | `src/packages/demo/api/request.ts` | GET 场景与 POST 回显接口 |
 | `src/packages/demo/api/auth.ts` | 登录、个人信息与匿名接口 |
@@ -174,6 +175,53 @@ http.Post<{ url: string }>('/files', {
 http.Get<UniApp.DownloadSuccessData>('/files/report.pdf', { requestType: 'download' })
 ```
 
+## 公共请求头与租户上下文
+
+`createHttpClient` 的 `getHeaders()` 在每次请求前读取当前公共头，适合租户 ID、语言、客户端版本等配置。租户 ID 由业务登录态提供：登录或选择租户后更新，退出时清除；从 Pinia 或 uni 存储读取都可以。公共 `http` 默认未绑定租户来源，实际接入时在 `src/http/index.ts` 的客户端配置中加入自己的 getter。
+
+下面用变量表示当前租户，业务中将它替换为登录状态中的值：
+
+```ts
+import { getToken } from '@/auth/token'
+import { appEnv } from '@/config/env'
+import { createHttpClient } from '@/http'
+
+let tenantId: string | undefined
+const tenantHttp = createHttpClient({
+  baseURL: appEnv.apiBaseURL,
+  getToken,
+  getHeaders: () => ({
+    'X-Tenant-ID': tenantId,
+    'Accept-Language': 'zh-CN',
+  }),
+})
+
+tenantId = 'tenant-a'
+await tenantHttp.Get('/orders')
+tenantId = 'tenant-b'
+await tenantHttp.Get('/orders')
+tenantId = undefined
+```
+
+请求头按名称忽略大小写合并，顺序为公共头 → 单次 `headers` → Token 注入。普通同名头由单次配置覆盖；公共值为 `null` 或 `undefined` 时省略，单次同名空值也可屏蔽该公共头。`getToken` 仍按既有契约管理认证头，需要手写认证头时设置 `meta.auth: false`。
+
+| 配置 | 行为 |
+| --- | --- |
+| 默认 | 注入公共头与 Token |
+| `meta.auth: false` | 跳过 Token，仍可携带租户头，适合需要租户信息的登录接口 |
+| `meta.commonHeaders: false` | 跳过公共头，仍注入 Token |
+| 两者均为 `false` | 跳过两种自动注入，保留手写 `headers` |
+
+```ts
+tenantHttp.Get('/orders', { headers: { 'x-tenant-id': 'tenant-specific' } })
+tenantHttp.Post('/login', { username: 'demo' }, { meta: { auth: false } })
+tenantHttp.Get('/tenant-options', { meta: { commonHeaders: false } })
+```
+
+重复发送同一个 Method 会读取最新公共头，不修改原 Method 的配置或 getter 返回对象。getter 抛错时请求直接失败，不发送缺失上下文的网络调用。它读取的是请求拦截器执行时的状态；需要固定目标租户的操作，应在创建 Method 时显式传入租户头。
+
+当前默认关闭缓存与请求共享。若显式开启，动态公共头不会自动进入 alova 的缓存标识；应在 Method 创建时把租户 ID 放入显式 `headers` 或 `params`，切换租户后重新创建 Method。切换租户也不会自动取消旧请求，界面需要取消或隔离旧响应，避免旧租户结果覆盖当前内容。
+
 ## Mock 开关与扩展
 
 `development`、`test` 模板默认开启 Mock；`production` mode 始终关闭。测试构建使用 `build:test`，仍可包含 Mock。生产剔除条件直接使用 `import.meta.env` 编译常量，Mock 数据和适配器都在工厂函数中延迟创建，便于构建器移除整个不可达分支。调整初始化方式后应检查 H5 与小程序生产产物，避免顶层创建 Mock 留下代码。
@@ -214,6 +262,43 @@ clearToken()
 ```
 
 Mock 使用固定的演示 Token，不读取客户端缓存判断登录态。退出示例只清除本地缓存，不模拟服务端会话吊销。页面退出或清除 Token 时会取消在途操作并隔离旧结果，避免延迟的登录响应重新写入缓存。真实服务应使用自己的登录、过期与退出协议。
+
+### Mock 租户请求头
+
+`GET /demo/headers` 从实际请求头读取 `X-Tenant-ID`，返回 `{ tenantId }`，缺失时返回 `null`。此接口用于观察注入结果，不模拟租户权限校验。下面可在开发示例逻辑中运行，验证登录后设置租户、切换、跳过和清除的行为：
+
+```ts
+import { clearToken, getToken, setToken } from '@/auth/token'
+import { createHttpClient, isMockEnabled } from '@/http'
+import { createMockAdapter } from '@/mock'
+
+if (!isMockEnabled)
+  throw new Error('请开启 Mock 后运行租户示例')
+
+let tenantId: string | undefined
+const tenantHttp = createHttpClient({
+  baseURL: '',
+  getToken,
+  getHeaders: () => ({ 'X-Tenant-ID': tenantId }),
+  requestAdapter: createMockAdapter(),
+})
+const login = await tenantHttp.Post<{ token: string }>('/demo/auth/login', {
+  username: 'demo',
+  password: 'demo123',
+}, { meta: { auth: false, commonHeaders: false } })
+setToken(login.token)
+
+tenantId = 'tenant-a'
+const currentTenant = tenantHttp.Get<{ tenantId: string | null }>('/demo/headers')
+await currentTenant.send() // { tenantId: 'tenant-a' }
+tenantId = 'tenant-b'
+await currentTenant.send() // { tenantId: 'tenant-b' }
+await tenantHttp.Get('/demo/headers', { meta: { auth: false } }) // 仍为 tenant-b
+await tenantHttp.Get('/demo/headers', { meta: { commonHeaders: false } }) // null
+clearToken()
+tenantId = undefined
+await currentTenant.send() // { tenantId: null }
+```
 
 ### Mock 请求日志
 

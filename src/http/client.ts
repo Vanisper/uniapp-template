@@ -13,6 +13,12 @@ export interface HttpClientOptions {
   timeout?: number
   /** 业务成功码，默认 0，按值和类型严格比较 */
   successCode?: number | string
+  /**
+   * 每次发送前读取公共请求头，适用于租户、语言等运行时上下文
+   *
+   * @description 单次 headers 按名称忽略大小写覆盖公共值；null 或 undefined 不发送，认证头最后由 getToken 处理
+   */
+  getHeaders?: () => Readonly<Record<string, string | undefined | null>> | undefined | null
   /** 每次发送时读取 Token；返回空值会移除旧认证头 */
   getToken?: () => string | undefined | null
   /** 鉴权请求头名称，默认读取 VITE_AUTH_HEADER_NAME */
@@ -40,6 +46,16 @@ export function createHttpClient(options: HttpClientOptions) {
     shareRequest: false,
     cacheLogger: false,
     beforeRequest(method) {
+      if (options.getHeaders && method.meta?.commonHeaders !== false) {
+        const headers = new Map<string, [string, unknown]>()
+        for (const [key, value] of Object.entries(options.getHeaders() ?? {}))
+          headers.set(key.toLowerCase(), [key, value])
+        for (const [key, value] of Object.entries(method.config.headers))
+          headers.set(key.toLowerCase(), [key, value])
+
+        // alova 每次发送提供独立的 Method 副本，不把运行时上下文写回原始配置
+        method.config.headers = Object.fromEntries([...headers.values()].filter(([, value]) => value !== null && value !== undefined))
+      }
       if (options.getToken && method.meta?.auth !== false) {
         const token = options.getToken()
         // Method 可重复发送，先移除上一轮认证头，避免退出登录后继续携带旧 Token

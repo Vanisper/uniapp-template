@@ -131,6 +131,81 @@ describe('真实 alova 与 uni-app 适配器', () => {
     await expect(third).resolves.toBe(3)
   })
 
+  it('单次请求头覆盖公共头，空值省略，认证头仍由 Token 来源管理', async () => {
+    const common = Object.freeze({
+      'X-Tenant-ID': 'tenant-common',
+      'Accept-Language': 'zh-CN',
+      'X-Optional': 'common',
+      'X-Unset': undefined,
+      'authorization': 'common-token',
+    })
+    const client = createHttpClient({ baseURL: '', getHeaders: () => common, getToken: () => 'current-token' })
+    const method = client.Get('/items', {
+      headers: { 'x-tenant-id': 'tenant-specific', 'x-optional': null, 'Authorization': 'manual' },
+    })
+    const pending = method.send()
+    await vi.waitFor(() => expect(requests).toHaveLength(1))
+    expect(requests[0]!.header).toEqual({
+      'x-tenant-id': 'tenant-specific',
+      'Accept-Language': 'zh-CN',
+      'Authorization': 'Bearer current-token',
+    })
+    expect(method.config.headers).toEqual({ 'x-tenant-id': 'tenant-specific', 'x-optional': null, 'Authorization': 'manual' })
+    expect(common.authorization).toBe('common-token')
+    respond(0)
+    await pending
+  })
+
+  it('公共头与 Token 开关独立，关闭两者后仍保留手写请求头', async () => {
+    const getHeaders = vi.fn(() => ({ 'X-Tenant-ID': 'tenant-a' }))
+    const getToken = vi.fn(() => 'current-token')
+    const client = createHttpClient({ baseURL: '', getHeaders, getToken })
+    for (const [index, meta] of [
+      { commonHeaders: false },
+      { auth: false },
+      { commonHeaders: false, auth: false },
+    ].entries()) {
+      const pending = client.Get('/items', { meta, headers: { Authorization: 'Basic manual' } }).send()
+      await vi.waitFor(() => expect(requests).toHaveLength(index + 1))
+      expect(requests[index]!.header).toEqual([
+        { Authorization: 'Bearer current-token' },
+        { 'X-Tenant-ID': 'tenant-a', 'Authorization': 'Basic manual' },
+        { Authorization: 'Basic manual' },
+      ][index])
+      respond(index)
+      await pending
+    }
+    expect(getHeaders).toHaveBeenCalledTimes(1)
+    expect(getToken).toHaveBeenCalledTimes(1)
+  })
+
+  it('切换租户后并发发送同一个 Method，各次传输保留发送时的请求头', async () => {
+    let tenantId = 'tenant-a'
+    const client = createHttpClient({ baseURL: '', getHeaders: () => ({ 'X-Tenant-ID': tenantId }) })
+    const method = client.Get('/items')
+    const first = method.send()
+    await vi.waitFor(() => expect(requests).toHaveLength(1))
+    tenantId = 'tenant-b'
+    const second = method.send()
+    await vi.waitFor(() => expect(requests).toHaveLength(2))
+    expect(requests.map(options => options.header)).toEqual([{ 'X-Tenant-ID': 'tenant-a' }, { 'X-Tenant-ID': 'tenant-b' }])
+    respond(1, { code: 0, message: 'ok', data: 'tenant-b' })
+    respond(0, { code: 0, message: 'ok', data: 'tenant-a' })
+    await expect(Promise.all([first, second])).resolves.toEqual(['tenant-a', 'tenant-b'])
+  })
+
+  it('公共头来源失败时拒绝请求，不发送缺失上下文的网络调用', async () => {
+    const failure = new Error('无法读取租户状态')
+    const client = createHttpClient({
+      baseURL: '',
+      getHeaders: () => {
+        throw failure
+      },
+    })
+    await expect(client.Get('/items').send()).rejects.toBe(failure)
+    expect(request).not.toHaveBeenCalled()
+  })
+
   it.each(['Session', ''])('客户端继承环境鉴权配置，支持前缀 %j 和自定义头的清理', async (prefix) => {
     vi.stubEnv('VITE_AUTH_HEADER_NAME', 'X-Session')
     vi.stubEnv('VITE_AUTH_TOKEN_PREFIX', prefix)
