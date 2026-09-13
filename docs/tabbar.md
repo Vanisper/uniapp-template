@@ -21,7 +21,7 @@ TabBar 的展示、选择交互和页面导航分层处理。组件接收受控�
 | 组件 | 导入位置 | 交互职责 |
 | --- | --- | --- |
 | 基础 `Tabbar` | `@/components/Tabbar/index.vue` | 图文排列、字段映射、受控选择，点击后立即发出 `change` |
-| `TabbarAnimated` | `@/components/Tabbar/Animated/index.vue` | 组合基础组件，增加预选过渡、`beforeChange` 确认与 `cancel` |
+| `TabbarAnimated` | `@/components/Tabbar/Animated/index.vue` | 共用基础组件的字段映射与排列样式，增加预选过渡、`beforeChange` 确认与 `cancel` |
 | `TabbarRaised` | `@/components/Tabbar/Raised/index.vue` | 组合动画组件，以插槽提供凹槽和抬升图文，沿用同一套确认与取消交互 |
 
 当前接入层导入 `Raised`。凹槽和抬起图标随当前预选项移动，选中状态仍来自相同的受控值与预选规则。
@@ -55,6 +55,8 @@ TabBar 的展示、选择交互和页面导航分层处理。组件接收受控�
 - `item` 提供原始项、索引、活动状态，以及映射后的值、文字与当前图标路径 `icon`
 
 动画组件在这两个插槽中继续提供 `motionStyle`，其中包含本次交互的过渡时长。展示扩展应沿用该值，使点击过渡、受控同步和取消恢复保持一致。`Raised` 在内部使用这些插槽替换装饰和图文，无需复制导航或动画状态逻辑。
+
+小程序端的循环作用域插槽应由拥有显式列表循环的组件直接提供。避免在已有循环作用域插槽内再次转发同名插槽：多层转发可能丢失逐项名称，生成多个固定名称的原生插槽，平台只接受第一个。Vue DOM 测试不能覆盖这一编译差异，需要同时检查小程序模板产物并验证运行时渲染。
 
 ## 预选与确认
 

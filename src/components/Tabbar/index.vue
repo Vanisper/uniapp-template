@@ -2,6 +2,7 @@
 import type { TabbarProps, TabbarSelection, TabbarSlots } from './type'
 import { computed } from 'vue'
 import { resolveTabbarIndex } from './selection'
+import { useTabbarEntries } from './useTabbarEntries'
 
 defineOptions({
   options: {
@@ -28,22 +29,7 @@ const emit = defineEmits<{
 defineSlots<TabbarSlots<I>>()
 
 const currentIndex = computed(() => resolveTabbarIndex(props))
-const entries = computed(() => props.list?.map((item, index) => {
-  const active = index === currentIndex.value
-  const source = (active && item[props.activeIconField]) || item[props.iconField]
-  const icon = typeof source === 'string' && source
-    ? source.startsWith('static/') ? `/${source}` : source
-    : undefined
-
-  return {
-    item,
-    index,
-    active,
-    icon,
-    value: item[props.valueField],
-    text: item[props.textField],
-  }
-}) ?? [])
+const entries = useTabbarEntries(props, currentIndex)
 
 function handleChange(index: number) {
   const entry = entries.value[index]
@@ -90,40 +76,7 @@ function handleChange(index: number) {
 </template>
 
 <style scoped lang="scss">
-.tabbar-placeholder {
-  flex-shrink: 0;
-}
-
-.tabbar {
-  position: absolute;
-  z-index: 1;
-  bottom: 0;
-  left: 0;
-  display: flex;
-  width: 100%;
-  overflow: hidden;
-  box-sizing: border-box;
-  background: #fff;
-  border-top: 1px solid #f0f0f0;
-}
-
-.tabbar__item {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  flex: 1 1 0;
-  align-items: center;
-  justify-content: center;
-  min-width: 0;
-  font-size: 12px;
-}
-
-.tabbar__content {
-  // 为小程序作用域插槽生成的容器提供确定宽度
-  width: 100%;
-  min-width: 0;
-  text-align: center;
-}
+@use './styles.scss';
 
 .tabbar__label {
   display: block;
