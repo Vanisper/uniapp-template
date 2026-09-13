@@ -12,8 +12,9 @@ page {
   -webkit-font-smoothing: antialiased;
 }
 
-button, uni-button { margin: 0; line-height: 1.4; }
-button::after, uni-button::after { border: 0; }
+// 页面内重置优先于按需注入的框架默认样式，同时允许组件类名覆盖
+page button { margin: 0; line-height: 1.4; }
+page button::after { border: 0; }
 
 .journal-screen { display: flex; flex: 1; flex-direction: column; min-height: 0; width: 100%; }
 .journal-scroll { flex: 1; height: 0; min-height: 0; }
