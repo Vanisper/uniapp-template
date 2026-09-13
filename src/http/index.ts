@@ -1,3 +1,4 @@
+import { getToken } from '@/auth/token'
 import { appEnv } from '@/config/env'
 import { createMockAdapter } from '@/mock'
 import { createHttpClient } from './client'
@@ -15,5 +16,6 @@ export const isMockEnabled = import.meta.env.MODE !== 'production' && import.met
 export const http = createHttpClient({
   baseURL: appEnv.apiBaseURL,
   timeout: appEnv.requestTimeout,
+  getToken,
   requestAdapter: isMockEnabled ? createMockAdapter(appEnv.mockDelay) : undefined,
 })

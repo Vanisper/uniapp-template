@@ -8,8 +8,8 @@ const request = vi.fn((options: UniApp.RequestOptions) => {
   return { abort: vi.fn() }
 })
 
-function createClient() {
-  return createHttpClient({ baseURL: 'https://api.example.test/v1', requestAdapter: createMockAdapter(delay) })
+function createClient(logEnabled = false) {
+  return createHttpClient({ baseURL: 'https://api.example.test/v1', requestAdapter: createMockAdapter(delay, logEnabled) })
 }
 
 beforeEach(() => {
@@ -20,6 +20,8 @@ afterEach(() => {
   vi.clearAllTimers()
   vi.useRealTimers()
   vi.unstubAllGlobals()
+  vi.unstubAllEnvs()
+  vi.restoreAllMocks()
 })
 
 describe('跨端 Mock 集成', () => {
@@ -82,6 +84,68 @@ describe('跨端 Mock 集成', () => {
     const assertion = expect(pending).rejects.toMatchObject({ kind: 'timeout' })
     await vi.advanceTimersByTimeAsync(delay)
     await assertion
+    expect(request).not.toHaveBeenCalled()
+  })
+
+  it('日志关闭时不打印，开启后标明 Mock 响应与真实请求回退', async () => {
+    const info = vi.spyOn(console, 'info').mockImplementation(() => {})
+    const silent = createClient().Get('/demo/request').send()
+    await vi.advanceTimersByTimeAsync(delay)
+    await silent
+    expect(info).not.toHaveBeenCalled()
+
+    const client = createClient(true)
+    const mocked = client.Get('/demo/request').send()
+    await vi.advanceTimersByTimeAsync(delay)
+    await mocked
+    await client.Get('/unmocked').send()
+    expect(info.mock.calls.map(call => call[0])).toEqual([
+      expect.stringMatching(/^\[Mock\].*GET.*\/demo\/request/),
+      expect.stringMatching(/^\[HTTP\].*GET.*\/unmocked/),
+    ])
+  })
+
+  it('默认读取环境日志开关，关闭日志后仍正常处理 Mock 和真实请求', async () => {
+    const info = vi.spyOn(console, 'info').mockImplementation(() => {})
+    vi.stubEnv('VITE_MOCK_LOG_ENABLED', 'false')
+    vi.resetModules()
+    const { createMockAdapter: createConfiguredAdapter } = await import('./index')
+    const client = createHttpClient({ baseURL: '', requestAdapter: createConfiguredAdapter(delay) })
+    const mocked = client.Get('/demo/request').send()
+    await vi.advanceTimersByTimeAsync(delay)
+    await expect(mocked).resolves.toMatchObject({ items: expect.any(Array) })
+    await expect(client.Get('/unmocked').send()).resolves.toBe('real endpoint')
+    expect(info).not.toHaveBeenCalled()
+  })
+
+  it('客户端覆盖鉴权头时隐藏实际 Token，同时保留请求中的完整认证信息', async () => {
+    const info = vi.spyOn(console, 'info').mockImplementation(() => {})
+    const token = 'instance-session-marker'
+    const mockAdapter = createMockAdapter(delay, true)
+    const sentHeaders: Record<string, unknown>[] = []
+    const client = createHttpClient({
+      baseURL: 'https://api.example.test/v1',
+      authHeaderName: 'X-Session',
+      authTokenPrefix: '',
+      getToken: () => token,
+      requestAdapter(elements, method) {
+        sentHeaders.push(elements.headers)
+        return mockAdapter(elements, method)
+      },
+    })
+    const method = client.Get('/demo/request', { params: { scenario: 'empty' } })
+    const pending = method.send()
+    await vi.advanceTimersByTimeAsync(delay)
+    await expect(pending).resolves.toMatchObject({ items: [] })
+
+    expect(sentHeaders[0]?.['X-Session']).toBe(token)
+    expect(info).toHaveBeenCalledWith(expect.stringMatching(/^\[Mock\]/), expect.objectContaining({
+      request: expect.objectContaining({
+        headers: { 'X-Session': '[REDACTED]' },
+        query: { scenario: 'empty' },
+      }),
+    }))
+    expect(JSON.stringify(info.mock.calls)).not.toContain(token)
     expect(request).not.toHaveBeenCalled()
   })
 })

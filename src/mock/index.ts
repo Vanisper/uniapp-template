@@ -1,14 +1,17 @@
 import { uniappMockResponse, uniappRequestAdapter } from '@alova/adapter-uniapp'
 import { createAlovaMockAdapter } from '@alova/mock'
+import { appEnv } from '@/config/env'
+import { createAuthMocks } from './auth'
 import { createDemoMocks } from './demo'
+import { createMockLogger } from './logger'
 
-/** 创建跨端 Mock 适配器；未匹配的请求交给 uni.request，默认延迟 500 毫秒 */
-export function createMockAdapter(delay = 500) {
-  return createAlovaMockAdapter([createDemoMocks()], {
+/** 创建跨端 Mock 适配器；未匹配请求交给 uni.request，日志开关默认使用环境配置 */
+export function createMockAdapter(delay = 500, logEnabled = appEnv.mockLogEnabled) {
+  return createAlovaMockAdapter([createDemoMocks(), createAuthMocks()], {
     httpAdapter: uniappRequestAdapter,
     onMockResponse: uniappMockResponse,
     matchMode: 'methodurl',
     delay,
-    mockRequestLogger: false,
+    mockRequestLogger: logEnabled ? createMockLogger(appEnv.authHeaderName) : false,
   })
 }

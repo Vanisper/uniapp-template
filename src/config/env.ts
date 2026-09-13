@@ -8,15 +8,19 @@ export interface AppEnv {
   readonly authHeaderName: string
   /** Token 前缀，非空时与 Token 之间自动加一个空格；空值表示直接发送 Token */
   readonly authTokenPrefix: string
+  /** Token 在 uni 同步存储中的 key */
+  readonly authTokenKey: string
   /** Mock 响应延迟毫秒数 */
   readonly mockDelay: number
   /** Vite mode，允许 development、test、production 之外的自定义值 */
   readonly mode: string
   /** Mock 开关，production 模式始终为 false */
   readonly mockEnabled: boolean
+  /** 是否输出 Mock 适配器日志 */
+  readonly mockLogEnabled: boolean
 }
 
-type AppEnvSource = Partial<Pick<ImportMetaEnv, 'VITE_API_BASE_URL' | 'VITE_REQUEST_TIMEOUT' | 'VITE_AUTH_HEADER_NAME' | 'VITE_AUTH_TOKEN_PREFIX' | 'VITE_MOCK_DELAY' | 'VITE_MOCK_ENABLED'>> & { MODE: string }
+type AppEnvSource = Partial<Pick<ImportMetaEnv, 'VITE_API_BASE_URL' | 'VITE_REQUEST_TIMEOUT' | 'VITE_AUTH_HEADER_NAME' | 'VITE_AUTH_TOKEN_PREFIX' | 'VITE_AUTH_TOKEN_KEY' | 'VITE_MOCK_DELAY' | 'VITE_MOCK_ENABLED' | 'VITE_MOCK_LOG_ENABLED'>> & { MODE: string }
 
 function positiveNumber(value: string | undefined, fallback: number, name: string): number {
   if (value === undefined)
@@ -43,6 +47,10 @@ export function parseAppEnv(source: AppEnvSource): AppEnv {
   if (mockFlag !== 'true' && mockFlag !== 'false')
     throw new Error('[env] VITE_MOCK_ENABLED 必须为 true 或 false')
 
+  const mockLogFlag = source.VITE_MOCK_LOG_ENABLED ?? 'true'
+  if (mockLogFlag !== 'true' && mockLogFlag !== 'false')
+    throw new Error('[env] VITE_MOCK_LOG_ENABLED 必须为 true 或 false')
+
   const authHeaderName = (source.VITE_AUTH_HEADER_NAME ?? 'Authorization').trim()
   if (!/^[!#$%&'*+\-.^`|~\w]+$/.test(authHeaderName))
     throw new Error('[env] VITE_AUTH_HEADER_NAME 必须为非空的 HTTP 请求头名称')
@@ -51,14 +59,20 @@ export function parseAppEnv(source: AppEnvSource): AppEnv {
   if (Array.from(rawAuthTokenPrefix).some(char => char.charCodeAt(0) < 32 || char.charCodeAt(0) === 127))
     throw new Error('[env] VITE_AUTH_TOKEN_PREFIX 不能包含控制字符')
 
+  const authTokenKey = (source.VITE_AUTH_TOKEN_KEY ?? 'uniapp-template:auth:token').trim()
+  if (!authTokenKey)
+    throw new Error('[env] VITE_AUTH_TOKEN_KEY 必须为非空的缓存 key')
+
   return Object.freeze({
     apiBaseURL: apiBaseURL.replace(/\/+$/, ''),
     requestTimeout: positiveNumber(source.VITE_REQUEST_TIMEOUT, 10_000, 'VITE_REQUEST_TIMEOUT'),
     authHeaderName,
     authTokenPrefix: rawAuthTokenPrefix.trim(),
+    authTokenKey,
     mockDelay: positiveNumber(source.VITE_MOCK_DELAY, 500, 'VITE_MOCK_DELAY'),
     mode: source.MODE,
     mockEnabled: source.MODE !== 'production' && mockFlag === 'true',
+    mockLogEnabled: mockLogFlag === 'true',
   })
 }
 

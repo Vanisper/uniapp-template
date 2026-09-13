@@ -50,8 +50,10 @@ mode 和开发/构建命令是两个维度。`build:test` 会生成优化后的�
 | `VITE_REQUEST_TIMEOUT` | `10000` | 请求超时毫秒数，有限正数 |
 | `VITE_AUTH_HEADER_NAME` | `Authorization` | 非空的 HTTP 请求头名称，移除首尾空白 |
 | `VITE_AUTH_TOKEN_PREFIX` | `Bearer` | Token 前缀，不含控制字符；移除首尾空白，空字符串表示直接发送 Token |
+| `VITE_AUTH_TOKEN_KEY` | `uniapp-template:auth:token` | Token 缓存 key，移除首尾空白后必须非空 |
 | `VITE_MOCK_DELAY` | `500` | Mock 响应延迟毫秒数，有限正数 |
 | `VITE_MOCK_ENABLED` | `false` | 只接受字符串 `true` 或 `false`；development、test 模板覆盖为 `true` |
+| `VITE_MOCK_LOG_ENABLED` | `true` | 是否输出脱敏后的 Mock 适配器日志，只接受字符串 `true` 或 `false` |
 
 公共客户端从 [`src/config/env.ts`](../src/config/env.ts) 的 `appEnv` 读取解析后的配置。缺失变量使用上述默认值；显式配置的空时间、无效数字、无效地址、鉴权格式或开关会抛出带变量名的配置错误。地址首尾空白及末尾斜杠会被移除。
 
@@ -71,11 +73,16 @@ pnpm dev
 ```dotenv
 VITE_AUTH_HEADER_NAME=X-Token
 VITE_AUTH_TOKEN_PREFIX=
+VITE_AUTH_TOKEN_KEY=my-project:development:token
 ```
 
 默认配置发送 `Authorization: Bearer <token>`。前缀非空时与 Token 之间自动加入一个空格，配置中无需保留末尾空格。解析后的值分别为 `appEnv.authHeaderName` 和 `appEnv.authTokenPrefix`；所有 `createHttpClient` 实例默认继承这两个值，也可通过实例参数覆盖。
 
-这些变量只定义鉴权格式，Token 仍由运行时注入的 `getToken` 函数提供。公共 `http` 客户端尚未绑定 Token 来源，仅修改环境变量不会自动读取登录状态。修改配置后重启当前开发或构建命令。
+公共 `http` 已绑定 [`src/auth/token.ts`](../src/auth/token.ts) 的 `getToken`，每次发送时读取 `VITE_AUTH_TOKEN_KEY` 指定的缓存。登录成功后调用 `setToken` 保存，退出时调用 `clearToken` 清除；这些操作使用同一个 key。不同 mode 需要独立登录态时，在各自的 `.env.[mode]` 或 `.env.[mode].local` 中配置不同 key。
+
+缓存 key 变更后不会自动迁移旧 Token，需要重新登录。环境变量保存的是鉴权格式与缓存位置，Token 内容由运行时登录结果提供。修改配置后重启当前开发或构建命令。
+
+Mock 命中时不会发送网络请求，可在控制台查看 `[Mock]` 日志；未命中时输出 `[HTTP]` 转发提示，并通过平台网络 API 请求服务。设置 `VITE_MOCK_LOG_ENABLED=false` 可关闭该适配器的日志，不影响请求和页面状态。production 模式不引入 Mock 适配器与日志实现。
 
 客户端使用与接口分层见[请求层与 Mock](../docs/request.md)。
 
