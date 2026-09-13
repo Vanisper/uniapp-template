@@ -48,10 +48,11 @@ interface NavbarProps {
 }
 
 const navbarStyle = computed(() => ({
+  boxSizing: 'border-box' as const,
   backgroundColor: props.bgColor,
   color: props.textColor,
   height: `${props.height}px`,
-  borderBottom: props.bordered ? '1px solid #e5e5e5' : 'none',
+  borderBottom: props.bordered ? '1px solid var(--app-line, #e9ede8)' : 'none',
   top: `${props.top}px`,
 }))
 
@@ -93,8 +94,18 @@ const rightSlotStyle = {
         @click="!leftDisabled && emit('clickLeft')"
       >
         <slot name="left">
-          <view v-if="leftArrow" text-17px i-line-md:chevron-left />
-          <view v-if="leftText" text-14px>{{ leftText }}</view>
+          <button
+            class="navbar-action"
+            :class="{ 'navbar-action--disabled': leftDisabled }"
+            :disabled="leftDisabled"
+            :hover-class="leftDisabled ? 'none' : 'navbar-action--pressed'"
+            :hover-start-time="0"
+            :hover-stay-time="100"
+            :aria-label="leftText || '返回上一页'"
+          >
+            <view v-if="leftArrow" text-17px i-line-md:chevron-left />
+            <view v-if="leftText" text-14px>{{ leftText }}</view>
+          </button>
         </slot>
       </view>
 
@@ -113,9 +124,50 @@ const rightSlotStyle = {
         @click="!rightDisabled && emit('clickRight')"
       >
         <slot name="right">
-          <view v-if="rightText" text-14px>{{ rightText }}</view>
+          <button
+            class="navbar-action"
+            :class="{ 'navbar-action--disabled': rightDisabled }"
+            :disabled="rightDisabled"
+            :hover-class="rightDisabled ? 'none' : 'navbar-action--pressed'"
+            :hover-start-time="0"
+            :hover-stay-time="100"
+          >
+            <view v-if="rightText" text-14px>{{ rightText }}</view>
+          </button>
         </slot>
       </view>
     </view>
   </view>
 </template>
+
+<style lang="scss" scoped>
+.navbar-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-width: 44px;
+  min-height: 44px;
+  margin: 0;
+  padding: 0 4px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: inherit;
+  line-height: 1;
+
+  &::after {
+    border: 0;
+  }
+}
+
+.navbar-action--pressed {
+  background: rgba(128, 128, 128, 0.1);
+}
+
+.navbar-action.navbar-action--disabled {
+  background: transparent;
+  color: inherit;
+  opacity: 0.35;
+}
+</style>
