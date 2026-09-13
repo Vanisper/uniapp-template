@@ -68,7 +68,7 @@ src/
 
 开发与构建启动时自动发现 `src/packages` 下非隐藏的直属目录，只扫描各包的 `pages`。例如 `demo/pages/index.vue` 会生成分包根 `packages/demo` 和页面路径 `pages/index`，完整跳转路径为 `/packages/demo/pages/index`。没有页面的包不会写入分包配置。
 
-分包扫描配置集中在 [plugins/vite/pages.ts](plugins/vite/pages.ts)，使用 `src/packages/*/pages` 匹配页面目录，再由 `root` 函数计算分包根。glob 扫描与插件的 `prepare()` 接口由项目维护的 [uni-pages 补丁](docs/dependencies/dependency-upgrade-2026-09-12.md#uni-pages分包扫描与提前准备)提供。
+分包扫描配置集中在 [plugins/vite/pages.ts](plugins/vite/pages.ts)，使用 `src/packages/*/pages` 匹配页面目录，再由 `root` 函数计算分包根。glob 扫描与插件的 `prepare()` 接口由项目维护的 [uni-pages 补丁](docs/dependencies/dependency-upgrade-2026-09-12.md#uni-pages分包扫描配置依赖与提前准备)提供。
 
 创建其他插件前，先等待 `pages.prepare()` 生成完整的 `pages.json` 和路由类型；Vite 随后接管同一个插件实例，复用已准备的上下文。项目显式启用 `platformSuffix`，使准备阶段就能确定平台文件规则。
 
