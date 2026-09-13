@@ -4,13 +4,14 @@ import { useLayout } from './index'
 
 const mocks = vi.hoisted(() => ({
   usePageRoute: vi.fn<() => string | undefined>(),
+  tabbar: { mode: 'custom' as 'custom' | 'default', height: 56 },
 }))
 
 vi.mock('../usePageRoute', () => ({ usePageRoute: mocks.usePageRoute }))
 vi.mock('@/configs/theme', () => ({
   THEME_CONFIG: {
     navbar: { height: 48 },
-    tabbar: { mode: 'custom', height: 56 },
+    tabbar: mocks.tabbar,
   },
 }))
 
@@ -31,6 +32,7 @@ function readLayout(layout: ReturnType<typeof useLayout>) {
   return {
     hasNavbar: layout.hasNavbar.value,
     hasTabbar: layout.hasTabbar.value,
+    hasNativeTabbar: layout.hasNativeTabbar.value,
     navbarHeight: layout.navbarHeight.value,
     tabbarHeight: layout.tabbarHeight.value,
     pageHeight: layout.pageHeight.value,
@@ -39,6 +41,7 @@ function readLayout(layout: ReturnType<typeof useLayout>) {
 }
 
 beforeEach(() => {
+  mocks.tabbar.mode = 'custom'
   activeRoute = shallowRef('pages/index')
   vi.stubGlobal('usePages', () => ({
     currentRoute: activeRoute,
@@ -59,7 +62,9 @@ afterEach(() => {
 })
 
 describe('页面布局归属', () => {
-  it('两个缓存 tab 页和普通页各自保留导航栏、底栏及占位，活动页切换不改变旧页面', async () => {
+  it.each(['custom', 'default'] as const)('%s 模式下，缓存 tab 页和普通页各自保留布局，活动页切换不改变旧页面', async (mode) => {
+    mocks.tabbar.mode = mode
+    const custom = mode === 'custom'
     const layouts = [
       createLayout('pages/index'),
       createLayout('pages/about'),
@@ -68,11 +73,11 @@ describe('页面布局归属', () => {
     const initialLayouts = layouts.map(readLayout)
 
     expect(initialLayouts).toMatchObject([
-      { hasNavbar: true, hasTabbar: true, navbarHeight: 48, tabbarHeight: 56 },
-      { hasNavbar: false, hasTabbar: true, navbarHeight: 44, tabbarHeight: 56 },
-      { hasNavbar: true, hasTabbar: false, navbarHeight: 48, tabbarHeight: 0 },
+      { hasNavbar: true, hasTabbar: custom, hasNativeTabbar: !custom, navbarHeight: 48, tabbarHeight: custom ? 56 : 0 },
+      { hasNavbar: false, hasTabbar: custom, hasNativeTabbar: !custom, navbarHeight: 44, tabbarHeight: custom ? 56 : 0 },
+      { hasNavbar: true, hasTabbar: false, hasNativeTabbar: false, navbarHeight: 48, tabbarHeight: 0 },
     ])
-    expect(initialLayouts[2]!.pageHeight).toBeGreaterThan(initialLayouts[0]!.pageHeight)
+    expect(initialLayouts[2]!.pageHeight - initialLayouts[0]!.pageHeight).toBe(custom ? 56 : 0)
 
     for (const route of ['pages/about', 'pages/detail', 'pages/index']) {
       activeRoute.value = route

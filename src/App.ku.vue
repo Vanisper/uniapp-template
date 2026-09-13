@@ -25,7 +25,7 @@ function handleClickGithub() {
 <style lang="scss" scoped>
 .root-bar {
   position: absolute;
-  bottom: 50px;
+  bottom: var(--tabbar-height, 0px);
   left: 0;
   width: 100%;
   height: 40px;

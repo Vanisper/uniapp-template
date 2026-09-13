@@ -1,13 +1,16 @@
 <script lang="ts" setup>
 import { useLayout } from '@/composables/useLayout'
 
-const { hasNavbar, pageWrapperStyle } = useLayout()
+const { hasNavbar, hasNativeTabbar, pageWrapperStyle } = useLayout()
 </script>
 
 <template>
   <div
     class="page-wrapper"
-    :class="{ 'page-wrapper--custom-navigation': hasNavbar }"
+    :class="{
+      'page-wrapper--custom-navigation': hasNavbar,
+      'page-wrapper--native-tabbar': hasNativeTabbar,
+    }"
     :style="pageWrapperStyle"
   >
     <slot />
@@ -37,6 +40,11 @@ const { hasNavbar, pageWrapperStyle } = useLayout()
   .page-wrapper--custom-navigation {
     // 自定义状态栏在容器内部占位
     --page-top: 0px;
+  }
+
+  .page-wrapper--native-tabbar {
+    // 原生底栏的安全区已由平台或窗口偏移预留
+    --page-bottom: var(--window-bottom, 0px);
   }
 
   /* #ifdef H5 */

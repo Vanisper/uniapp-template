@@ -31,6 +31,10 @@ export function useLayout() {
   const hasTabbar = computed(() =>
     customTabbar && isTabBarPage(pageRoute),
   )
+  /** 所属页面是否使用原生底栏 */
+  const hasNativeTabbar = computed(() =>
+    !customTabbar && isTabBarPage(pageRoute),
+  )
 
   const navbarHeight = computed(() =>
     hasNavbar.value ? THEME_CONFIG.navbar.height : nativeNavbarHeight.value,
@@ -57,6 +61,7 @@ export function useLayout() {
     statusBarHeight,
     hasNavbar,
     hasTabbar,
+    hasNativeTabbar,
     navbarHeight,
     tabbarHeight,
     pageHeight,
