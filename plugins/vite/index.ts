@@ -2,18 +2,16 @@
 import type { PluginOption } from 'vite'
 
 import Uni from '@uni-helper/plugin-uni'
-import Components from '@uni-helper/vite-plugin-uni-components'
-import { ZPagingResolver } from '@uni-helper/vite-plugin-uni-components/resolvers'
 import UniLayouts from '@uni-helper/vite-plugin-uni-layouts'
 import UniManifest from '@uni-helper/vite-plugin-uni-manifest'
 import UniPages from '@uni-helper/vite-plugin-uni-pages'
 import UniPlatform from '@uni-helper/vite-plugin-uni-platform'
 import Optimization from '@uni-ku/bundle-optimizer'
 import UniRoot from '@uni-ku/root'
-import { UniEchartsResolver } from 'uni-echarts/resolver'
 import { UniEcharts } from 'uni-echarts/vite'
 import UnoCSS from 'unocss/vite'
 import AutoImport from 'unplugin-auto-import/vite'
+import { createComponentPlugins } from './components'
 import { getPagesOptions } from './pages'
 
 export default async function createPlugins(mode: string, isBuild = false) {
@@ -23,13 +21,7 @@ export default async function createPlugins(mode: string, isBuild = false) {
 
   const Plugins: (PluginOption | PluginOption[])[] = [
     // https://uni-helper.js.org/vite-plugin-uni-components
-    Components({
-      dts: 'src/typings/components.d.ts',
-      dtsTsx: false,
-      types: [],
-      directoryAsNamespace: true,
-      resolvers: [UniEchartsResolver(), ZPagingResolver()],
-    }),
+    ...createComponentPlugins(),
     // https://github.com/uni-helper/vite-plugin-uni-pages
     pages,
     // https://github.com/uni-helper/vite-plugin-uni-layouts

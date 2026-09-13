@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import ComponentEntries from '../components/ComponentEntries.vue'
 import InputEntry from '../components/InputEntry.vue'
 
 const appVersion = __APP_VERSION__
@@ -29,8 +30,14 @@ async function openRefs() {
     <view class="page-description">在这里验证交互、页面跳转与组件能力。每次操作，都能看到真实结果。</view>
 
     <view class="group-heading">
-      <text class="group-title">组件与生命周期</text>
+      <text class="group-title">组件体验</text>
       <text class="group-number">01</text>
+    </view>
+    <ComponentEntries />
+
+    <view class="group-heading">
+      <text class="group-title">组件与生命周期</text>
+      <text class="group-number">02</text>
     </view>
     <button class="refs-entry" @click="openRefs">
       <view class="entry-icon"><text i-carbon-cube /></view>
@@ -44,7 +51,7 @@ async function openRefs() {
 
     <view class="group-heading">
       <text class="group-title">路由与状态</text>
-      <text class="group-number">02</text>
+      <text class="group-number">03</text>
     </view>
     <InputEntry />
 

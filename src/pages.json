@@ -79,6 +79,45 @@
             "navigationBarTitleText": "测试中心",
             "navigationStyle": "default"
           }
+        },
+        {
+          "path": "pages/paging-basic",
+          "type": "page",
+          "layout": "default",
+          "style": {
+            "navigationBarTitleText": "基础分页",
+            "navigationStyle": "custom",
+            "disableScroll": true
+          }
+        },
+        {
+          "path": "pages/paging-filter",
+          "type": "page",
+          "layout": "default",
+          "style": {
+            "navigationBarTitleText": "搜索与分类",
+            "navigationStyle": "custom",
+            "disableScroll": true
+          }
+        },
+        {
+          "path": "pages/paging-states",
+          "type": "page",
+          "layout": "default",
+          "style": {
+            "navigationBarTitleText": "空态与重试",
+            "navigationStyle": "custom",
+            "disableScroll": true
+          }
+        },
+        {
+          "path": "pages/wot",
+          "type": "page",
+          "layout": "default",
+          "style": {
+            "navigationBarTitleText": "Wot UI 组件",
+            "navigationStyle": "custom"
+          }
         }
       ]
     },

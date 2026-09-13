@@ -79,16 +79,20 @@ src/
 
 所属页面与活动页面的区别、原生和自定义导航职责、安全区、滚动区域及测试入口边界见[页面容器与导航约定](docs/page-layouts.md)。
 
+测试中心提供 Wot UI v2 交互示例，以及 z-paging 的基础分页、搜索筛选、空态与失败重试场景。组件按需导入、主题配置和示例接入方式见[组件接入与场景示例](docs/component-examples.md)。
+
 底栏的组件选择、共用参数、受控交互和平台接入见 [TabBar 接入与组件契约](docs/tabbar.md)。图片和图标来源单独记录在[静态资源说明](src/static/README.md)。
 
 ## TODO
 
 ### Basic
+
 - [x] uniapp3 + vue3 + typescript
 - [x] eslint
 - [x] unocss
 
 ### 开发优化
+
 - [x] [unplugin-auto-import/vite](https://github.com/antfu/unplugin-auto-import): 按需自动导入API
 - [x] [@uni-helper/unh](https://github.com/uni-helper/unh): uniapp cli 启动命令二次封装，简化运行脚本指令，增强开发体验
 - [x] [@uni-helper/plugin-uni](https://github.com/uni-helper/plugin-uni): uni插件的ESM导出，于 uni-app 构建体系中实现 ESM-First
@@ -98,15 +102,19 @@ src/
 - [x] [@uni-helper/vite-plugin-uni-manifest](https://github.com/uni-helper/vite-plugin-uni-manifest): 使用 TypeScript 来编写 uni-app 的 manifest.json
 - [x] [@uni-helper/vite-plugin-uni-platform](https://uni-helper.js.org/vite-plugin-uni-platform): 实现文件级别的平台条件编译
 - [x] [@uni-ku/root](https://github.com/uni-ku/root): 实现虚拟根组件
-- [ ] [@uni-ku/bundle-optimizer](https://github.com/uni-ku/bundle-optimizer): Uniapp Vue3 版本的分包优化实现
+- [x] [@uni-ku/bundle-optimizer](https://github.com/uni-ku/bundle-optimizer): Uniapp Vue3 版本的分包优化实现
 
 ### 实用库
+
+- [x] [Wot UI v2](https://wot-ui.cn/)（`@wot-ui/ui`）: 按需引入组件与官方全局类型，提供表单和交互反馈示例
+- [x] [z-paging](https://z-paging.com/): 列表分页、下拉刷新与加载更多，提供搜索筛选及失败重试示例
 - [x] [uni-echarts](https://github.com/xiaohe0601/uni-echarts): 适用于 uni-app 的 Apache ECharts 组件
 - [x] pinia + [pinia-plugin-persistedstate](https://praz.codeberg.page/pinia-plugin-persistedstate): 全局状态管理及持久化
 - [ ] 路由管理
 - [ ] [alova](https://alova.js.org/zh-CN/tutorial/getting-started/introduce) 请求库的支持
 
 ### 业务增强
+
 - [ ] layouts 的建设：自定义 tabbar、navbar，以及实现布局的动态切换
 - [ ] 全局样式、主题的建设
 - [ ] 网络请求封装
