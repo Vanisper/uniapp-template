@@ -5,6 +5,7 @@ import Tabbar from '@/components/Tabbar/index.vue'
 import TabbarRaised from '@/components/Tabbar/Raised/index.vue'
 
 definePage({ style: { navigationBarTitleText: '底栏版式', navigationStyle: 'custom' } })
+const colors = { normal: '#89948f', active: '#257864' }
 const classic = shallowRef('discover')
 const animated = shallowRef('discover')
 const raised = shallowRef('discover')
@@ -25,12 +26,12 @@ const items = [
           <text class="appearance-preview__title">{{ items.find(item => item.value === raised)?.text }}</text>
           <text>让此刻的选择，轻轻浮出。</text>
         </view>
-        <TabbarRaised :value="raised" :list="items" :height="72" color="#89948f" active-color="#257864" @change="raised = $event.value" />
+        <TabbarRaised :value="raised" :list="items" :height="72" :color="colors.normal" :active-color="colors.active" @change="raised = $event.value" />
       </view>
       <view class="journal-section-heading"><text class="journal-section-title">02 · 简洁图文</text><text class="journal-muted">即时切换</text></view>
-      <view class="appearance-preview"><view class="appearance-preview__content"><text class="appearance-preview__title">{{ items.find(item => item.value === classic)?.text }}</text><text>少一点装饰，让内容更突出。</text></view><Tabbar :value="classic" :list="items" :height="64" color="#89948f" active-color="#257864" @change="classic = $event.value" /></view>
+      <view class="appearance-preview"><view class="appearance-preview__content"><text class="appearance-preview__title">{{ items.find(item => item.value === classic)?.text }}</text><text>少一点装饰，让内容更突出。</text></view><Tabbar :value="classic" :list="items" :height="64" :color="colors.normal" :active-color="colors.active" @change="classic = $event.value" /></view>
       <view class="journal-section-heading"><text class="journal-section-title">03 · 胶囊强调</text><text class="journal-muted">柔和过渡</text></view>
-      <view class="appearance-preview"><view class="appearance-preview__content"><text class="appearance-preview__title">{{ items.find(item => item.value === animated)?.text }}</text><text>用轻盈的移动，回应每一次选择。</text></view><TabbarAnimated :value="animated" :list="items" :height="64" color="#89948f" active-color="#257864" @change="animated = $event.value" /></view>
+      <view class="appearance-preview"><view class="appearance-preview__content"><text class="appearance-preview__title">{{ items.find(item => item.value === animated)?.text }}</text><text>用轻盈的移动，回应每一次选择。</text></view><TabbarAnimated :value="animated" :list="items" :height="64" :color="colors.normal" :active-color="colors.active" @change="animated = $event.value" /></view>
       <view class="appearance-tip"><text class="i-carbon-information" /><text>这里的切换仅用于版式预览，不会离开当前页面。</text></view>
     </view>
   </scroll-view>

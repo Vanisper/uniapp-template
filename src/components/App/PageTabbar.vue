@@ -24,6 +24,7 @@ withDefaults(defineProps<{
 const { pagesJson, getCurrentPage, go } = usePages()
 const pageRoute = usePageRoute()
 const list = pagesJson.tabBar?.list
+const colors = { normal: '#89948f', active: '#257864' }
 const tabbar = shallowRef<TabbarExpose>()
 let navigating = false
 let pageVersion = 0
@@ -96,7 +97,20 @@ if (typeof wx !== 'undefined'
     value-field="pagePath"
     :height="height"
     :before-change="navigate"
-    color="#89948f"
-    active-color="#257864"
+    :color="colors.normal"
+    :active-color="colors.active"
   />
+  <view class="page-tabbar-safe-area" />
 </template>
+
+<style scoped>
+.page-tabbar-safe-area {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  left: 0;
+  height: var(--page-bottom, 0px);
+  background: #fff;
+  pointer-events: none;
+}
+</style>

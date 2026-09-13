@@ -44,7 +44,7 @@ export function useLayout() {
     hasTabbar.value ? THEME_CONFIG.tabbar.height : 0,
   )
 
-  /** 安全区域内扣除状态栏、导航栏与底栏后的内容高度 */
+  /** 安全区域内扣除状态栏、导航栏与完整底栏后的保守内容高度 */
   const pageHeight = computed(() =>
     safeBottom.value - statusBarHeight.value - navbarHeight.value - tabbarHeight.value,
   )
