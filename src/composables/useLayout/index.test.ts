@@ -44,7 +44,7 @@ beforeEach(() => {
   mocks.tabbar.mode = 'custom'
   activeRoute = shallowRef('pages/index')
   vi.stubGlobal('usePages', () => ({
-    currentRoute: activeRoute,
+    getCurrentPage: () => ({ route: activeRoute.value }),
     isCustomNavigationStyle: (route: string) => pageOptions[route]?.customNavigation ?? false,
     isTabBarPage: (route: string) => pageOptions[route]?.tabbar ?? false,
   }))

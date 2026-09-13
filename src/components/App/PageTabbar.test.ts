@@ -64,7 +64,7 @@ beforeEach(() => {
     return true
   })
   mocks.usePages.mockReturnValue({
-    currentRoute,
+    getCurrentPage: () => ({ route: currentRoute.value }),
     go: mocks.go,
     pagesJson: { tabBar: { list } },
   })

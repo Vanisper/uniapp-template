@@ -16,7 +16,7 @@
 | `TabbarAnimated` | `src/components/Tabbar/Animated/` | 胶囊与文字过渡、视觉预选、延迟确认和取消 |
 | `AppPageTabbar` | `src/components/App/PageTabbar.vue` | 读取配置、绑定所属页路由、执行导航、反馈失败及适配页面生命周期 |
 | `PageWrapper` | `src/components/App/PageWrapper.vue` | 确定页面可用高度，统一处理窗口偏移与安全区 |
-| `usePages` | `src/composables/usePages/` | 查询页面配置、真实页面栈与活动路由，执行导航 |
+| `usePages` | `src/composables/usePages/` | 查询页面配置与调用时的栈顶页面，执行导航 |
 | `usePageRoute` | `src/composables/usePageRoute/` | 获取组件所属页面的固定路由 |
 | `useLayout` | `src/composables/useLayout/` | 按所属页面配置计算导航栏、底栏和内容区域尺寸 |
 
@@ -84,11 +84,13 @@ H5 使用框架的窗口偏移变量，它们已经包含安全区；自定义�
 
 页面容器负责底栏的展示与生命周期。H5 同 tab 导航可能只触发 `onHide`，因此该钩子只用于交互清理，底栏显示由所属页面的布局配置决定。
 
-## 页面归属与状态同步
+## 页面归属与即时查询
 
 `usePageRoute()` 在 setup 中沿 Vue 父级读取所属页面的固定路由，没有页面上下文时返回 `undefined`。底栏选中项、导航栏标题和布局尺寸使用该路由，缓存页面和异步子组件都保持各自的页面状态。
 
-`usePages().currentRoute` 表示真实页面栈的活动路由。`main.ts` 在应用创建时调用 `setupPages(app)`，通过页面显示、就绪生命周期及导航 API 完成拦截器刷新页面栈。两类入口分别覆盖原生 tab 点击、系统返回和程序导航等场景。
+`usePages().getCurrentPage()` 每次调用都从 `getCurrentPages()` 读取真实栈顶页面，并附加页面配置；空栈时返回 `undefined`。`AppPageTabbar` 在导航判断和微信转场完成事件中通过 `getCurrentPage()?.route` 查询活动路由，`goBack()` 在返回前直接读取真实栈长度。页面查询与导航统一由 `usePages` 提供，无需在应用启动时安装页面插件。
+
+这些调用方只需要事件发生时的页面状态，因此不维护响应式页面栈，也无需生命周期或导航拦截器刷新缓存。若后续需要在模板中持续展示活动路由，应补充明确的响应式事件来源；仅将 `getCurrentPages()` 包在 `computed` 中不会随页面切换更新。
 
 `go()`、`goHome()`、`goBack()` 返回 `Promise<boolean>`，表示导航 API 的成功或失败；页面显示状态由实际页面栈反映。导航目标使用应用根路径，有无前导 `/` 均可，普通页面可以携带查询参数。
 

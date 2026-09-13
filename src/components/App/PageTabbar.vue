@@ -23,7 +23,7 @@ withDefaults(defineProps<{
   height: THEME_CONFIG.tabbar.height,
 })
 
-const { pagesJson, currentRoute, go } = usePages()
+const { pagesJson, getCurrentPage, go } = usePages()
 const pageRoute = usePageRoute()
 const list = pagesJson.tabBar?.list
 const animatedTabbar = shallowRef<TabbarAnimatedExpose>()
@@ -31,7 +31,7 @@ let navigating = false
 let pageVersion = 0
 
 async function navigate({ value }: TabbarSelection) {
-  if (navigating || typeof value !== 'string' || value === currentRoute.value) {
+  if (navigating || typeof value !== 'string' || value === getCurrentPage()?.route) {
     return false
   }
 
@@ -81,7 +81,7 @@ if (THEME_CONFIG.tabbar.variant === 'animated'
   && wx.canIUse('offAppRouteDone')) {
   const restoreInactiveSelection: WechatMiniprogram.OnAppRouteDoneCallback = (event) => {
     // 转场结束后准备隐藏页的缓存；迟到事件不能打断当前页的预选
-    if (event?.path === currentRoute.value && event.path !== pageRoute) {
+    if (event?.path && event.path === getCurrentPage()?.route && event.path !== pageRoute) {
       animatedTabbar.value?.cancel()
     }
   }
