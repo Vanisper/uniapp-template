@@ -1,9 +1,10 @@
 <script lang="ts" setup>
+import AppPageTabbar from '@/components/App/PageTabbar.vue'
 import NavbarCapsule from '@/components/Navbar/capsule.vue'
 import Navbar from '@/components/Navbar/index.vue'
 import StatusBar from '@/components/StatusBar/index.vue'
-import Tabbar from '@/components/Tabbar/index.vue'
 import { useLayout } from '@/composables/useLayout'
+import { usePageRoute } from '@/composables/usePageRoute'
 
 defineOptions({
   options: {
@@ -14,59 +15,38 @@ defineOptions({
 })
 
 const {
-  go,
   goBack,
   goHome,
-  pagesJson,
-  currentRoute,
-  currentTabbarPath,
-  syncPageStack,
   isTabBarPage,
   getNavigationBarTitleText,
 } = usePages()
-const { hasNavbar, hasTabbar, navbarHeight, tabbarHeight, statusBarHeight, hideNativeTabbar } = useLayout()
+const { hasNavbar, hasTabbar, navbarHeight, tabbarHeight, statusBarHeight } = useLayout()
+const pageRoute = usePageRoute() ?? ''
 
 const { navigationBarColor } = useTheme()
 
-const tabbarList = pagesJson.tabBar?.list
-const navbarTitle = computed(() => getNavigationBarTitleText(currentRoute.value))
-
-onMounted(() => {
-  syncPageStack()
-  hideNativeTabbar()
-})
+const navbarTitle = computed(() => getNavigationBarTitleText(pageRoute))
 </script>
 
 <template>
   <StatusBar v-if="hasNavbar" :height="statusBarHeight" :bg-color="navigationBarColor.backgroundColor" />
   <Navbar
     v-if="hasNavbar"
-    :left-arrow="!isTabBarPage(currentRoute)"
     :title="navbarTitle"
     :height="navbarHeight"
     :top="statusBarHeight"
     :bg-color="navigationBarColor.backgroundColor"
     :text-color="navigationBarColor.frontColor"
-    @click-left="goBack(true)"
   >
-    <template #left>
+    <template v-if="!isTabBarPage(pageRoute)" #left>
       <NavbarCapsule
         @click-back="goBack(true)"
         @click-home="goHome()"
       />
     </template>
   </Navbar>
-  <view class="flex-1 overflow-auto">
+  <view class="min-h-0 flex flex-1 flex-col overflow-auto">
     <slot />
   </view>
-  <Tabbar
-    v-if="hasTabbar"
-    :default-value="currentTabbarPath"
-    :list="tabbarList"
-    value-field="pagePath"
-    :height="tabbarHeight"
-    @change="({ value }) => {
-      typeof value === 'string' && go(value, true)
-    }"
-  />
+  <AppPageTabbar v-if="hasTabbar" :height="tabbarHeight" />
 </template>

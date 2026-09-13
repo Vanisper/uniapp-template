@@ -46,7 +46,40 @@ unh 的环境变量类型生成功能已关闭（`env.dts: false`）；构建配
 
 测试运行器位于 `tools/testing` 工作区，使用 Vitest 4.1.11 和 Vite 6.4.3；应用构建继续使用 DCloud 配套的 Vite 5.2.8。`pnpm test` 保持为统一入口，测试文件仍与被测代码放在一起。测试配置中的模块别名与 `tsconfig.test.json` 的路径映射共同保证它们加载同一套测试依赖。
 
+测试使用 DCloud 预处理器执行平台条件编译：H5 项目运行全部用例，微信项目补充运行 TabBar 及页面接入用例。可通过 `pnpm test --project h5` 或 `pnpm test --project mp-weixin` 单独验证；平台专有用例只在对应项目运行。
+
 业务配置未显式加载 Node 类型，但 uni-pages 的声明会间接引入部分 Node 全局；配置拆分不等于禁止传递依赖引入类型。业务代码仍应使用 uni-app 的平台 API。
+
+## 分包目录
+
+主包页面放在 `src/pages`，分包将页面、组件、状态、样式和专属资源归集到 `src/packages/<包名>`：
+
+```text
+src/
+├── pages/
+└── packages/
+    └── <包名>/
+        ├── pages/
+        ├── components/
+        ├── styles/
+        └── static/
+```
+
+开发与构建启动时自动发现 `src/packages` 下非隐藏的直属目录，只扫描各包的 `pages`。例如 `demo/pages/index.vue` 会生成分包根 `packages/demo` 和页面路径 `pages/index`，完整跳转路径为 `/packages/demo/pages/index`。没有页面的包不会写入分包配置。
+
+分包扫描配置集中在 [plugins/vite/pages.ts](plugins/vite/pages.ts)，使用 `src/packages/*/pages` 匹配页面目录，再由 `root` 函数计算分包根。glob 扫描与插件的 `prepare()` 接口由项目维护的 [uni-pages 补丁](docs/dependencies/dependency-upgrade-2026-09-12.md#uni-pages分包扫描配置依赖与提前准备)提供。
+
+创建其他插件前，先等待 `pages.prepare()` 生成完整的 `pages.json` 和路由类型；Vite 随后接管同一个插件实例，复用已准备的上下文。项目显式启用 `platformSuffix`，使准备阶段就能确定平台文件规则。
+
+包内组件、composables 等资源使用显式导入；公共组件与公共逻辑继续使用现有自动导入规则。页面插件会自动发现分包新增、删除和重建。由于本项目的分包优化插件在初始化时读取包结构，新增或重命名整个分包后仍需重启开发命令；已有分包内的页面增删继续由页面插件监听。
+
+主 tab 页保留主包薄入口，仅声明路由、布局和跨包组件占位，具体视图由分包提供。主包入口不直接读取包内状态；包内消费者共用同一份状态模块，避免复制状态或引入主包同步依赖。跨包组件使用静态导入与 `componentPlaceholder`，具体约束和产物检查见[分包归属](docs/page-layouts.md#分包归属)。
+
+## 页面与导航
+
+所属页面与活动页面的区别、原生和自定义导航职责、安全区、滚动区域及测试入口边界见[页面容器与导航约定](docs/page-layouts.md)。
+
+底栏的组件选择、共用参数、受控交互和平台接入见 [TabBar 接入与组件契约](docs/tabbar.md)。图片和图标来源单独记录在[静态资源说明](src/static/README.md)。
 
 ## TODO
 

@@ -14,8 +14,13 @@ import { UniEchartsResolver } from 'uni-echarts/resolver'
 import { UniEcharts } from 'uni-echarts/vite'
 import UnoCSS from 'unocss/vite'
 import AutoImport from 'unplugin-auto-import/vite'
+import { getPagesOptions } from './pages'
 
 export default async function createPlugins(mode: string, isBuild = false) {
+  const pages = UniPages(getPagesOptions())
+  // 根组件与分包优化插件在创建时读取 pages.json
+  await pages.prepare()
+
   const Plugins: (PluginOption | PluginOption[])[] = [
     // https://uni-helper.js.org/vite-plugin-uni-components
     Components({
@@ -26,14 +31,7 @@ export default async function createPlugins(mode: string, isBuild = false) {
       resolvers: [UniEchartsResolver(), ZPagingResolver()],
     }),
     // https://github.com/uni-helper/vite-plugin-uni-pages
-    UniPages({
-      dts: 'src/typings/uni-pages.d.ts',
-      exclude: ['_*.*', '**/components/**/*.*', '**/_components/**/*.*'],
-      subPackages: [
-        'src/pages-demo',
-        'src/pages-lib',
-      ],
-    }),
+    pages,
     // https://github.com/uni-helper/vite-plugin-uni-layouts
     UniLayouts(),
     // https://github.com/uni-helper/vite-plugin-uni-manifest
@@ -74,7 +72,7 @@ export default async function createPlugins(mode: string, isBuild = false) {
       ignore: ['getCurrentWatcher', 'onWatcherCleanup', 'useId', 'useTemplateRef'],
       dts: 'src/typings/auto-imports.d.ts',
       dtsMode: 'overwrite',
-      dirs: ['src/composables', 'src/stores/modules', 'src/utils'],
+      dirs: ['src/composables/*/index.ts', 'src/stores/modules', 'src/utils'],
       vueTemplate: true,
     }),
   ]

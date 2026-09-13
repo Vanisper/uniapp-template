@@ -1,0 +1,750 @@
+diff --git a/dist/index.d.mts b/dist/index.d.mts
+index 81e52926a2e225d52ca01861c48514b475470a8c..28129296c37f9135ecb070d9745f3a31a124cc78 100644
+--- a/dist/index.d.mts
++++ b/dist/index.d.mts
+@@ -467,6 +467,12 @@ interface Options {
+    * @since 0.1.0
+    */
+   mergePages: boolean;
++  /**
++   * 按当前平台过滤文件名后缀，并统一页面和 TabBar 路径
++   *
++   * @description 未指定时由 Vite 检测 uni-platform 插件；prepare 必须显式设置
++   */
++  platformSuffix: boolean;
+   /**
+    * 主包页面的搜索目录
+    *
+@@ -480,7 +486,9 @@ interface Options {
+   /**
+    * uni-app 分包加载的子包页面目录
+    *
+-   * 支持字符串形式（目录路径）或对象形式（pages.json 中的自定义 root）
++   * 支持固定目录或 glob，对象形式可以自定义 pages.json 中的 root
++   *
++   * @description 匹配目录按路径排序；无匹配时不生成分包，隐藏目录可通过 exclude 排除
+    *
+    * monorepo 项目中页面可能位于项目根目录之外。使用对象形式指定
+    * 出现在 pages.json 中的自定义 root，避免生成的 root 路径含 '..'。
+@@ -613,10 +621,14 @@ interface ResolvedOptions extends Omit<Options, 'dir' | 'homePage' | 'configSour
+  * ```
+  */
+ interface SubPackageConfig {
+-  /** 扫描页面文件的实际物理目录路径 */
++  /** 扫描页面的固定目录或 glob，相对路径基于项目根目录 */
+   dir: string;
+-  /** 出现在 pages.json subPackages.root 中的自定义根路径 */
+-  root: string;
++  /**
++   * 出现在 pages.json subPackages.root 中的自定义根路径
++   *
++   * @description 函数接收项目相对 POSIX 匹配目录，可含 ../；必须同步、纯函数，可被重复调用
++   */
++  root: string | ((matchedDir: string) => string);
+ }
+ /**
+  * 页面路径信息接口
+@@ -904,18 +916,26 @@ declare function generateAll(userOptions?: UserOptions, overrides?: PipelineOver
+ }>;
+ //#endregion
+ //#region src/index.d.ts
++/** 支持提前生成页面配置的 Vite 插件实例 */
++interface UniPagesPlugin extends Plugin {
++  /**
++   * 提前生成 pages.json 和声明文件，并在 Vite 初始化时复用同一上下文
++   *
++   * @description
++   * - 必须显式设置 platformSuffix，并在其他读取页面配置的插件工厂之前 await
++   * - 同环境的重复调用复用准备结果；失败不复用候选上下文，修正输入后可重试
++   * - 正式初始化会校验 root、platform、输入及产物指纹；变化时需重建插件并重新启动构建
++   * - 不启动持久监听；动态更新从 Vite 接管监听后生效
++   */
++  prepare(overrides?: PipelineOverrides): Promise<void>;
++}
+ /**
+  * vite-plugin-uni-pages 插件主入口
+  *
+- * 自动扫描页面目录并生成 pages.json 配置文件
+- * 支持 definePage 宏定义页面配置
+- * 支持多平台条件编译
+- * 支持分包配置
+- * 支持 TypeScript 声明文件生成
+- *
++ * @description 自动扫描页面目录，生成 pages.json、路由声明并处理 definePage 宏
+  * @param userOptions - 用户配置项
+  * @returns Vite 插件实例
+  */
+-declare function VitePluginUniPages(userOptions?: UserOptions): Plugin;
++declare function VitePluginUniPages(userOptions?: UserOptions): UniPagesPlugin;
+ //#endregion
+-export { type ConfigSource, type DebugType, DefineConditional, type DefinePage, type DefinePageContext, type ExcludeIndexSignature, FILE_EXTENSIONS, type InternalPageItem, type InternalPages, MODULE_ID_VIRTUAL, type MaybeCallable, type MaybePromise, type MaybePromiseCallable, MergePagesJsonOptions, OUTPUT_NAME, type Options, Page, PageContext, type PagePath, PagesJsonData, PagesJsonFormatOptions, PipelineOverrides, RESOLVED_MODULE_ID_VIRTUAL, type ResolvedOptions, type SubPackageConfig, type UserOptions, type UserPageItem, type UserTabBarItem, VitePluginUniPages, VitePluginUniPages as default, WritePagesJsonOptions, checkPagesJsonFileSync, createPages, debug, type debugType, type definePage, defineUniPages, evaluateDefinePage, filterPlatformSuffixPages, findDefinePageMacro, generateAll, getPageFiles, isConditional, isTargetFile, mergePagesJson, parseSFC, resolveConditional, resolveOptions, resolvePageDirs, resolvePagesJsonPath, withFileLock, writePagesJson };
+\ No newline at end of file
++export { type ConfigSource, type DebugType, DefineConditional, type DefinePage, type DefinePageContext, type ExcludeIndexSignature, FILE_EXTENSIONS, type InternalPageItem, type InternalPages, MODULE_ID_VIRTUAL, type MaybeCallable, type MaybePromise, type MaybePromiseCallable, MergePagesJsonOptions, OUTPUT_NAME, type Options, Page, PageContext, type PagePath, PagesJsonData, PagesJsonFormatOptions, PipelineOverrides, RESOLVED_MODULE_ID_VIRTUAL, type ResolvedOptions, type SubPackageConfig, type UniPagesPlugin, type UserOptions, type UserPageItem, type UserTabBarItem, VitePluginUniPages, VitePluginUniPages as default, WritePagesJsonOptions, checkPagesJsonFileSync, createPages, debug, type debugType, type definePage, defineUniPages, evaluateDefinePage, filterPlatformSuffixPages, findDefinePageMacro, generateAll, getPageFiles, isConditional, isTargetFile, mergePagesJson, parseSFC, resolveConditional, resolveOptions, resolvePageDirs, resolvePagesJsonPath, withFileLock, writePagesJson };
+diff --git a/dist/index.mjs b/dist/index.mjs
+index 60ed1cb87c2d5b217841ff00b24aa9f1f13ac48f..bc9ab5fdf8e7adb54eb9e741adb4bf19be642155 100644
+--- a/dist/index.mjs
++++ b/dist/index.mjs
+@@ -1,18 +1,22 @@
+ import { createRequire } from "node:module";
++import { createHash } from "node:crypto";
+ import path, { dirname, extname, join, resolve } from "node:path";
+ import process from "node:process";
+ import chokidar from "chokidar";
+ import MagicString from "magic-string";
+ import { createLogger, normalizePath } from "vite";
++import { externalPlugin, injectFileScopePlugin, JS_EXT_RE } from "bundle-require";
++import { build as buildConfig } from "esbuild";
++import { createJiti } from "jiti";
+ import { platform } from "@uni-helper/uni-env";
+ import { CommentArray, parse, stringify } from "comment-json";
+ import Debug from "debug";
+ import groupBy from "lodash.groupby";
+-import { loadConfig } from "unconfig";
++import { createConfigLoader, defaultExtensions, loadConfig } from "unconfig";
+ import fs, { existsSync } from "node:fs";
+-import { mkdir, readFile, writeFile } from "node:fs/promises";
++import { mkdir, readFile } from "node:fs/promises";
+ import lockfile from "proper-lockfile";
+-import { globSync } from "tinyglobby";
++import { globSync, isDynamicPattern } from "tinyglobby";
+ import vm from "node:vm";
+ import babelGenerate from "@babel/generator";
+ import * as t from "@babel/types";
+@@ -85,26 +89,25 @@ declare module "virtual:uni-pages" {
+ `;
+ }
+ /**
+-* 写入文件，自动创建所在目录
+-* @param filePath - 文件路径
+-* @param content - 文件内容
+-*/
+-async function writeFile$1(filePath, content) {
+-	await mkdir(dirname(filePath), { recursive: true });
+-	return await writeFile(filePath, content, "utf-8");
+-}
+-/**
+ * 将声明文件写入磁盘
+ * 仅在内容变化时写入，避免不必要的文件操作
+ *
+ * @param input - 合并后的路由数据
+ * @param filepath - 声明文件输出路径
+ */
+-async function writeDeclaration(input, filepath) {
+-	const originalContent = existsSync(filepath) ? await readFile(filepath, "utf-8") : "";
++async function writeDeclaration(input, filepath, onWritten) {
+ 	const code = getDeclaration(input);
+ 	if (!code) return;
+-	if (code !== originalContent) await writeFile$1(filepath, code);
++	await mkdir(dirname(filepath), { recursive: true });
++	const completed = await withFileLock(filepath, async () => {
++		const originalContent = existsSync(filepath) ? await readFile(filepath, "utf-8") : "";
++		if (code !== originalContent) {
++			await writeFileAtomic(filepath, code);
++			onWritten?.();
++		}
++		return true;
++	});
++	if (!completed) throw new Error(`[vite-plugin-uni-pages] Could not acquire the declaration file lock: ${filepath}`);
+ }
+ //#endregion
+ //#region src/logger.ts
+@@ -259,21 +262,14 @@ function sleep(ms) {
+ * @returns 解析后的配置项
+ */
+ function resolveOptions(userOptions, viteRoot = process.cwd()) {
+-	const { dts = true, configSource = "pages.config", homePage = ["pages/index", "pages/index/index"], mergePages = true, dir = "src/pages", subPackages = [], outDir = "src", exclude = [
++	const { dts = true, configSource = "pages.config", homePage = ["pages/index", "pages/index/index"], mergePages = true, platformSuffix = false, dir = "src/pages", subPackages = [], outDir = "src", exclude = [
+ 		"node_modules",
+ 		".git",
+ 		"**/__*__/**"
+ 	], minify = false, insertFinalNewline = false, indent = 2, eol = "\n", debug = false, onBeforeLoadUserConfig = () => {}, onAfterLoadUserConfig = () => {}, onBeforeScanPages = () => {}, onAfterScanPages = () => {}, onBeforeMergePageMetaData = () => {}, onAfterMergePageMetaData = () => {}, onBeforeWriteFile = () => {}, onAfterWriteFile = () => {} } = userOptions;
+ 	const root = viteRoot || normalizePath(process.env.VITE_ROOT_DIR || process.cwd());
+ 	const resolvedDirs = resolvePageDirs(dir, root, exclude);
+-	const subPackageRootMap = /* @__PURE__ */ new Map();
+-	const resolvedSubDirs = [];
+-	for (const sub of subPackages) if (typeof sub === "string") resolvedSubDirs.push(normalizePath(sub));
+-	else {
+-		const dirPath = normalizePath(sub.dir);
+-		resolvedSubDirs.push(dirPath);
+-		subPackageRootMap.set(dirPath, sub.root);
+-	}
++	const { dirs: resolvedSubDirs, roots: subPackageRootMap } = resolveSubPackages(subPackages, root, outDir, exclude);
+ 	const resolvedHomePage = typeof homePage === "string" ? [homePage] : homePage;
+ 	const resolvedConfigSource = typeof configSource === "string" ? [{ files: configSource }] : configSource;
+ 	return {
+@@ -281,6 +277,7 @@ function resolveOptions(userOptions, viteRoot = process.cwd()) {
+ 		configSource: Array.isArray(resolvedConfigSource) ? resolvedConfigSource : [resolvedConfigSource],
+ 		homePage: resolvedHomePage,
+ 		mergePages,
++		platformSuffix,
+ 		dirs: resolvedDirs,
+ 		subPackages: resolvedSubDirs,
+ 		subPackageRootMap,
+@@ -318,6 +315,26 @@ function resolvePageDirs(dir, root, exclude) {
+ 		cwd: root
+ 	});
+ }
++/** 展开实际目录并验证分包目录与输出 root 的一一对应关系 */
++function resolveSubPackages(sources, root, outDir, exclude) {
++	const roots = /* @__PURE__ */ new Map();
++	const dirsByRoot = /* @__PURE__ */ new Map();
++	for (const source of sources) {
++		const pattern = typeof source === "string" ? source : source.dir;
++		const dirs = resolvePageDirs(pattern, root, exclude).map((dir) => normalizePath(path.relative(root, path.resolve(root, dir)))).sort();
++		for (const dir of dirs) {
++			const configuredRoot = typeof source === "string" ? void 0 : source.root;
++			const outputRoot = typeof configuredRoot === "function" ? configuredRoot(dir) : configuredRoot ?? normalizePath(path.relative(path.resolve(root, outDir), path.resolve(root, dir)));
++			if (typeof outputRoot !== "string" || !outputRoot.trim()) throw new Error(`[vite-plugin-uni-pages] Invalid subPackage root for "${dir}": expected a non-empty string`);
++			const normalizedRoot = normalizePath(outputRoot);
++			if (roots.has(dir) && roots.get(dir) !== normalizedRoot) throw new Error(`[vite-plugin-uni-pages] SubPackage directory "${dir}" maps to conflicting roots "${roots.get(dir)}" and "${normalizedRoot}"`);
++			if (dirsByRoot.has(normalizedRoot) && dirsByRoot.get(normalizedRoot) !== dir) throw new Error(`[vite-plugin-uni-pages] SubPackage root "${normalizedRoot}" maps to conflicting directories "${dirsByRoot.get(normalizedRoot)}" and "${dir}"`);
++			roots.set(dir, normalizedRoot);
++			dirsByRoot.set(normalizedRoot, dir);
++		}
++	}
++	return { dirs: [...roots.keys()], roots };
++}
+ //#endregion
+ //#region src/condition.ts
+ /** 判断一个值是否为普通对象（非 null、非数组） */
+@@ -1568,6 +1585,158 @@ function mergePlatformItems(source, currentPlatform, items, uniqueKeyName) {
+ }
+ //#endregion
+ //#region src/context.ts
++const contextInputs = /* @__PURE__ */ new WeakMap();
++const contextWatchers = /* @__PURE__ */ new WeakMap();
++function scanPatterns(ctx) {
++	const input = contextInputs.get(ctx);
++	return [input.dir, ...input.subPackages.map((source) => typeof source === "string" ? source : source.dir)].map((dir) => normalizePath(path.resolve(ctx.root, dir)));
++}
++function refreshScanDirs(ctx) {
++	const input = contextInputs.get(ctx);
++	const dirs = resolvePageDirs(input.dir, ctx.root, ctx.options.exclude);
++	const sub = resolveSubPackages(input.subPackages, ctx.root, ctx.options.outDir, ctx.options.exclude);
++	ctx.options.dirs = dirs;
++	ctx.options.subPackages = sub.dirs;
++	ctx.options.subPackageRootMap = sub.roots;
++}
++function configFilePatterns(ctx) {
++	return ctx.options.configSource.flatMap((source) => {
++		const files = Array.isArray(source.files) ? source.files : [source.files];
++		return files.flatMap((file) => (source.extensions ?? defaultExtensions).map((ext) => normalizePath(path.resolve(ctx.root, `${file}${ext ? `.${ext}` : ""}`))));
++	});
++}
++function configFiles(ctx) {
++	return createConfigLoader({ cwd: ctx.root, sources: ctx.options.configSource, defaults: {} }).findConfigs.sync().map(normalizePath);
++}
++async function loadConfigModule(file) {
++	const { config } = await loadConfig({ sources: [{ files: file, extensions: [], parser: "import" }] });
++	return config;
++}
++/** 指纹覆盖新增页面与分包映射，防止准备阶段的旧快照被后续插件继续使用 */
++function inputFingerprint(ctx, includeDependencies = true) {
++	const input = contextInputs.get(ctx);
++	const dirs = resolvePageDirs(input.dir, ctx.root, ctx.options.exclude);
++	const sub = resolveSubPackages(input.subPackages, ctx.root, ctx.options.outDir, ctx.options.exclude);
++	const files = new Set(configFiles(ctx));
++	if (includeDependencies) for (const file of input.dependencies) files.add(file);
++	if (ctx.options.mergePages) for (const dir of [...dirs, ...sub.dirs]) for (const page of getPagePaths(dir, ctx.options)) files.add(page.absolutePath);
++	const hash = createHash("sha256");
++	hash.update(JSON.stringify([dirs, [...sub.roots]]));
++	for (const file of [...files].sort()) {
++		hash.update(file);
++		try {
++			hash.update(fs.readFileSync(file));
++		} catch (error) {
++			if (error.code !== "ENOENT") throw error;
++			hash.update("\0missing");
++		}
++	}
++	return hash.digest("hex");
++}
++function within(file, dir) {
++	return file === dir || file.startsWith(`${dir}/`);
++}
++function outputFingerprint(ctx, contents) {
++	const hash = createHash("sha256");
++	for (const file of [ctx.resolvedPagesJSONPath, ctx.options.dts].filter(Boolean)) {
++		hash.update(file);
++		try {
++			hash.update(contents?.get(file) ?? fs.readFileSync(file));
++		} catch (error) {
++			if (error.code !== "ENOENT") throw error;
++			hash.update("\0missing");
++		}
++	}
++	return hash.digest("hex");
++}
++function staticScanPrefix(pattern) {
++	const parts = pattern.split("/");
++	const dynamic = parts.findIndex((part) => isDynamicPattern(part));
++	return dynamic < 0 ? pattern : parts.slice(0, dynamic).join("/") || "/";
++}
++function watchScope(ctx) {
++	const prefixes = scanPatterns(ctx).map(staticScanPrefix);
++	const configs = [...configFilePatterns(ctx), ...contextInputs.get(ctx).dependencies];
++	const roots = new Set([ctx.root]);
++	for (const target of [...prefixes, ...configs]) if (!within(target, ctx.root)) {
++		let ancestor = path.dirname(target);
++		while (!existsSync(ancestor)) ancestor = path.dirname(ancestor);
++		roots.add(normalizePath(ancestor));
++	}
++	return {
++		roots: [...roots].filter((root, index, all) => !all.some((other, otherIndex) => index !== otherIndex && within(root, other))),
++		// 只展开扫描前缀及配置文件的祖先，避免遍历无关依赖和构建产物
++		ignored: (file) => {
++			const absolute = normalizePath(path.resolve(file));
++			const currentConfigs = [...configFilePatterns(ctx), ...contextInputs.get(ctx).dependencies];
++			return !prefixes.some((prefix) => within(absolute, prefix) || within(prefix, absolute)) && !currentConfigs.some((config) => absolute === config || within(config, absolute));
++		}
++	};
++}
++function isRelevantEvent(ctx, event, file) {
++	const absolute = normalizePath(path.resolve(ctx.root, file));
++	if ([...ctx.pagesConfigSourcePaths, ...contextInputs.get(ctx).dependencies, ...configFilePatterns(ctx)].some((config) => path.posix.matchesGlob(absolute, config))) return true;
++	if (!ctx.options.mergePages) return false;
++	const relative = normalizePath(path.relative(ctx.root, absolute));
++	if (ctx.options.exclude.some((pattern) => path.posix.matchesGlob(relative, normalizePath(pattern)))) return false;
++	const patterns = scanPatterns(ctx);
++	if (event === "addDir" || event === "unlinkDir") return patterns.some((pattern) => path.posix.matchesGlob(absolute, pattern)) || [...ctx.options.dirs, ...ctx.options.subPackages].some((dir) => within(normalizePath(path.resolve(ctx.root, dir)), absolute));
++	if (!isTargetFile(absolute)) return false;
++	for (let ancestor = path.dirname(absolute); ; ancestor = path.dirname(ancestor)) {
++		if (patterns.some((pattern) => path.posix.matchesGlob(ancestor, pattern))) {
++			const pagePath = normalizePath(path.relative(ancestor, absolute));
++			return !pagePath.split("/").some((part) => part.startsWith(".")) && !ctx.options.exclude.some((pattern) => path.posix.matchesGlob(pagePath, normalizePath(pattern)));
++		}
++		if (ancestor === path.dirname(ancestor)) return false;
++	}
++}
++/** 同一上下文只安装一组监听，批量变更按顺序完成生成后再通知 HMR */
++function attachWatcher(ctx, watcher) {
++	const previous = contextWatchers.get(ctx);
++	if (previous?.watcher === watcher) return previous;
++	if (previous) throw new Error("[vite-plugin-uni-pages] A page context already has an active watcher");
++	let timer;
++	let pending = false;
++	let disposed = false;
++	let chain = Promise.resolve();
++	const flush = () => {
++		clearTimeout(timer);
++		if (!pending || disposed) return chain;
++		pending = false;
++		chain = chain.then(async () => {
++			if (disposed) return;
++			refreshScanDirs(ctx);
++			ctx.pages.clear();
++			ctx.subPages.clear();
++			if (await ctx.updatePagesJSON()) ctx.onUpdate();
++			watcher.add([...ctx.pagesConfigSourcePaths, ...contextInputs.get(ctx).dependencies]);
++		}).catch((error) => {
++			ctx.logger?.error(error.stack ?? String(error));
++			debug.error(error);
++		});
++		return chain;
++	};
++	const listener = (event, file) => {
++		if (!["add", "change", "unlink", "addDir", "unlinkDir"].includes(event) || !isRelevantEvent(ctx, event, file)) return;
++		pending = true;
++		clearTimeout(timer);
++		timer = setTimeout(flush, 25);
++	};
++	watcher.on("all", listener);
++	const state = {
++		watcher,
++		flush,
++		async dispose() {
++			disposed = true;
++			clearTimeout(timer);
++			watcher.off("all", listener);
++			contextWatchers.delete(ctx);
++			await chain;
++		}
++	};
++	contextWatchers.set(ctx, state);
++	return state;
++}
+ /**
+ * 页面上下文：负责扫描页面、加载配置、合并页面信息、生成 pages.json
+ *
+@@ -1622,6 +1791,12 @@ var PageContext = class {
+ 		this.platform = platform$1;
+ 		debug.options("root", this.root);
+ 		this.options = resolveOptions(userOptions, this.root);
++		this.withUniPlatform = this.options.platformSuffix;
++		contextInputs.set(this, {
++			dir: userOptions.dir ?? "src/pages",
++			subPackages: (userOptions.subPackages ?? []).map((source) => typeof source === "string" ? source : { ...source }),
++			dependencies: []
++		});
+ 		const debugOption = this.options.debug;
+ 		if (debugOption) {
+ 			const prefix = "vite-plugin-uni-pages:";
+@@ -1643,14 +1818,53 @@ var PageContext = class {
+ 	* 使用 unconfig 加载配置，支持多种配置文件格式
+ 	*/
+ 	async loadUserPagesConfig() {
+-		const configSource = this.options.configSource;
+-		const { config, sources } = await loadConfig({
++		const sourceDependencies = new Map();
++		const configSource = this.options.configSource.map((source) => {
++			if (source.transform || source.parser && source.parser !== "auto" && source.parser !== "import") return source;
++			return {
++				...source,
++				parser: async (file) => {
++					if (source.parser !== "import") {
++						const content = await readFile(file, "utf8");
++						try {
++							return JSON.parse(content);
++						} catch (error) {
++							if (!(error instanceof SyntaxError)) throw error;
++						}
++					}
++					if (!JS_EXT_RE.test(file)) return loadConfigModule(file);
++					const bundled = await buildConfig({
++						entryPoints: [file],
++						absWorkingDir: this.root,
++						bundle: true,
++						write: false,
++						metafile: true,
++						format: "esm",
++						platform: "node",
++						sourcemap: "inline",
++						tsconfigRaw: {},
++						// 与 watcher 保持同一路径，避免符号链接目录产生两套依赖标识
++						preserveSymlinks: true,
++						logLevel: "silent",
++						plugins: [externalPlugin(), injectFileScopePlugin()]
++					});
++					const jiti = createJiti(file, { fsCache: false, moduleCache: false, interopDefault: true });
++					const mod = await jiti.evalModule(bundled.outputFiles[0].text, { filename: file, async: true, forceTranspile: true });
++					sourceDependencies.set(normalizePath(file), Object.keys(bundled.metafile.inputs).map((dependency) => normalizePath(path.resolve(this.root, dependency))));
++					return mod?.default ?? mod;
++				}
++			};
++		});
++		const { config, sources, dependencies } = await loadConfig({
+ 			cwd: this.root,
+ 			sources: configSource,
+ 			defaults: {}
+ 		});
+ 		this.pagesGlobConfig = config.default || config;
+ 		this.pagesConfigSourcePaths = sources.map(normalizePath);
++		const input = contextInputs.get(this);
++		input.dependencies = [...new Set([...(dependencies ?? []), ...sources.flatMap((file) => sourceDependencies.get(normalizePath(file)) ?? [])].map((file) => normalizePath(path.resolve(file))))].filter((file) => !this.pagesConfigSourcePaths.includes(file) && file !== this.resolvedPagesJSONPath && file !== this.options.dts);
++		input.onConfigLoaded?.();
+ 		debug.options(this.pagesGlobConfig);
+ 	}
+ 	/**
+@@ -1671,6 +1885,8 @@ var PageContext = class {
+ 		if (this._server === server) return;
+ 		this._server = server;
+ 		this.setupWatcher(server.watcher);
++		const externalRoots = watchScope(this).roots.filter((root) => root !== this.root);
++		if (externalRoots.length) server.watcher.add(externalRoots);
+ 	}
+ 	/**
+ 	* 设置文件监听器，监听页面文件与配置文件变更
+@@ -1678,36 +1894,8 @@ var PageContext = class {
+ 	* @param watcher - chokidar 文件监听器实例
+ 	*/
+ 	async setupWatcher(watcher) {
+-		watcher.add(this.pagesConfigSourcePaths);
+-		const targetDirs = [...this.options.dirs, ...this.options.subPackages].map((v) => normalizePath(path.resolve(this.root, v)));
+-		const isWatchedPageFile = (filePath) => {
+-			const absolute = normalizePath(path.resolve(this.root, filePath));
+-			return isTargetFile(filePath) && targetDirs.some((v) => absolute === v || absolute.startsWith(`${v}/`));
+-		};
+-		watcher.on("add", async (path) => {
+-			path = normalizePath(path);
+-			if (!isWatchedPageFile(path)) return;
+-			debug.pages(`File added: ${path}`);
+-			if (await this.updatePagesJSON()) this.onUpdate();
+-		});
+-		watcher.on("change", async (path) => {
+-			path = normalizePath(path);
+-			if (this.pagesConfigSourcePaths.includes(path)) {
+-				debug.pages(`Config source changed: ${path}`);
+-				if (await this.updatePagesJSON()) this.onUpdate();
+-				return;
+-			}
+-			path = normalizePath(path);
+-			if (!isWatchedPageFile(path)) return;
+-			debug.pages(`File changed: ${path}`);
+-			if (await this.updatePagesJSON(path)) this.onUpdate();
+-		});
+-		watcher.on("unlink", async (path) => {
+-			path = normalizePath(path);
+-			if (!isWatchedPageFile(path)) return;
+-			debug.pages(`File removed: ${path}`);
+-			if (await this.updatePagesJSON()) this.onUpdate();
+-		});
++		attachWatcher(this, watcher);
++		watcher.add([...this.pagesConfigSourcePaths, ...contextInputs.get(this).dependencies]);
+ 	}
+ 	/**
+ 	* 页面更新回调，页面文件或配置变化时触发
+@@ -1741,7 +1929,13 @@ var PageContext = class {
+ 				}
+ 			}
+ 		}
++		const preparation = contextInputs.get(this).preparation;
++		const hadPagesJson = existsSync(this.resolvedPagesJSONPath);
+ 		checkPagesJsonFileSync(this.resolvedPagesJSONPath);
++		if (preparation && !hadPagesJson) {
++			preparation.expected.set(this.resolvedPagesJSONPath, fs.readFileSync(this.resolvedPagesJSONPath));
++			preparation.written.add(this.resolvedPagesJSONPath);
++		}
+ 		this.options.onBeforeLoadUserConfig();
+ 		await this.loadUserPagesConfig();
+ 		this.options.onAfterLoadUserConfig(this.pagesGlobConfig);
+@@ -1755,8 +1949,13 @@ var PageContext = class {
+ 		await this.mergePageMetaData();
+ 		await this.mergeSubPageMetaData();
+ 		this.options.onAfterMergePageMetaData(this.pageMetaData, this.subPageMetaData);
+-		const pages = this.withUniPlatform ? filterPlatformSuffixPages(this.pageMetaData, this.platform) : this.pageMetaData;
+-		this.pageMetaData = dedupeByPath(pages);
++		if (this.withUniPlatform) {
++			this.pageMetaData = this.setHomePage(dedupeByPath(filterPlatformSuffixPages(this.pageMetaData, this.platform)));
++			this.subPageMetaData = this.subPageMetaData.flatMap((sub) => {
++				const pages = dedupeByPath(filterPlatformSuffixPages(sub.pages, this.platform));
++				return sub.pages.length && !pages.length ? [] : [{ ...sub, pages }];
++			});
++		} else this.pageMetaData = dedupeByPath(this.pageMetaData);
+ 		this.options.onBeforeWriteFile(this.resolvedPagesJSONPath);
+ 		const homePath = this.pageMetaData.find((meta) => meta.type === "home")?.path;
+ 		this.tabBar = await this.resolveTabBar();
+@@ -1775,7 +1974,12 @@ var PageContext = class {
+ 				insertFinalNewline: this.options.insertFinalNewline
+ 			}
+ 		});
+-		this.generateDeclaration();
++		if (preparation) {
++			if (!result) throw new Error("[vite-plugin-uni-pages] prepare() could not acquire the pages.json file lock");
++			preparation.expected.set(this.resolvedPagesJSONPath, Buffer.from(result.content));
++			if (result.updated) preparation.written.add(this.resolvedPagesJSONPath);
++		}
++		await this.generateDeclaration();
+ 		if (result?.updated) this.options.onAfterWriteFile(this.resolvedPagesJSONPath, result.content);
+ 		return result?.updated ?? false;
+ 	}
+@@ -1807,21 +2011,25 @@ var PageContext = class {
+ 	* @returns 合并后的 tabBar 配置对象，无 tabBar 时为 undefined
+ 	*/
+ 	async resolveTabBar() {
++		const normalizeItems = (items) => this.withUniPlatform ? dedupeByPath(filterPlatformSuffixPages(items.map(({ pagePath, ...item }) => ({ ...item, path: pagePath })), this.platform)).map(({ path, ...item }) => ({ ...item, pagePath: path })) : items;
+ 		const tabBarItems = [];
+ 		for (const [_, page] of this.pages) {
++			if (this.withUniPlatform && !filterPlatformSuffixPages([{ path: page.uri }], this.platform).length) continue;
+ 			const tabbar = await page.getTabBar();
+ 			if (tabbar) tabBarItems.push(tabbar);
+ 		}
+-		if (tabBarItems.length === 0) return this.pagesGlobConfig?.tabBar;
++		const configuredTabBar = this.pagesGlobConfig?.tabBar;
++		if (tabBarItems.length === 0 && (!this.withUniPlatform || !configuredTabBar)) return configuredTabBar;
+ 		const tabBar = {
+-			...this.pagesGlobConfig?.tabBar,
+-			list: this.pagesGlobConfig?.tabBar?.list || []
++			...configuredTabBar,
++			list: normalizeItems(configuredTabBar?.list || []).slice()
+ 		};
+ 		const pagePaths = new Set(tabBar.list.map((item) => item.pagePath));
+-		tabBarItems.sort((a, b) => a.index - b.index);
+-		for (const item of tabBarItems) if (!pagePaths.has(item.pagePath)) {
++		const generated = normalizeItems(tabBarItems).sort((a, b) => a.index - b.index);
++		for (const item of generated) if (!pagePaths.has(item.pagePath)) {
+ 			const { index: _, ...tabbar } = item;
+ 			tabBar.list.push(tabbar);
++			pagePaths.add(item.pagePath);
+ 		}
+ 		return tabBar;
+ 	}
+@@ -1832,12 +2040,15 @@ var PageContext = class {
+ 	generateDeclaration() {
+ 		if (!this.options.dts) return;
+ 		debug.declaration("generating");
+-		return writeDeclaration({
++		const data = {
+ 			pages: this.pageMetaData,
+ 			subPackages: this.subPageMetaData,
+ 			tabBar: this.tabBar,
+ 			globConfig: this.pagesGlobConfig
+-		}, this.options.dts);
++		};
++		const preparation = contextInputs.get(this).preparation;
++		preparation?.expected.set(this.options.dts, Buffer.from(getDeclaration(data)));
++		return writeDeclaration(data, this.options.dts, () => preparation?.written.add(this.options.dts));
+ 	}
+ 	/**
+ 	* 扫描主包页面目录并收集所有页面文件路径
+@@ -1900,7 +2111,7 @@ var PageContext = class {
+ 		const generatedPageMetaData = await Promise.all(jobs);
+ 		const customPageMetaData = overrides || [];
+ 		const parseMeta = dedupeByPath(customPageMetaData.length ? mergePageMetaDataArray(generatedPageMetaData.concat(customPageMetaData)) : generatedPageMetaData);
+-		return packageType === "main" ? this.setHomePage(parseMeta) : parseMeta;
++		return packageType === "main" && !this.withUniPlatform ? this.setHomePage(parseMeta) : parseMeta;
+ 	}
+ 	/**
+ 	* 设置首页
+@@ -2135,22 +2346,135 @@ async function generateAll(userOptions = {}, overrides = {}) {
+ */
+ function VitePluginUniPages(userOptions = {}) {
+ 	let ctx;
++	let preparePromise;
++	let prepared;
++	let prepareEnvironment;
++	let resolved = false;
++	let watchBuild = false;
++	let ownedWatcher;
++	let server;
++	const changedInputError = () => new Error("[vite-plugin-uni-pages] Page inputs or generated outputs changed after prepare(); recreate the plugin and restart the current build before downstream plugins read pages.json");
++	const assertPreparedInputs = () => {
++		if (prepared && (inputFingerprint(ctx) !== prepared.fingerprint || outputFingerprint(ctx) !== prepared.outputs)) throw changedInputError();
++	};
++	const onWatcherError = (error) => { ctx.logger?.error(error.stack ?? String(error)); };
++	const dispose = async () => {
++		server?.httpServer?.off("close", onServerClose);
++		await contextWatchers.get(ctx)?.dispose();
++		if (ownedWatcher) {
++			const watcher = ownedWatcher;
++			ownedWatcher = void 0;
++			watcher.off("error", onWatcherError);
++			await watcher.close();
++		}
++	};
++	const onServerClose = () => { void dispose(); };
+ 	checkPagesJsonFileSync(resolvePagesJsonPath(process.env.VITE_ROOT_DIR || process.cwd(), userOptions.outDir ?? "src"));
+ 	return {
+ 		name: "vite-plugin-uni-pages",
+ 		enforce: "pre",
++		/** 提前生成完整产物，正式 Vite 初始化时复用上下文并验证输入未变化 */
++		prepare(overrides = {}) {
++			const environment = {
++				root: normalizePath(path.resolve(overrides.root ?? process.env.VITE_ROOT_DIR ?? process.cwd())),
++				platform: overrides.platform ?? platform,
++				platformSuffix: userOptions.platformSuffix
++			};
++			if (typeof environment.platformSuffix !== "boolean") return Promise.reject(new Error("[vite-plugin-uni-pages] prepare() requires an explicit platformSuffix option"));
++			if (preparePromise) {
++				if (JSON.stringify(environment) !== JSON.stringify(prepareEnvironment)) return Promise.reject(new Error("[vite-plugin-uni-pages] prepare() root, platform and platformSuffix must remain unchanged"));
++				return preparePromise;
++			}
++			if (resolved) return Promise.reject(new Error("[vite-plugin-uni-pages] prepare() must run before configResolved"));
++			prepareEnvironment = environment;
++			preparePromise = (async () => {
++				const candidate = new PageContext(userOptions, environment.root, environment.platform);
++				candidate.setLogger(createLogger(void 0, { prefix: "[vite-plugin-uni-pages]" }));
++				const input = contextInputs.get(candidate);
++				input.preparation = { expected: new Map(), written: new Set() };
++				const before = inputFingerprint(candidate, false);
++				let loaded;
++				input.onConfigLoaded = () => { loaded = inputFingerprint(candidate); };
++				const outputs = [candidate.resolvedPagesJSONPath, candidate.options.dts].filter(Boolean).map((file) => {
++					try {
++						return { file, content: fs.readFileSync(file) };
++					} catch (error) {
++						if (error.code !== "ENOENT") throw error;
++						return { file, content: void 0 };
++					}
++				});
++				try {
++					await candidate.updatePagesJSON();
++					const fingerprint = inputFingerprint(candidate);
++					const generatedOutputs = outputFingerprint(candidate, input.preparation.expected);
++					if (before !== inputFingerprint(candidate, false) || loaded !== fingerprint || generatedOutputs !== outputFingerprint(candidate)) throw changedInputError();
++					ctx = candidate;
++					prepared = { fingerprint, outputs: generatedOutputs, ...environment };
++				} catch (error) {
++					// 沿用写入锁尽力恢复本次且未被改写的输出，不复用失败的候选上下文
++					for (const { file, content } of outputs) {
++						if (!input.preparation.written.has(file)) continue;
++						const written = input.preparation.expected.get(file);
++						await withFileLock(file, async () => {
++							if (!fs.existsSync(file) || !fs.readFileSync(file).equals(written)) return;
++							if (content === void 0) await fs.promises.rm(file, { force: true });
++							else await writeFileAtomic(file, content);
++						});
++					}
++					throw error;
++				} finally {
++					delete input.onConfigLoaded;
++					delete input.preparation;
++				}
++			})().catch((error) => {
++				preparePromise = void 0;
++				prepareEnvironment = void 0;
++				throw error;
++			});
++			return preparePromise;
++		},
+ 		/**
+ 		* Vite configResolved 钩子
+ 		* 初始化 PageContext，设置 logger，生成初始 pages.json
+ 		*/
+ 		async configResolved(config) {
+-			ctx = new PageContext(userOptions, config.root);
+-			if (config.plugins.some((v) => v.name === "vite-plugin-uni-platform")) ctx.withUniPlatform = true;
+-			const logger = createLogger(void 0, { prefix: "[vite-plugin-uni-pages]" });
+-			ctx.setLogger(logger);
+-			await ctx.updatePagesJSON();
+-			if (config.command === "build") {
+-				if (config.build.watch) ctx.setupWatcher(chokidar.watch([...ctx.options.dirs, ...ctx.options.subPackages].map((v) => normalizePath(path.resolve(config.root, v)))));
++			resolved = true;
++			if (preparePromise) await preparePromise;
++			const suffix = userOptions.platformSuffix ?? config.plugins.some((v) => v.name === "vite-plugin-uni-platform");
++			if (prepared) {
++				if (prepared.root !== normalizePath(path.resolve(config.root)) || prepared.platform !== platform || prepared.platformSuffix !== suffix) throw new Error("[vite-plugin-uni-pages] Resolved root, platform or platformSuffix differs from prepare(); recreate the plugin with the final environment");
++				assertPreparedInputs();
++			} else {
++				ctx = new PageContext(userOptions, config.root);
++				ctx.withUniPlatform = suffix;
++				ctx.setLogger(createLogger(void 0, { prefix: "[vite-plugin-uni-pages]" }));
++				await ctx.updatePagesJSON();
++			}
++			watchBuild = config.command === "build" && !!config.build.watch;
++			if (watchBuild && !ownedWatcher) {
++				const scope = watchScope(ctx);
++				ownedWatcher = chokidar.watch(scope.roots, { ignoreInitial: true, ignored: scope.ignored });
++				ownedWatcher.on("error", onWatcherError);
++				try {
++					await new Promise((resolve, reject) => {
++						const watcher = ownedWatcher;
++						const onReady = () => {
++							watcher.off("error", onError);
++							resolve();
++						};
++						const onError = (error) => {
++							watcher.off("ready", onReady);
++							reject(error);
++						};
++						watcher.once("ready", onReady);
++						watcher.once("error", onError);
++					});
++					assertPreparedInputs();
++					await ctx.setupWatcher(ownedWatcher);
++				} catch (error) {
++					await dispose();
++					throw error;
++				}
+ 			}
+ 		},
+ 		/**
+@@ -2178,8 +2502,18 @@ function VitePluginUniPages(userOptions = {}) {
+ 		* 配置开发服务器钩子
+ 		* 设置文件监听与 HMR 支持
+ 		*/
+-		configureServer(server) {
++		configureServer(viteServer) {
++			assertPreparedInputs();
++			server = viteServer;
+ 			ctx.setupViteServer(server);
++			server.httpServer?.once("close", onServerClose);
++		},
++		async closeBundle() {
++			// 小程序 watch 每轮构建都会 closeBundle，监听保留到 closeWatcher
++			if (!watchBuild) await dispose();
++		},
++		async closeWatcher() {
++			await dispose();
+ 		},
+ 		/**
+ 		* 模块解析钩子

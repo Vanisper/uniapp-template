@@ -26,7 +26,7 @@ interface IThemeConfig<T extends Record<string, any> = Record<string, any>> {
     mode: 'default' | 'custom'
     /**
      * tabbar 高度 - 单位 `px`
-     * @default 50
+     * @default 72
      */
     height: number
   }
@@ -62,7 +62,7 @@ export function createThemeConfig(): IThemeConfig {
     },
     tabbar: {
       mode: 'custom',
-      height: 50,
+      height: 72,
     },
     navbar: {
       height: 56,

@@ -165,10 +165,13 @@ settings:
 overrides:
   giget@1.2.5>tar: 7.5.22
 
+packageExtensionsChecksum: sha256-6L+A5JlWTt7PnRCXWMS/LgXy5rnJZ3vyBPjc1gGTeW4=
+
 pnpmfileChecksum: sha256-Zny0bPT0FlVpjiBG5MSAquYwe+BovkqEHCCCDwf88n0=
 
 patchedDependencies:
   '@uni-helper/unh@0.3.2': f0a73567ef9ebc07fa664e1ddd173d5b11bf7457ffbd3836f851e27c311453e9
+  '@uni-helper/vite-plugin-uni-pages@0.5.0': 69d0ff60222b90f358838419fac340dc06a3ecac5ca13541eb71c724c8bcda97
   '@unocss/vite@66.10.1': b812d1af791f96c838436a8e2481603c70573c5d6fed46402964c49308ad1cc9
   devframe@0.9.18: 52df250c6bcc22917f6d9ebd54fa82efd60c080bb448dd5f470d78190bd33439
 
@@ -301,8 +304,8 @@ importers:
         specifier: ^0.6.0
         version: 0.6.0(supports-color@8.1.1)(typescript@5.9.3)(vite@5.2.8(@types/node@22.20.2)(sass@1.104.0)(terser@5.51.2))
       '@uni-helper/vite-plugin-uni-pages':
-        specifier: ^0.5.0
-        version: 0.5.0(supports-color@8.1.1)(vite@5.2.8(@types/node@22.20.2)(sass@1.104.0)(terser@5.51.2))
+        specifier: 0.5.0
+        version: 0.5.0(patch_hash=69d0ff60222b90f358838419fac340dc06a3ecac5ca13541eb71c724c8bcda97)(supports-color@8.1.1)(vite@5.2.8(@types/node@22.20.2)(sass@1.104.0)(terser@5.51.2))
       '@uni-helper/vite-plugin-uni-platform':
         specifier: ^0.1.2
         version: 0.1.2(vite@5.2.8(@types/node@22.20.2)(sass@1.104.0)(terser@5.51.2))
@@ -3410,6 +3413,12 @@ packages:
     resolution: {integrity: sha512-hMQUl2bUFG339QygPM97E+mc8OY1IAchORZxm4a/frcYwKzozMzRVDBwHW0NjOqGElLm2O37AVQE8ikxlZHrMQ==}
     engines: {node: '>=18.20'}
 
+  bundle-require@5.1.0:
+    resolution: {integrity: sha512-3WrrOuZiyaaZPWiEt4G3+IffISVC9HYlWueJEBWED4ZH4aIAC2PnkdnuRrR94M+w6yGWn4AglWtJtBI8YqvgoA==}
+    engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
+    peerDependencies:
+      esbuild: '>=0.18'
+
   bytes@3.1.2:
     resolution: {integrity: sha512-/Nf7TyzTx6S3yRJObOAV7956r8cr2+Oj8AC5dt8wSP3BQAoeX58NoHyCU8P8zGkNXStjTSi6fzO6F0pBdcYbEg==}
     engines: {node: '>= 0.8'}
@@ -4909,6 +4918,10 @@ packages:
 
   load-bmfont@1.4.2:
     resolution: {integrity: sha512-qElWkmjW9Oq1F9EI5Gt7aD9zcdHb9spJCW1L/dmPf7KzCCEJxq8nhHz5eCgI9aMf7vrG/wyaCqdsI+Iy9ZTlog==}
+
+  load-tsconfig@0.2.5:
+    resolution: {integrity: sha512-IXO6OCs9yg8tMKzfPZ1YmheJbZCiEsnBdcB03l0OcfK9prKnJb96siuHCr5Fl37/yo9DnKU+TLpxzTUspw9shg==}
+    engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
 
   loader-utils@3.3.1:
     resolution: {integrity: sha512-FMJTLMXfCLMLfJxcX9PFqX5qD88Z5MRGaZCVzfuqeZSPsyiBzs+pahDQjbIWz2QIzPZz0NX9Zy4FX3lmK6YHIg==}
@@ -9937,7 +9950,7 @@ snapshots:
       - supports-color
       - typescript
 
-  '@uni-helper/vite-plugin-uni-pages@0.5.0(supports-color@8.1.1)(vite@5.2.8(@types/node@22.20.2)(sass@1.104.0)(terser@5.51.2))':
+  '@uni-helper/vite-plugin-uni-pages@0.5.0(patch_hash=69d0ff60222b90f358838419fac340dc06a3ecac5ca13541eb71c724c8bcda97)(supports-color@8.1.1)(vite@5.2.8(@types/node@22.20.2)(sass@1.104.0)(terser@5.51.2))':
     dependencies:
       '@babel/generator': 8.0.0
       '@babel/types': 8.0.4
@@ -9945,9 +9958,12 @@ snapshots:
       '@uni-helper/uni-pages-types': 0.5.0(typescript@6.0.3)
       '@vue/compiler-sfc': 3.4.38
       ast-kit: 3.0.0
+      bundle-require: 5.1.0(esbuild@0.20.2)
       chokidar: 5.0.0
       comment-json: 5.0.0
       debug: 4.4.3(supports-color@8.1.1)
+      esbuild: 0.20.2
+      jiti: 2.7.0
       lodash.groupby: 4.6.0
       magic-string: 1.2.2
       proper-lockfile: 4.1.2
@@ -10749,6 +10765,11 @@ snapshots:
       ieee754: 1.2.1
 
   builtin-modules@5.3.0: {}
+
+  bundle-require@5.1.0(esbuild@0.20.2):
+    dependencies:
+      esbuild: 0.20.2
+      load-tsconfig: 0.2.5
 
   bytes@3.1.2: {}
 
@@ -12547,6 +12568,8 @@ snapshots:
       xtend: 4.0.2
     transitivePeerDependencies:
       - debug
+
+  load-tsconfig@0.2.5: {}
 
   loader-utils@3.3.1: {}
 

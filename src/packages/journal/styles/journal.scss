@@ -1,0 +1,17 @@
+.journal-screen { display: flex; flex: 1; flex-direction: column; min-height: 0; width: 100%; }
+.journal-scroll { flex: 1; height: 0; min-height: 0; }
+.journal-body { max-width: 640px; box-sizing: border-box; margin: 0 auto; padding: 24px 22px 32px; }
+.journal-kicker { display: block; color: var(--app-green); font-size: 10px; font-weight: 700; letter-spacing: 2px; }
+.journal-title { display: block; margin-top: 9px; font-size: 28px; font-weight: 700; line-height: 1.4; letter-spacing: -0.8px; }
+.journal-muted { color: var(--app-muted); font-size: 12px; line-height: 1.8; }
+.journal-section-heading { display: flex; align-items: center; justify-content: space-between; margin: 27px 0 15px; }
+.journal-section-title { font-size: 17px; font-weight: 650; }
+.journal-link { display: inline-flex; align-items: center; min-height: 32px; padding: 0; color: var(--app-green); background: transparent; font-size: 12px; }
+.journal-primary { display: flex; align-items: center; justify-content: center; gap: 7px; min-height: 46px; padding: 0 22px; border-radius: 13px; color: white; background: var(--app-green); font-size: 14px; font-weight: 600; }
+.journal-icon-button { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; padding: 0; border-radius: 50%; background: transparent; color: var(--app-ink); font-size: 20px; }
+.journal-empty { padding: 38px 20px; text-align: center; color: var(--app-muted); line-height: 1.9; }
+.journal-search { display: flex; align-items: center; gap: 9px; height: 43px; box-sizing: border-box; padding: 0 14px; border: 1px solid var(--app-line); border-radius: 13px; background: var(--app-surface); color: #a0aaa3; }
+.journal-search-input { flex: 1; font-size: 13px; color: var(--app-ink); }
+.journal-chips { display: flex; gap: 9px; margin: 20px 0; }
+.journal-chip { min-width: 54px; min-height: 34px; box-sizing: border-box; padding: 8px 14px; border: 1px solid var(--app-line); border-radius: 20px; color: #7b867f; background: transparent; font-size: 12px; }
+.journal-chip--active { border-color: var(--app-green); color: white; background: var(--app-green); }

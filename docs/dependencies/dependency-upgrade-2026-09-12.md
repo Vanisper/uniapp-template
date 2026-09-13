@@ -44,7 +44,7 @@ DCloud 同批次包具体包括：
 | `@uni-helper/vite-plugin-uni-components` | `^0.2.6` | `0.3.2` | 更新组件扫描与解析器，修复导入变量命名 |
 | `@uni-helper/vite-plugin-uni-layouts` | `^0.1.11` | `0.1.11` | 保持，已是 latest |
 | `@uni-helper/vite-plugin-uni-manifest` | `^0.2.12` | `0.6.0` | 更新配置类型及生成生命周期，适配 ESM 入口 |
-| `@uni-helper/vite-plugin-uni-pages` | `^0.3.22` | `0.5.0` | 更新路由生成、平台合并，迁移类型入口 |
+| `@uni-helper/vite-plugin-uni-pages` | `^0.3.22` | `0.5.0`，精确锁定并打补丁 | 支持分包 glob、包根映射与插件提前准备 |
 | `@uni-helper/vite-plugin-uni-platform` | `^0.0.5` | `0.1.2` | 修复平台文件路径解析 |
 | `@uni-ku/bundle-optimizer` | `^2.2.0` | `2.2.0` | 保持，已是 latest |
 | `@uni-ku/root` | `^1.4.1` | `1.5.0` | 新增 nvue 支持，修复分包字段及路径匹配 |
@@ -139,7 +139,7 @@ uni-pages 0.4 移除了 `<route>` 自定义块与旧 Volar 服务；0.5 转为 E
 
 路由扫描从 fast-glob 转向 tinyglobby，0.5 还引入生成标记、平台条件合并和过期分包清理。回归范围包含 H5 与微信构建后的首页、tabBar、分包 root 和重复页面，具体结果见文末。已有 `_*.*` 排除模式也不应被理解为任意层级的下划线文件规则；新增这类页面时需按实际扫描范围处理。
 
-保留 unh 的页面预生成。DCloud 在 Vite 的 `config` 阶段读取并缓存 `pages.json`，而路由插件在较晚的 `configResolved` 阶段生成文件；已有 `UniPages()` 不代表可以移除 `autoGenerate.pages`。[uni-pages 生成时序说明](https://github.com/uni-helper/vite-plugin-uni-pages/blob/v0.5.0/packages/core/README.md)
+unh 0.3.2 的 `autoGenerate.pages` 只在文件缺失时创建占位配置。项目先创建 UniPages 插件并等待 `prepare()` 完成，再创建根组件与分包优化插件，使它们能读取完整路由；后续页面变化由同一个 UniPages 实例监听处理。
 
 ### CLI hook、配置加载与自动导入
 
@@ -232,7 +232,25 @@ ESLint 10 移除旧配置和 RuleContext API，并调整推荐规则。项目已
 
 ## 本地补丁与回归维护
 
-首轮维护了两项精确版本补丁。当前 applet 已升级到包含修复的上游版本，旧属性补丁及其 pnpm 映射已移除；现保留 unh 0.3.2、devframe 0.9.18 和 `@unocss/vite` 66.10.1 补丁，由 `patchedDependencies` 自动应用。升级对应包时应检查上游修复与回归结果，不依赖手工修改 `node_modules`。
+当前维护 uni-pages 0.5.0、unh 0.3.2、devframe 0.9.18 和 `@unocss/vite` 66.10.1 的精确版本补丁，由 `patchedDependencies` 自动应用。升级对应包时应检查上游修复与回归结果，不依赖手工修改 `node_modules`。
+
+### uni-pages：分包扫描、配置依赖与提前准备
+
+`patches/@uni-helper__vite-plugin-uni-pages@0.5.0.patch` 为分包的 `dir` 提供 glob 支持，`root` 可使用固定字符串或同步映射函数。函数接收相对于项目根目录、使用 `/` 分隔的实际匹配目录，返回生成配置中的分包根；它可能随目录重新发现而执行，应保持为纯函数。固定目录与 glob 可以混用，相同映射去重，冲突映射报错。
+
+项目使用 `dir: 'src/packages/*/pages'`，由 `root` 函数得到 `packages/<包名>`，并通过 `exclude` 排除隐藏目录。页面插件保留 glob 模式并监听稳定的上级目录，覆盖初次没有匹配目录、分包新增、删除后重建等场景，空分包不写入路由配置。
+
+标准 JS/TS 配置由 esbuild 在内存中打包并收集本地静态导入，复用 `bundle-require` 的模块外部化与文件上下文处理，再通过 Jiti 执行。配置发现仍由 unconfig 负责，保留默认导出、具名导出和 CommonJS 支持。直接或间接依赖变化后，重新加载配置、生成 `pages.json` 与声明文件，再通知 HMR；每次成功加载都会替换依赖集合，覆盖 import 的新增与移除。`pages.config.ts` 引用的主题配置因此参与自动更新，JSON 依赖也会读取最新内容。
+
+JSON 配置入口、自定义 parser/transform 及非脚本格式沿用原加载方式。自动收集范围是 JS/TS 中可静态解析的本地导入，不包含第三方包内部文件、运行时拼接的路径或 `fs` 读取。配置加载不采用应用的 Vite alias 或 tsconfig paths。补丁通过 `packageExtensions` 声明 `bundle-require`、esbuild 和 Jiti 依赖，后两者复用当前工具链的版本；升级或移除补丁时同步核查这项声明。
+
+`UniPages(options)` 返回的插件提供 `prepare({ root?, platform? })`。项目先等待该方法写完 `pages.json` 和声明文件，再创建需要读取页面配置的其他插件。提前准备要求显式设置 `platformSuffix`；主包、分包和 TabBar 使用相同的平台规则。普通用法仍可由 Vite 检测 UniPlatform。
+
+同一环境下的重复准备复用初始化结果，准备与创建其他插件期间应保持配置输入稳定。Vite 接管时校验运行环境、已知页面与配置文件，以及已生成的产物，未变则复用同一个上下文；检测到变化时，报错并要求重新初始化，避免其他插件使用旧配置。准备失败后可以修正输入并重试。
+
+动态页面扫描与构建插件的初始化相互独立。本项目的分包优化插件在创建时缓存包结构，新增或重命名整个分包后仍需重启开发命令。扫描与准备接口由 `plugins/vite/uni-pages.test.ts` 验证，项目目录约定由 `plugins/vite/pages.test.ts` 验证。
+
+升级 uni-pages 时，应先确认这些接口及生成契约已由上游提供，再移除补丁并运行相关回归。
 
 ### UnoCSS 重复解析误报
 
@@ -272,7 +290,7 @@ pnpm 12.4.1 已正式发布。本次采用官方 10→12 迁移流程，已将 p
 | --- | --- |
 | `package.json.packageManager` | 已固定为 `pnpm@12.4.1` |
 | `package.json.pnpm.onlyBuiltDependencies` | 已改为 `pnpm-workspace.yaml` 的 `allowBuilds` 映射 |
-| `package.json.pnpm.patchedDependencies` | 已迁入工作区 YAML；当前保留 unh、devframe 与 UnoCSS Vite 精确版本补丁，applet 补丁随上游修复移除 |
+| `package.json.pnpm.patchedDependencies` | 已迁入工作区 YAML；当前维护 uni-pages、unh、devframe 与 UnoCSS Vite 精确版本补丁 |
 | `.npmrc` 的 `auto-install-peers` | 已迁为 `autoInstallPeers: true` |
 | `.npmrc` 的 `shamefully-hoist` | 已迁为 `shamefullyHoist: true` |
 | `.npmrc` 的 `strict-peer-dependencies` | 已迁为 `strictPeerDependencies: false`，保留原项目设置；当前 Uno Inspector 的声明差距公开记录 |
