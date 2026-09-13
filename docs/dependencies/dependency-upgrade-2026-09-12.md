@@ -234,11 +234,15 @@ ESLint 10 移除旧配置和 RuleContext API，并调整推荐规则。项目已
 
 当前维护 uni-pages 0.5.0、unh 0.3.2、devframe 0.9.18 和 `@unocss/vite` 66.10.1 的精确版本补丁，由 `patchedDependencies` 自动应用。升级对应包时应检查上游修复与回归结果，不依赖手工修改 `node_modules`。
 
-### uni-pages：分包扫描与提前准备
+### uni-pages：分包扫描、配置依赖与提前准备
 
 `patches/@uni-helper__vite-plugin-uni-pages@0.5.0.patch` 为分包的 `dir` 提供 glob 支持，`root` 可使用固定字符串或同步映射函数。函数接收相对于项目根目录、使用 `/` 分隔的实际匹配目录，返回生成配置中的分包根；它可能随目录重新发现而执行，应保持为纯函数。固定目录与 glob 可以混用，相同映射去重，冲突映射报错。
 
 项目使用 `dir: 'src/packages/*/pages'`，由 `root` 函数得到 `packages/<包名>`，并通过 `exclude` 排除隐藏目录。页面插件保留 glob 模式并监听稳定的上级目录，覆盖初次没有匹配目录、分包新增、删除后重建等场景，空分包不写入路由配置。
+
+标准 JS/TS 配置由 esbuild 在内存中打包并收集本地静态导入，复用 `bundle-require` 的模块外部化与文件上下文处理，再通过 Jiti 执行。配置发现仍由 unconfig 负责，保留默认导出、具名导出和 CommonJS 支持。直接或间接依赖变化后，重新加载配置、生成 `pages.json` 与声明文件，再通知 HMR；每次成功加载都会替换依赖集合，覆盖 import 的新增与移除。`pages.config.ts` 引用的主题配置因此参与自动更新，JSON 依赖也会读取最新内容。
+
+JSON 配置入口、自定义 parser/transform 及非脚本格式沿用原加载方式。自动收集范围是 JS/TS 中可静态解析的本地导入，不包含第三方包内部文件、运行时拼接的路径或 `fs` 读取。配置加载不采用应用的 Vite alias 或 tsconfig paths。补丁通过 `packageExtensions` 声明 `bundle-require`、esbuild 和 Jiti 依赖，后两者复用当前工具链的版本；升级或移除补丁时同步核查这项声明。
 
 `UniPages(options)` 返回的插件提供 `prepare({ root?, platform? })`。项目先等待该方法写完 `pages.json` 和声明文件，再创建需要读取页面配置的其他插件。提前准备要求显式设置 `platformSuffix`；主包、分包和 TabBar 使用相同的平台规则。普通用法仍可由 Vite 检测 UniPlatform。
 

@@ -15,6 +15,13 @@ packages:
 overrides:
   giget@1.2.5>tar: 7.5.22
 
+packageExtensions:
+  '@uni-helper/vite-plugin-uni-pages@0.5.0':
+    dependencies:
+      bundle-require: 5.1.0
+      esbuild: 0.20.2
+      jiti: 2.7.0
+
 patchedDependencies:
   '@uni-helper/unh@0.3.2': patches/@uni-helper__unh@0.3.2.patch
   '@uni-helper/vite-plugin-uni-pages@0.5.0': patches/@uni-helper__vite-plugin-uni-pages@0.5.0.patch

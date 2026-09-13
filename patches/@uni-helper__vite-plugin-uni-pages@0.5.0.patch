@@ -81,16 +81,21 @@ index 81e52926a2e225d52ca01861c48514b475470a8c..28129296c37f9135ecb070d9745f3a31
 \ No newline at end of file
 +export { type ConfigSource, type DebugType, DefineConditional, type DefinePage, type DefinePageContext, type ExcludeIndexSignature, FILE_EXTENSIONS, type InternalPageItem, type InternalPages, MODULE_ID_VIRTUAL, type MaybeCallable, type MaybePromise, type MaybePromiseCallable, MergePagesJsonOptions, OUTPUT_NAME, type Options, Page, PageContext, type PagePath, PagesJsonData, PagesJsonFormatOptions, PipelineOverrides, RESOLVED_MODULE_ID_VIRTUAL, type ResolvedOptions, type SubPackageConfig, type UniPagesPlugin, type UserOptions, type UserPageItem, type UserTabBarItem, VitePluginUniPages, VitePluginUniPages as default, WritePagesJsonOptions, checkPagesJsonFileSync, createPages, debug, type debugType, type definePage, defineUniPages, evaluateDefinePage, filterPlatformSuffixPages, findDefinePageMacro, generateAll, getPageFiles, isConditional, isTargetFile, mergePagesJson, parseSFC, resolveConditional, resolveOptions, resolvePageDirs, resolvePagesJsonPath, withFileLock, writePagesJson };
 diff --git a/dist/index.mjs b/dist/index.mjs
-index 60ed1cb87c2d5b217841ff00b24aa9f1f13ac48f..048d47d9689524b8f50b60646b0c51bbe7c43f0f 100644
+index 60ed1cb87c2d5b217841ff00b24aa9f1f13ac48f..bc9ab5fdf8e7adb54eb9e741adb4bf19be642155 100644
 --- a/dist/index.mjs
 +++ b/dist/index.mjs
-@@ -1,4 +1,5 @@
+@@ -1,18 +1,22 @@
  import { createRequire } from "node:module";
 +import { createHash } from "node:crypto";
  import path, { dirname, extname, join, resolve } from "node:path";
  import process from "node:process";
  import chokidar from "chokidar";
-@@ -8,11 +9,11 @@ import { platform } from "@uni-helper/uni-env";
+ import MagicString from "magic-string";
+ import { createLogger, normalizePath } from "vite";
++import { externalPlugin, injectFileScopePlugin, JS_EXT_RE } from "bundle-require";
++import { build as buildConfig } from "esbuild";
++import { createJiti } from "jiti";
+ import { platform } from "@uni-helper/uni-env";
  import { CommentArray, parse, stringify } from "comment-json";
  import Debug from "debug";
  import groupBy from "lodash.groupby";
@@ -105,7 +110,7 @@ index 60ed1cb87c2d5b217841ff00b24aa9f1f13ac48f..048d47d9689524b8f50b60646b0c51bb
  import vm from "node:vm";
  import babelGenerate from "@babel/generator";
  import * as t from "@babel/types";
-@@ -85,26 +86,25 @@ declare module "virtual:uni-pages" {
+@@ -85,26 +89,25 @@ declare module "virtual:uni-pages" {
  `;
  }
  /**
@@ -143,7 +148,7 @@ index 60ed1cb87c2d5b217841ff00b24aa9f1f13ac48f..048d47d9689524b8f50b60646b0c51bb
  }
  //#endregion
  //#region src/logger.ts
-@@ -259,21 +259,14 @@ function sleep(ms) {
+@@ -259,21 +262,14 @@ function sleep(ms) {
  * @returns 解析后的配置项
  */
  function resolveOptions(userOptions, viteRoot = process.cwd()) {
@@ -167,7 +172,7 @@ index 60ed1cb87c2d5b217841ff00b24aa9f1f13ac48f..048d47d9689524b8f50b60646b0c51bb
  	const resolvedHomePage = typeof homePage === "string" ? [homePage] : homePage;
  	const resolvedConfigSource = typeof configSource === "string" ? [{ files: configSource }] : configSource;
  	return {
-@@ -281,6 +274,7 @@ function resolveOptions(userOptions, viteRoot = process.cwd()) {
+@@ -281,6 +277,7 @@ function resolveOptions(userOptions, viteRoot = process.cwd()) {
  		configSource: Array.isArray(resolvedConfigSource) ? resolvedConfigSource : [resolvedConfigSource],
  		homePage: resolvedHomePage,
  		mergePages,
@@ -175,7 +180,7 @@ index 60ed1cb87c2d5b217841ff00b24aa9f1f13ac48f..048d47d9689524b8f50b60646b0c51bb
  		dirs: resolvedDirs,
  		subPackages: resolvedSubDirs,
  		subPackageRootMap,
-@@ -318,6 +312,26 @@ function resolvePageDirs(dir, root, exclude) {
+@@ -318,6 +315,26 @@ function resolvePageDirs(dir, root, exclude) {
  		cwd: root
  	});
  }
@@ -202,7 +207,7 @@ index 60ed1cb87c2d5b217841ff00b24aa9f1f13ac48f..048d47d9689524b8f50b60646b0c51bb
  //#endregion
  //#region src/condition.ts
  /** 判断一个值是否为普通对象（非 null、非数组） */
-@@ -1568,6 +1582,154 @@ function mergePlatformItems(source, currentPlatform, items, uniqueKeyName) {
+@@ -1568,6 +1585,158 @@ function mergePlatformItems(source, currentPlatform, items, uniqueKeyName) {
  }
  //#endregion
  //#region src/context.ts
@@ -228,6 +233,10 @@ index 60ed1cb87c2d5b217841ff00b24aa9f1f13ac48f..048d47d9689524b8f50b60646b0c51bb
 +}
 +function configFiles(ctx) {
 +	return createConfigLoader({ cwd: ctx.root, sources: ctx.options.configSource, defaults: {} }).findConfigs.sync().map(normalizePath);
++}
++async function loadConfigModule(file) {
++	const { config } = await loadConfig({ sources: [{ files: file, extensions: [], parser: "import" }] });
++	return config;
 +}
 +/** 指纹覆盖新增页面与分包映射，防止准备阶段的旧快照被后续插件继续使用 */
 +function inputFingerprint(ctx, includeDependencies = true) {
@@ -357,7 +366,7 @@ index 60ed1cb87c2d5b217841ff00b24aa9f1f13ac48f..048d47d9689524b8f50b60646b0c51bb
  /**
  * 页面上下文：负责扫描页面、加载配置、合并页面信息、生成 pages.json
  *
-@@ -1622,6 +1784,12 @@ var PageContext = class {
+@@ -1622,6 +1791,12 @@ var PageContext = class {
  		this.platform = platform$1;
  		debug.options("root", this.root);
  		this.options = resolveOptions(userOptions, this.root);
@@ -370,11 +379,49 @@ index 60ed1cb87c2d5b217841ff00b24aa9f1f13ac48f..048d47d9689524b8f50b60646b0c51bb
  		const debugOption = this.options.debug;
  		if (debugOption) {
  			const prefix = "vite-plugin-uni-pages:";
-@@ -1644,13 +1812,16 @@ var PageContext = class {
+@@ -1643,14 +1818,53 @@ var PageContext = class {
+ 	* 使用 unconfig 加载配置，支持多种配置文件格式
  	*/
  	async loadUserPagesConfig() {
- 		const configSource = this.options.configSource;
+-		const configSource = this.options.configSource;
 -		const { config, sources } = await loadConfig({
++		const sourceDependencies = new Map();
++		const configSource = this.options.configSource.map((source) => {
++			if (source.transform || source.parser && source.parser !== "auto" && source.parser !== "import") return source;
++			return {
++				...source,
++				parser: async (file) => {
++					if (source.parser !== "import") {
++						const content = await readFile(file, "utf8");
++						try {
++							return JSON.parse(content);
++						} catch (error) {
++							if (!(error instanceof SyntaxError)) throw error;
++						}
++					}
++					if (!JS_EXT_RE.test(file)) return loadConfigModule(file);
++					const bundled = await buildConfig({
++						entryPoints: [file],
++						absWorkingDir: this.root,
++						bundle: true,
++						write: false,
++						metafile: true,
++						format: "esm",
++						platform: "node",
++						sourcemap: "inline",
++						tsconfigRaw: {},
++						// 与 watcher 保持同一路径，避免符号链接目录产生两套依赖标识
++						preserveSymlinks: true,
++						logLevel: "silent",
++						plugins: [externalPlugin(), injectFileScopePlugin()]
++					});
++					const jiti = createJiti(file, { fsCache: false, moduleCache: false, interopDefault: true });
++					const mod = await jiti.evalModule(bundled.outputFiles[0].text, { filename: file, async: true, forceTranspile: true });
++					sourceDependencies.set(normalizePath(file), Object.keys(bundled.metafile.inputs).map((dependency) => normalizePath(path.resolve(this.root, dependency))));
++					return mod?.default ?? mod;
++				}
++			};
++		});
 +		const { config, sources, dependencies } = await loadConfig({
  			cwd: this.root,
  			sources: configSource,
@@ -383,12 +430,12 @@ index 60ed1cb87c2d5b217841ff00b24aa9f1f13ac48f..048d47d9689524b8f50b60646b0c51bb
  		this.pagesGlobConfig = config.default || config;
  		this.pagesConfigSourcePaths = sources.map(normalizePath);
 +		const input = contextInputs.get(this);
-+		input.dependencies = (dependencies ?? []).map(normalizePath).filter((file) => file !== this.resolvedPagesJSONPath && file !== this.options.dts);
++		input.dependencies = [...new Set([...(dependencies ?? []), ...sources.flatMap((file) => sourceDependencies.get(normalizePath(file)) ?? [])].map((file) => normalizePath(path.resolve(file))))].filter((file) => !this.pagesConfigSourcePaths.includes(file) && file !== this.resolvedPagesJSONPath && file !== this.options.dts);
 +		input.onConfigLoaded?.();
  		debug.options(this.pagesGlobConfig);
  	}
  	/**
-@@ -1671,6 +1842,8 @@ var PageContext = class {
+@@ -1671,6 +1885,8 @@ var PageContext = class {
  		if (this._server === server) return;
  		this._server = server;
  		this.setupWatcher(server.watcher);
@@ -397,7 +444,7 @@ index 60ed1cb87c2d5b217841ff00b24aa9f1f13ac48f..048d47d9689524b8f50b60646b0c51bb
  	}
  	/**
  	* 设置文件监听器，监听页面文件与配置文件变更
-@@ -1678,36 +1851,8 @@ var PageContext = class {
+@@ -1678,36 +1894,8 @@ var PageContext = class {
  	* @param watcher - chokidar 文件监听器实例
  	*/
  	async setupWatcher(watcher) {
@@ -436,7 +483,7 @@ index 60ed1cb87c2d5b217841ff00b24aa9f1f13ac48f..048d47d9689524b8f50b60646b0c51bb
  	}
  	/**
  	* 页面更新回调，页面文件或配置变化时触发
-@@ -1741,7 +1886,13 @@ var PageContext = class {
+@@ -1741,7 +1929,13 @@ var PageContext = class {
  				}
  			}
  		}
@@ -450,7 +497,7 @@ index 60ed1cb87c2d5b217841ff00b24aa9f1f13ac48f..048d47d9689524b8f50b60646b0c51bb
  		this.options.onBeforeLoadUserConfig();
  		await this.loadUserPagesConfig();
  		this.options.onAfterLoadUserConfig(this.pagesGlobConfig);
-@@ -1755,8 +1906,13 @@ var PageContext = class {
+@@ -1755,8 +1949,13 @@ var PageContext = class {
  		await this.mergePageMetaData();
  		await this.mergeSubPageMetaData();
  		this.options.onAfterMergePageMetaData(this.pageMetaData, this.subPageMetaData);
@@ -466,7 +513,7 @@ index 60ed1cb87c2d5b217841ff00b24aa9f1f13ac48f..048d47d9689524b8f50b60646b0c51bb
  		this.options.onBeforeWriteFile(this.resolvedPagesJSONPath);
  		const homePath = this.pageMetaData.find((meta) => meta.type === "home")?.path;
  		this.tabBar = await this.resolveTabBar();
-@@ -1775,7 +1931,12 @@ var PageContext = class {
+@@ -1775,7 +1974,12 @@ var PageContext = class {
  				insertFinalNewline: this.options.insertFinalNewline
  			}
  		});
@@ -480,7 +527,7 @@ index 60ed1cb87c2d5b217841ff00b24aa9f1f13ac48f..048d47d9689524b8f50b60646b0c51bb
  		if (result?.updated) this.options.onAfterWriteFile(this.resolvedPagesJSONPath, result.content);
  		return result?.updated ?? false;
  	}
-@@ -1807,21 +1968,25 @@ var PageContext = class {
+@@ -1807,21 +2011,25 @@ var PageContext = class {
  	* @returns 合并后的 tabBar 配置对象，无 tabBar 时为 undefined
  	*/
  	async resolveTabBar() {
@@ -511,7 +558,7 @@ index 60ed1cb87c2d5b217841ff00b24aa9f1f13ac48f..048d47d9689524b8f50b60646b0c51bb
  		}
  		return tabBar;
  	}
-@@ -1832,12 +1997,15 @@ var PageContext = class {
+@@ -1832,12 +2040,15 @@ var PageContext = class {
  	generateDeclaration() {
  		if (!this.options.dts) return;
  		debug.declaration("generating");
@@ -529,7 +576,7 @@ index 60ed1cb87c2d5b217841ff00b24aa9f1f13ac48f..048d47d9689524b8f50b60646b0c51bb
  	}
  	/**
  	* 扫描主包页面目录并收集所有页面文件路径
-@@ -1900,7 +2068,7 @@ var PageContext = class {
+@@ -1900,7 +2111,7 @@ var PageContext = class {
  		const generatedPageMetaData = await Promise.all(jobs);
  		const customPageMetaData = overrides || [];
  		const parseMeta = dedupeByPath(customPageMetaData.length ? mergePageMetaDataArray(generatedPageMetaData.concat(customPageMetaData)) : generatedPageMetaData);
@@ -538,7 +585,7 @@ index 60ed1cb87c2d5b217841ff00b24aa9f1f13ac48f..048d47d9689524b8f50b60646b0c51bb
  	}
  	/**
  	* 设置首页
-@@ -2135,22 +2303,135 @@ async function generateAll(userOptions = {}, overrides = {}) {
+@@ -2135,22 +2346,135 @@ async function generateAll(userOptions = {}, overrides = {}) {
  */
  function VitePluginUniPages(userOptions = {}) {
  	let ctx;
@@ -681,7 +728,7 @@ index 60ed1cb87c2d5b217841ff00b24aa9f1f13ac48f..048d47d9689524b8f50b60646b0c51bb
  			}
  		},
  		/**
-@@ -2178,8 +2459,18 @@ function VitePluginUniPages(userOptions = {}) {
+@@ -2178,8 +2502,18 @@ function VitePluginUniPages(userOptions = {}) {
  		* 配置开发服务器钩子
  		* 设置文件监听与 HMR 支持
  		*/
