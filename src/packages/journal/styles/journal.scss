@@ -11,7 +11,7 @@
 .journal-icon-button { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; padding: 0; border-radius: 50%; background: transparent; color: var(--app-ink); font-size: 20px; }
 .journal-empty { padding: 38px 20px; text-align: center; color: var(--app-muted); line-height: 1.9; }
 .journal-search { display: flex; align-items: center; gap: 9px; height: 43px; box-sizing: border-box; padding: 0 14px; border: 1px solid var(--app-line); border-radius: 13px; background: var(--app-surface); color: #a0aaa3; }
-.journal-search input { flex: 1; font-size: 13px; color: var(--app-ink); }
+.journal-search-input { flex: 1; font-size: 13px; color: var(--app-ink); }
 .journal-chips { display: flex; gap: 9px; margin: 20px 0; }
 .journal-chip { min-width: 54px; min-height: 34px; box-sizing: border-box; padding: 8px 14px; border: 1px solid var(--app-line); border-radius: 20px; color: #7b867f; background: transparent; font-size: 12px; }
 .journal-chip--active { border-color: var(--app-green); color: white; background: var(--app-green); }

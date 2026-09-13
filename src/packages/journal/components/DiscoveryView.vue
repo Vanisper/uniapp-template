@@ -27,7 +27,7 @@ function openStory(id: string) {
           <view><text class="journal-kicker">A LITTLE EVERY DAY</text><text class="journal-title">发现日常里的美好</text></view>
           <view class="discovery-date"><text class="i-carbon-sun" /><text>慢慢来，也很好</text></view>
         </view>
-        <view class="journal-search"><text class="i-carbon-search" /><input v-model="search" placeholder="搜索感兴趣的内容" aria-label="搜索发现内容" confirm-type="search"></view>
+        <view class="journal-search"><text class="i-carbon-search" /><input v-model="search" class="journal-search-input" placeholder="搜索感兴趣的内容" aria-label="搜索发现内容" confirm-type="search"></view>
         <view class="journal-section-heading"><text class="journal-section-title">{{ search ? '搜索结果' : activeTab === '精选' ? '今日推荐' : `${activeTab}发现` }}</text><text class="journal-muted">{{ filtered.length }} 篇精选</text></view>
         <StoryCard v-for="(story, index) in filtered" :key="story.id" :story="story" :featured="index === 0" @open="openStory" />
         <view v-if="!filtered.length" class="journal-empty">还没有找到相关内容，换一个关键词试试。</view>

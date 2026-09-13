@@ -42,7 +42,7 @@ function openInfo() {
             <view>
               <text class="profile-name">拾页用户</text>
               <text class="profile-bio">记录日常，也收藏灵感</text>
-              <view class="profile-device"><view i-carbon:checkmark /><text>保存在此设备</text></view>
+              <view class="profile-device"><view class="profile-device-icon" i-carbon:checkmark /><text>保存在此设备</text></view>
             </view>
           </view>
           <view class="profile-stats">
@@ -110,7 +110,7 @@ function openInfo() {
 .profile-name { display: block; color: #263d30; font-size: 23px; font-weight: 650; }
 .profile-bio { display: block; margin-top: 8px; color: #788678; font-size: 12px; }
 .profile-device { display: inline-flex; align-items: center; gap: 4px; margin-top: 11px; color: #688772; font-size: 10px; }
-.profile-device > view { font-size: 11px; }
+.profile-device-icon { font-size: 11px; }
 .profile-stats { display: flex; align-items: center; margin-top: 25px; }
 .profile-stat { display: flex; flex: 1; flex-direction: column; align-items: center; padding: 7px 0; color: #2f4b39; background: transparent; }
 .profile-stat-number { font-size: 27px; font-weight: 600; line-height: 1.4; }

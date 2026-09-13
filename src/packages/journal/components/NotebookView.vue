@@ -48,7 +48,7 @@ function resetFilters() {
 
       <view class="journal-search notebook-search">
         <view i-carbon:search />
-        <input v-model="search" placeholder="找一找记下的灵感" confirm-type="search" aria-label="搜索笔记">
+        <input v-model="search" class="journal-search-input" placeholder="找一找记下的灵感" confirm-type="search" aria-label="搜索笔记">
         <button v-if="search" class="notebook-clear" aria-label="清空搜索" @click="search = ''">
           <view i-carbon:close />
         </button>
@@ -81,7 +81,7 @@ function resetFilters() {
           <text class="notebook-card-content">{{ note.content }}</text>
           <view class="notebook-card-footer">
             <text>继续记录</text>
-            <view i-carbon:arrow-up-right />
+            <view class="notebook-card-arrow" i-carbon:arrow-up-right />
           </view>
         </button>
       </view>
@@ -126,7 +126,7 @@ function resetFilters() {
 .notebook-card-title { display: block; margin-top: 15px; font-size: 17px; font-weight: 600; line-height: 1.6; }
 .notebook-card-content { display: -webkit-box; overflow: hidden; margin-top: 7px; color: #7a857d; font-size: 13px; line-height: 1.85; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
 .notebook-card-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 19px; padding-top: 12px; border-top: 1px solid #f0f2ed; color: #8d9790; font-size: 10px; }
-.notebook-card-footer > view { color: var(--app-green); font-size: 16px; }
+.notebook-card-arrow { color: var(--app-green); font-size: 16px; }
 .notebook-empty { display: flex; flex-direction: column; align-items: center; }
 .notebook-empty-icon { width: 35px; height: 35px; margin-bottom: 17px; color: #a2b4a8; }
 .notebook-empty-title { margin-bottom: 5px; color: var(--app-ink); font-size: 16px; }
