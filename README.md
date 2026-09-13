@@ -26,7 +26,7 @@ pnpm build mp-weixin
 
 平台名是 unh 的位置参数；测试环境构建使用 `pnpm build:test`。主要依赖的兼容范围、迁移原因与验证结果见[依赖升级记录](docs/dependencies/dependency-upgrade-2026-09-12.md)。
 
-微信开发使用 `pnpm dev wx`，编译完成后会自动打开微信开发者工具。请先复制 `envs/.env` 为 `envs/.env.local`，填写 `UNI_MP_WEIXIN_APPID`，然后启动开发服务。本机环境文件已被 Git 忽略；环境变量及多环境配置见 [envs/README.md](envs/README.md)。未配置 AppID 时，产物使用 `touristappid`，当前开发者工具的自动打开流程会报 AppID 不存在。
+微信开发使用 `pnpm dev wx`，编译完成后会自动打开微信开发者工具。请先复制 `envs/.env.local.example` 为 `envs/.env.local`，填写 `UNI_MP_WEIXIN_APPID`，然后启动开发服务。本机环境文件已被 Git 忽略；项目提供 development、test、production 环境模板，变量定义与覆盖方式见 [envs/README.md](envs/README.md)。未配置 AppID 时，产物使用 `touristappid`，当前开发者工具的自动打开流程会报 AppID 不存在。
 
 H5 开发时，UnoCSS Inspector 地址为 <http://localhost:13000/__unocss/>，端口以开发服务实际输出为准。当前版本不会自动打印入口地址；未授权浏览器打开该页面后，在运行 `pnpm dev` 的终端查看 `Devframe` 提示框中的 `auth code`，输入页面完成授权。授权按浏览器保存；已授权浏览器可以直接进入。验证码过期时提交或刷新页面，再查看终端中的新码。
 
@@ -83,6 +83,14 @@ src/
 
 底栏的组件选择、共用参数、受控交互和平台接入见 [TabBar 接入与组件契约](docs/tabbar.md)。图片和图标来源单独记录在[静态资源说明](src/static/README.md)。
 
+## 请求与 Mock
+
+请求层接入 alova v3、官方 uni-app 适配器与 `@alova/mock`，提供类型化 Method、业务响应解包、统一错误、Token 缓存与自动鉴权，以及上传、下载支持。环境变量通过 `appEnv` 统一解析，默认超时 10 秒；鉴权头、Token 前缀与缓存 key 均可配置。
+
+多租户等场景可通过 `getHeaders()` 动态提供公共请求头，单次请求可覆盖或跳过公共头。合并规则与租户 Mock 示例见[公共请求头与租户上下文](docs/request.md#公共请求头与租户上下文)。
+
+development 和 test 模板默认开启 Mock，未匹配接口转发真实服务；production 模式强制关闭 Mock。测试中心提供登录、受保护接口、匿名请求和退出示例，控制台默认输出脱敏后的 Mock 日志，可通过 `VITE_MOCK_LOG_ENABLED` 关闭。接口定义、hooks、错误处理与联调配置见[请求层与 Mock](docs/request.md)。
+
 ## TODO
 
 ### Basic
@@ -111,13 +119,13 @@ src/
 - [x] [uni-echarts](https://github.com/xiaohe0601/uni-echarts): 适用于 uni-app 的 Apache ECharts 组件
 - [x] pinia + [pinia-plugin-persistedstate](https://praz.codeberg.page/pinia-plugin-persistedstate): 全局状态管理及持久化
 - [ ] 路由管理
-- [ ] [alova](https://alova.js.org/zh-CN/tutorial/getting-started/introduce) 请求库的支持
+- [x] [alova](https://alova.js.org/zh-CN/tutorial/getting-started/introduce) 请求库与官方 uni-app、Mock 适配器
 
 ### 业务增强
 
 - [ ] layouts 的建设：自定义 tabbar、navbar，以及实现布局的动态切换
 - [ ] 全局样式、主题的建设
-- [ ] 网络请求封装
+- [x] 网络请求封装：业务响应、错误分类、认证注入、上传下载与环境配置
 - [ ] 业务模型声明
 - [ ] 可复用组件：echarts 图表的封装；常用组件、具体业务模块的组件封装以及分包优化的考虑
 - [ ] 国际化支持

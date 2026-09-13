@@ -179,6 +179,12 @@ importers:
 
   .:
     dependencies:
+      '@alova/adapter-uniapp':
+        specifier: ^2.0.18
+        version: 2.0.18(alova@3.5.5)
+      '@alova/mock':
+        specifier: ^2.0.22
+        version: 2.0.22(alova@3.5.5)
       '@dcloudio/uni-app':
         specifier: 3.0.0-5020420260813003
         version: 3.0.0-5020420260813003(@dcloudio/types@3.4.31)(postcss@8.5.28)(rollup@4.63.1)(supports-color@8.1.1)(vite@5.2.8(@types/node@22.20.2)(sass@1.104.0)(terser@5.51.2))(vue@3.4.21(typescript@5.9.3))
@@ -230,6 +236,9 @@ importers:
       '@wot-ui/ui':
         specifier: ^2.3.2
         version: 2.3.2(vue@3.4.21(typescript@5.9.3))
+      alova:
+        specifier: ^3.5.5
+        version: 3.5.5
       echarts:
         specifier: ^6.1.0
         version: 6.1.0
@@ -383,6 +392,19 @@ importers:
         version: 3.4.21(typescript@5.9.3)
 
 packages:
+
+  '@alova/adapter-uniapp@2.0.18':
+    resolution: {integrity: sha512-BOSpMRJFGGJ8gLxozq7+6dZqxSk3ITvR8hpLV7JfCNZtEFhNpXB53Op9iofMgfD9s9RdyT5OdnyWLJjnhfWSHw==}
+    peerDependencies:
+      alova: ^3.0.20
+
+  '@alova/mock@2.0.22':
+    resolution: {integrity: sha512-exgrQZdom0vvL6V0vmfVLr3IaG6kscHf5VSoSaoaBSFuSFFKKcJiSNCOwosYSRNtJ3YHmtvKEoBje2cGChdEwA==}
+    peerDependencies:
+      alova: ^3.0.20
+
+  '@alova/shared@1.3.4':
+    resolution: {integrity: sha512-kdYHUqO35AEdnQHnzevyf+VhhfD0jc+EBbZv/aYkA4rwjVjf+vB6D/ZkTwiYFH1yQjwiGwF1ZbJv5a7rKGyNiw==}
 
   '@ampproject/remapping@2.3.0':
     resolution: {integrity: sha512-30iZtAPgz+LTIYoeivqYo853f02jBYSd5uGnGpkFV0M3xOt9aN73erkgYAmZU43x4VfqcnLxW9Kpg3R5LC4YYw==}
@@ -3219,6 +3241,10 @@ packages:
   alien-signals@3.2.1:
     resolution: {integrity: sha512-I8FjmltrfnDFoZedi5CG8DghVYNhzb/Ijluz7tCSJH0xpd0484Kowhbb1XDYOxfJpU1p5wnM2X54dA+IfGyD1g==}
 
+  alova@3.5.5:
+    resolution: {integrity: sha512-V/w9xLNBpmBxx7Zeb+OAJapt9yD1L/hBoqi86xlRtug94F2xUkA1GFsJMeDeV/oL/iQCvW8fQyplGOiLXDkACg==}
+    engines: {node: '>= 18.0.0'}
+
   ansi-escapes@4.3.2:
     resolution: {integrity: sha512-gKXj5ALrKWQLsYG9jlTRmR/xKluxHV+Z9QEwNIgCfM1/uwPMCuzVVnh5mwTd+OuBZcwSIMbqssNWRm1lE51QaQ==}
     engines: {node: '>=8'}
@@ -5709,6 +5735,9 @@ packages:
     resolution: {integrity: sha512-Hrgsx+orqoygnmhFbKaHE6c296J+HTAQXoxEF6gNupROmmGJRoyzfG3ccAveqCBrwr/2yxQ5BVd/GTl5agOwSg==}
     engines: {node: '>= 0.6'}
 
+  rate-limiter-flexible@5.0.5:
+    resolution: {integrity: sha512-+/dSQfo+3FYwYygUs/V2BBdwGa9nFtakDwKt4l0bnvNB53TNT++QSFewwHX9qXrZJuMe9j+TUaU21lm5ARgqdQ==}
+
   raw-body@2.5.2:
     resolution: {integrity: sha512-8zGqypfENjCIqGhgXToC8aB2r7YrBX+AQAfIPs/Mlk+BtPTztOvTS01NRW/3Eh60J+a48lt8qsCzirQ6loCVfA==}
     engines: {node: '>= 0.8'}
@@ -6778,6 +6807,18 @@ packages:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
 
 snapshots:
+
+  '@alova/adapter-uniapp@2.0.18(alova@3.5.5)':
+    dependencies:
+      '@alova/shared': 1.3.4
+      alova: 3.5.5
+
+  '@alova/mock@2.0.22(alova@3.5.5)':
+    dependencies:
+      '@alova/shared': 1.3.4
+      alova: 3.5.5
+
+  '@alova/shared@1.3.4': {}
 
   '@ampproject/remapping@2.3.0':
     dependencies:
@@ -10543,6 +10584,11 @@ snapshots:
 
   alien-signals@3.2.1: {}
 
+  alova@3.5.5:
+    dependencies:
+      '@alova/shared': 1.3.4
+      rate-limiter-flexible: 5.0.5
+
   ansi-escapes@4.3.2:
     dependencies:
       type-fest: 0.21.3
@@ -13548,6 +13594,8 @@ snapshots:
   quote-js-string@0.1.0: {}
 
   range-parser@1.2.1: {}
+
+  rate-limiter-flexible@5.0.5: {}
 
   raw-body@2.5.2:
     dependencies:

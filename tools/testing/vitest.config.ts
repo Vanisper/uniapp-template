@@ -82,6 +82,8 @@ export default defineConfig({
     ],
     server: {
       deps: {
+        // 与应用构建一致地加载官方适配器的 ESM 入口
+        inline: ['@alova/adapter-uniapp'],
         // 该生成文件含注释，由测试 mock 接管，避免 Vite 先按 JSON 解析
         external: [/[/\\]src[/\\]pages\.json$/],
       },
