@@ -79,6 +79,15 @@
             "navigationBarTitleText": "测试中心",
             "navigationStyle": "default"
           }
+        },
+        {
+          "path": "pages/wot",
+          "type": "page",
+          "layout": "default",
+          "style": {
+            "navigationBarTitleText": "Wot UI 组件",
+            "navigationStyle": "custom"
+          }
         }
       ]
     },
