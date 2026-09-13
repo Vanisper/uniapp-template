@@ -5,5 +5,5 @@ onLaunch(() => {})
 </script>
 
 <style lang="scss">
-@use './styles/journal.scss';
+@use './styles/base.scss';
 </style>

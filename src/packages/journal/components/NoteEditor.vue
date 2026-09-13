@@ -47,6 +47,8 @@ async function save() {
 </template>
 
 <style scoped lang="scss">
+@use '../styles/journal.scss';
+
 .editor { padding-top: 30px; }
 .editor__intro { display: flex; flex-direction: column; gap: 10px; padding-bottom: 30px; }
 .editor__title { height: 52px; color: var(--app-ink); font-size: 24px; font-weight: 650; }

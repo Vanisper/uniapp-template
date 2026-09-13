@@ -37,6 +37,8 @@ const items = [
 </template>
 
 <style scoped lang="scss">
+@use '../styles/journal.scss';
+
 .appearance-intro { margin-top: 12px; color: #88928c; font-size: 12px; line-height: 1.9; }
 .appearance-preview { position: relative; overflow: hidden; border: 1px solid var(--app-line); border-radius: 18px; background: #eef3ed; }
 .appearance-preview__content { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; height: 145px; color: #9ba79e; background: #eef3ed; font-size: 11px; }

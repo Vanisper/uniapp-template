@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import ProfileView from '@/features/journal/components/ProfileView.vue'
+import ProfileView from '@/packages/journal/components/ProfileView.vue'
+
+defineOptions({ componentPlaceholder: { ProfileView: 'view' } })
 
 definePage({
   layout: 'tabbar',

@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import DiscoveryView from '@/features/journal/components/DiscoveryView.vue'
+import DiscoveryView from '@/packages/journal/components/DiscoveryView.vue'
+
+defineOptions({ componentPlaceholder: { DiscoveryView: 'view' } })
 
 definePage({
   layout: 'tabbar',

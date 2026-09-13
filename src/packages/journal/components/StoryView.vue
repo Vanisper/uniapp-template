@@ -27,6 +27,8 @@ const saved = computed(() => savedStoryIds.value.includes(story.value.id))
 </template>
 
 <style scoped lang="scss">
+@use '../styles/journal.scss';
+
 .article { padding-top: 32px; }
 .article__title { display: block; margin: 14px 0; font-size: 29px; font-weight: 700; letter-spacing: -1px; line-height: 1.5; }
 .article__meta { display: flex; gap: 16px; margin-bottom: 25px; color: #929b95; font-size: 12px; }

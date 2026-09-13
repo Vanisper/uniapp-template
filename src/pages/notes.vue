@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import NotebookView from '@/features/journal/components/NotebookView.vue'
+import NotebookView from '@/packages/journal/components/NotebookView.vue'
+
+defineOptions({ componentPlaceholder: { NotebookView: 'view' } })
 
 definePage({
   layout: 'default',

@@ -23,7 +23,7 @@ const visibleNotes = computed(() => {
 })
 
 function openNote(id?: string) {
-  uni.navigateTo({ url: id ? `/pages/note-editor?id=${encodeURIComponent(id)}` : '/pages/note-editor' })
+  uni.navigateTo({ url: id ? `/packages/journal/pages/note-editor?id=${encodeURIComponent(id)}` : '/packages/journal/pages/note-editor' })
 }
 
 function resetFilters() {
@@ -103,7 +103,9 @@ function resetFilters() {
   </scroll-view>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
+@use '../styles/journal.scss';
+
 .notebook-scroll { height: 100%; background: var(--app-bg); }
 .notebook-body { padding-top: 28px; }
 .notebook-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; }

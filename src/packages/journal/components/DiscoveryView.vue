@@ -14,7 +14,7 @@ const filtered = computed(() => stories.filter(story =>
   && `${story.title}${story.summary}`.includes(search.value.trim()),
 ))
 function openStory(id: string) {
-  void go(`/pages/story?id=${id}`)
+  void go(`/packages/journal/pages/story?id=${id}`)
 }
 </script>
 
@@ -31,7 +31,7 @@ function openStory(id: string) {
         <view class="journal-section-heading"><text class="journal-section-title">{{ search ? '搜索结果' : activeTab === '精选' ? '今日推荐' : `${activeTab}发现` }}</text><text class="journal-muted">{{ filtered.length }} 篇精选</text></view>
         <StoryCard v-for="(story, index) in filtered" :key="story.id" :story="story" :featured="index === 0" @open="openStory" />
         <view v-if="!filtered.length" class="journal-empty">还没有找到相关内容，换一个关键词试试。</view>
-        <view class="discovery-note" @click="go('/pages/note-editor')"><view><text class="discovery-note__title">今天，有什么想记下来？</text><text class="journal-muted">让每一个微小的灵感，都有地方安放。</text></view><button class="discovery-note__button" aria-label="新建笔记"><text class="i-carbon-add" /></button></view>
+        <view class="discovery-note" @click="go('/packages/journal/pages/note-editor')"><view><text class="discovery-note__title">今天，有什么想记下来？</text><text class="journal-muted">让每一个微小的灵感，都有地方安放。</text></view><button class="discovery-note__button" aria-label="新建笔记"><text class="i-carbon-add" /></button></view>
         <view class="discovery-footer"><text>拾页 · 把日常写成自己的故事</text><button class="journal-link" @click="go('/packages/demo/pages/index')">进入测试中心 <text class="i-carbon-arrow-right" /></button></view>
       </view>
     </scroll-view>
@@ -39,6 +39,8 @@ function openStory(id: string) {
 </template>
 
 <style scoped lang="scss">
+@use '../styles/journal.scss';
+
 .discovery-body { padding-top: 25px; }
 .discovery-intro { display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px; }
 .discovery-intro .journal-title { font-size: 25px; }

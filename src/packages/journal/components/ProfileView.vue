@@ -17,7 +17,7 @@ function openNotebook() {
 }
 
 function openSaved() {
-  uni.navigateTo({ url: '/pages/saved' })
+  uni.navigateTo({ url: '/packages/journal/pages/saved' })
 }
 
 function openTesting() {
@@ -25,7 +25,7 @@ function openTesting() {
 }
 
 function openInfo() {
-  uni.navigateTo({ url: '/pages/info' })
+  uni.navigateTo({ url: '/packages/journal/pages/info' })
 }
 </script>
 
@@ -98,7 +98,9 @@ function openInfo() {
   </view>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
+@use '../styles/journal.scss';
+
 .profile-screen { background: var(--app-bg); }
 .profile-topbar, .profile-hero { background: #ecefe7; }
 .profile-hero { border-radius: 0 0 25px 25px; }

@@ -1,3 +1,5 @@
+import bookshopCover from './static/editorial/bookshop.jpg'
+
 export interface Story {
   id: string
   category: '灵感' | '生活' | '城市'
@@ -18,7 +20,7 @@ export const stories: Story[] = [
     summary: '放慢一点，去书页和阳光之间，找回属于自己的节奏。',
     author: '拾页编辑部',
     minutes: 5,
-    cover: '/static/editorial/bookshop.jpg',
+    cover: bookshopCover,
     color: 'sand',
     paragraphs: [
       '周末不一定要安排得满满当当。走进一间没去过的书店，把手机放进口袋，选一个靠窗的位置，就已经是很好的开始。',

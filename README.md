@@ -52,18 +52,17 @@ unh 的环境变量类型生成功能已关闭（`env.dts: false`）；构建配
 
 ## 分包目录
 
-主包页面放在 `src/pages`，分包按 `src/packages/<包名>/pages` 组织：
+主包页面放在 `src/pages`，分包将页面、组件、状态、样式和专属资源归集到 `src/packages/<包名>`：
 
 ```text
 src/
 ├── pages/
 └── packages/
-    └── demo/
+    └── <包名>/
         ├── pages/
-        │   ├── index.vue
-        │   └── hi.vue
-        └── components/
-            └── Demo.vue
+        ├── components/
+        ├── styles/
+        └── static/
 ```
 
 开发与构建启动时自动发现 `src/packages` 下非隐藏的直属目录，只扫描各包的 `pages`。例如 `demo/pages/index.vue` 会生成分包根 `packages/demo` 和页面路径 `pages/index`，完整跳转路径为 `/packages/demo/pages/index`。没有页面的包不会写入分包配置。
@@ -73,6 +72,8 @@ src/
 创建其他插件前，先等待 `pages.prepare()` 生成完整的 `pages.json` 和路由类型；Vite 随后接管同一个插件实例，复用已准备的上下文。项目显式启用 `platformSuffix`，使准备阶段就能确定平台文件规则。
 
 包内组件、composables 等资源使用显式导入；公共组件与公共逻辑继续使用现有自动导入规则。页面插件会自动发现分包新增、删除和重建。由于本项目的分包优化插件在初始化时读取包结构，新增或重命名整个分包后仍需重启开发命令；已有分包内的页面增删继续由页面插件监听。
+
+主 tab 页保留主包薄入口，仅声明路由、布局和跨包组件占位，具体视图由分包提供。主包入口不直接读取包内状态；包内消费者共用同一份状态模块，避免复制状态或引入主包同步依赖。跨包组件使用静态导入与 `componentPlaceholder`，具体约束和产物检查见[分包归属](docs/page-layouts.md#分包归属)。
 
 ## 页面与导航
 
