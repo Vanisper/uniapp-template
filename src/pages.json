@@ -118,6 +118,15 @@
             "navigationBarTitleText": "Wot UI 组件",
             "navigationStyle": "custom"
           }
+        },
+        {
+          "path": "pages/request",
+          "type": "page",
+          "layout": "default",
+          "style": {
+            "navigationBarTitleText": "请求与 Mock",
+            "navigationStyle": "custom"
+          }
         }
       ]
     },

@@ -13,6 +13,9 @@
 | `src/http/error.ts` | 提供统一 `RequestError` 和错误分类 |
 | `src/mock/index.ts` | 创建 Mock 适配器并配置真实请求回退 |
 | `src/mock/demo.ts` | 请求示例的 Mock 分组 |
+| `src/packages/demo/api/request.ts` | GET 场景与 POST 回显接口 |
+
+测试中心的「请求与 Mock」页面位于 `/packages/demo/pages/request`，可操作成功、空态、业务失败、HTTP 失败、取消和提交回显场景。
 
 默认请求超时为 10 秒，关闭响应缓存和相同请求共享，错误交给调用方展示。Method 保留 alova 的配置能力，可按接口显式启用缓存或其他策略。环境模板、命令和加载优先级见[环境变量说明](../envs/README.md)。
 
