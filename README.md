@@ -24,11 +24,11 @@ pnpm build
 pnpm build mp-weixin
 ```
 
-平台名是 unh 的位置参数；测试环境构建使用 `pnpm build:test`。主要依赖的兼容范围、迁移原因与验证结果见[依赖升级记录](docs/dependencies/dependency-upgrade-2026-09-12.md)。
+平台名是 unh 的位置参数；测试环境构建使用 `pnpm build:test`。
 
 微信开发使用 `pnpm dev wx`，编译完成后会自动打开微信开发者工具。请先复制 `envs/.env.local.example` 为 `envs/.env.local`，填写 `UNI_MP_WEIXIN_APPID`，然后启动开发服务。本机环境文件已被 Git 忽略；项目提供 development、test、production 环境模板，变量定义与覆盖方式见 [envs/README.md](envs/README.md)。未配置 AppID 时，产物使用 `touristappid`，当前开发者工具的自动打开流程会报 AppID 不存在。
 
-H5 开发时，UnoCSS Inspector 地址为 <http://localhost:13000/__unocss/>，端口以开发服务实际输出为准。当前版本不会自动打印入口地址；未授权浏览器打开该页面后，在运行 `pnpm dev` 的终端查看 `Devframe` 提示框中的 `auth code`，输入页面完成授权。授权按浏览器保存；已授权浏览器可以直接进入。验证码过期时提交或刷新页面，再查看终端中的新码。
+H5 开发时，UnoCSS Inspector 地址为 <http://localhost:13000/__unocss/>，端口以开发服务实际输出为准。未授权浏览器打开该页面后，在运行 `pnpm dev` 的终端查看 `Devframe` 提示框中的 `auth code`，输入页面完成授权。授权按浏览器保存；已授权浏览器可以直接进入。验证码过期时，点击页面的 `Re-issue one-time code` 按钮，再到终端查看新码。
 
 ## 类型检查与测试
 
@@ -67,9 +67,11 @@ src/
 
 开发与构建启动时自动发现 `src/packages` 下非隐藏的直属目录，只扫描各包的 `pages`。例如 `demo/pages/index.vue` 会生成分包根 `packages/demo` 和页面路径 `pages/index`，完整跳转路径为 `/packages/demo/pages/index`。没有页面的包不会写入分包配置。
 
-分包扫描配置集中在 [plugins/vite/pages.ts](plugins/vite/pages.ts)，使用 `src/packages/*/pages` 匹配页面目录，再由 `root` 函数计算分包根。glob 扫描与插件的 `prepare()` 接口由项目维护的 [uni-pages 补丁](docs/dependencies/dependency-upgrade-2026-09-12.md#uni-pages分包扫描配置依赖与提前准备)提供。
+分包扫描配置集中在 [plugins/vite/pages.ts](plugins/vite/pages.ts)，使用 `src/packages/*/pages` 匹配页面目录，再由 `root` 函数计算分包根。
 
-创建其他插件前，先等待 `pages.prepare()` 生成完整的 `pages.json` 和路由类型；Vite 随后接管同一个插件实例，复用已准备的上下文。项目显式启用 `platformSuffix`，使准备阶段就能确定平台文件规则。
+根组件与分包优化插件在创建时读取 `pages.json`，因此先等待 `pages.prepare({ platformSuffix: true })` 生成页面配置和路由类型，再创建这些插件。Vite 随后接管同一个页面插件实例。平台后缀页面用于主包；分包和 TabBar 使用跨平台通用路径。
+
+页面插件监听 `pages.config.ts` 及其本地依赖；修改 [主题配置](src/configs/theme.ts) 等配置依赖后，会重新生成页面配置和路由类型。
 
 包内组件、composables 等资源使用显式导入；公共组件与公共逻辑继续使用现有自动导入规则。页面插件会自动发现分包新增、删除和重建。由于本项目的分包优化插件在初始化时读取包结构，新增或重命名整个分包后仍需重启开发命令；已有分包内的页面增删继续由页面插件监听。
 

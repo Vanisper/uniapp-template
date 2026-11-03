@@ -17,7 +17,7 @@ import { getPagesOptions } from './pages'
 export default async function createPlugins(mode: string, isBuild = false) {
   const pages = UniPages(getPagesOptions())
   // 根组件与分包优化插件在创建时读取 pages.json
-  await pages.prepare()
+  await pages.prepare({ platformSuffix: true })
 
   const Plugins: (PluginOption | PluginOption[])[] = [
     // https://uni-helper.js.org/vite-plugin-uni-components

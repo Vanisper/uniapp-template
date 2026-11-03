@@ -6,9 +6,8 @@ import { normalizePath } from 'vite'
 /** 根据项目目录生成主包与分包的页面扫描配置 */
 export function getPagesOptions(root = process.cwd()): UserOptions {
   return {
-    platformSuffix: true,
     dts: normalizePath(join(root, 'src/typings/uni-pages.d.ts')),
-    exclude: ['_*.*', '**/components/**/*.*', '**/_components/**/*.*', '**/.*/**'],
+    exclude: ['**/_*.*', '**/components/**/*.*', '**/_components/**/*.*', '**/.*/**'],
     subPackages: [{
       dir: 'src/packages/*/pages',
       root: dir => posix.relative('src', posix.dirname(dir)),
