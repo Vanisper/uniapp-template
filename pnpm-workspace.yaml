@@ -12,9 +12,6 @@ shellEmulator: true
 packages:
   - tools/testing
 
-overrides:
-  giget@1.2.5>tar: 7.5.22
-
 allowBuilds:
   '@parcel/watcher': true
   '@uni-helper/unocss-preset-uni': true
