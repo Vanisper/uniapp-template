@@ -1,5 +1,6 @@
 /* eslint-disable unused-imports/no-unused-vars */
 import type { PluginOption } from 'vite'
+import { posix } from 'node:path'
 
 import Uni from '@uni-helper/plugin-uni'
 import UniLayouts from '@uni-helper/vite-plugin-uni-layouts'
@@ -12,18 +13,27 @@ import { UniEcharts } from 'uni-echarts/vite'
 import UnoCSS from 'unocss/vite'
 import AutoImport from 'unplugin-auto-import/vite'
 import { createComponentPlugins } from './components'
-import { getPagesOptions } from './pages'
 
-export default async function createPlugins(mode: string, isBuild = false) {
-  const pages = UniPages(getPagesOptions())
-  // 根组件与分包优化插件在创建时读取 pages.json
-  await pages.prepare({ platformSuffix: true })
-
-  const Plugins: (PluginOption | PluginOption[])[] = [
+export default async function createPlugins(mode: string, isBuild = false): Promise<PluginOption[]> {
+  return [
     // https://uni-helper.js.org/vite-plugin-uni-components
     ...createComponentPlugins(),
-    // https://github.com/uni-helper/vite-plugin-uni-pages
-    pages,
+    // 根组件与分包优化插件在创建时读取 pages.json，需先完成页面生成
+    await UniPages({
+      dts: 'src/typings/uni-pages.d.ts',
+      exclude: [
+        '**/node_modules/**',
+        '**/__*__/**',
+        '**/.*/**',
+        '**/_*.*',
+        '**/components/**',
+        '**/_components/**',
+      ],
+      subPackages: [{
+        dir: 'src/packages/*/pages',
+        root: dir => posix.relative('src', posix.dirname(dir)),
+      }],
+    }).prepare({ platformSuffix: true }),
     // https://github.com/uni-helper/vite-plugin-uni-layouts
     UniLayouts(),
     // https://github.com/uni-helper/vite-plugin-uni-manifest
@@ -68,6 +78,4 @@ export default async function createPlugins(mode: string, isBuild = false) {
       vueTemplate: true,
     }),
   ]
-
-  return Plugins
 }

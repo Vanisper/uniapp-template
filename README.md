@@ -67,9 +67,9 @@ src/
 
 开发与构建启动时自动发现 `src/packages` 下非隐藏的直属目录，只扫描各包的 `pages`。例如 `demo/pages/index.vue` 会生成分包根 `packages/demo` 和页面路径 `pages/index`，完整跳转路径为 `/packages/demo/pages/index`。没有页面的包不会写入分包配置。
 
-分包扫描配置集中在 [plugins/vite/pages.ts](plugins/vite/pages.ts)，使用 `src/packages/*/pages` 匹配页面目录，再由 `root` 函数计算分包根。
+分包扫描在 [plugins/vite/index.ts](plugins/vite/index.ts) 的 `UniPages` 配置中声明，使用 `src/packages/*/pages` 匹配页面目录，再由 `root` 函数计算分包根。
 
-根组件与分包优化插件在创建时读取 `pages.json`，因此先等待 `pages.prepare({ platformSuffix: true })` 生成页面配置和路由类型，再创建这些插件。Vite 随后接管同一个页面插件实例。平台后缀页面用于主包；分包和 TabBar 使用跨平台通用路径。
+根组件与分包优化插件在创建时读取 `pages.json`，因此插件列表中通过 `await UniPages(...).prepare({ platformSuffix: true })` 先生成页面配置和路由类型，再创建后续插件。平台后缀页面用于主包；分包和 TabBar 使用跨平台通用路径。
 
 页面插件监听 `pages.config.ts` 及其本地依赖；修改 [主题配置](src/configs/theme.ts) 等配置依赖后，会重新生成页面配置和路由类型。
 
