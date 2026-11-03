@@ -1,6 +1,10 @@
 minimumReleaseAge: 1440
 minimumReleaseAgeStrict: true
+
 minimumReleaseAgeExcludePrune: true
+minimumReleaseAgeExclude:
+  - '@uni-ku/bundle-optimizer@2.2.2'
+
 trustPolicy: no-downgrade
 # DCloud 固定的历史 Vite 插件缺少部分早期版本具有的来源证明
 trustPolicyIgnoreAfter: 525600
@@ -14,10 +18,7 @@ packages:
 
 allowBuilds:
   '@parcel/watcher': true
-  '@uni-helper/unocss-preset-uni': true
-  bufferutil: true
-  core-js: true
+  core-js: false
   core-js-pure: false
   esbuild: true
-  minidev: true
   vue-demi: true

@@ -311,8 +311,8 @@ importers:
         specifier: ^0.1.2
         version: 0.1.2(vite@5.2.8(@types/node@22.20.2)(sass@1.104.0)(terser@5.51.2))
       '@uni-ku/bundle-optimizer':
-        specifier: ^2.2.0
-        version: 2.2.0(chokidar@3.6.0)(vite@5.2.8(@types/node@22.20.2)(sass@1.104.0)(terser@5.51.2))(vue@3.4.21(typescript@5.9.3))
+        specifier: ^2.2.2
+        version: 2.2.2(chokidar@3.6.0)(vite@5.2.8(@types/node@22.20.2)(sass@1.104.0)(terser@5.51.2))(vue@3.4.21(typescript@5.9.3))
       '@uni-ku/root':
         specifier: ^1.5.0
         version: 1.5.0(vite@5.2.8(@types/node@22.20.2)(sass@1.104.0)(terser@5.51.2))
@@ -3084,10 +3084,10 @@ packages:
     peerDependencies:
       vite: ^5.0.0
 
-  '@uni-ku/bundle-optimizer@2.2.0':
-    resolution: {integrity: sha512-yM8WfEisQifoXZU16/Fagy6lO+KF2d9ZxXQJf7bxviQmUN9c+jC231IyiXILIWC40TjttKRTyAp7kJpB2WbHmQ==}
+  '@uni-ku/bundle-optimizer@2.2.2':
+    resolution: {integrity: sha512-27I1O+czAwhBFTRn2jSsdm7Ga6+8dXA1yI6G1ePa0SZCypnNTtvKue2dYJQBYBgzLGvxHjmQ4d79BoIMKOsfSA==}
     peerDependencies:
-      vite: ^4.0.0 || ^5.0.0
+      vite: ^4.0.0 || ^5.0.0 || ^6.0.0
       vue: ^3.0.0
 
   '@uni-ku/root@1.5.0':
@@ -10256,7 +10256,7 @@ snapshots:
       '@uni-helper/uni-env': 0.2.2
       vite: 5.2.8(@types/node@22.20.2)(sass@1.104.0)(terser@5.51.2)
 
-  '@uni-ku/bundle-optimizer@2.2.0(chokidar@3.6.0)(vite@5.2.8(@types/node@22.20.2)(sass@1.104.0)(terser@5.51.2))(vue@3.4.21(typescript@5.9.3))':
+  '@uni-ku/bundle-optimizer@2.2.2(chokidar@3.6.0)(vite@5.2.8(@types/node@22.20.2)(sass@1.104.0)(terser@5.51.2))(vue@3.4.21(typescript@5.9.3))':
     dependencies:
       '@vue/compiler-sfc': 3.4.21
       ast-kit: 2.2.0
