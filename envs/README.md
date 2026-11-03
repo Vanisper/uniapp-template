@@ -76,24 +76,12 @@ VITE_AUTH_TOKEN_PREFIX=
 VITE_AUTH_TOKEN_KEY=my-project:development:token
 ```
 
-默认配置发送 `Authorization: Bearer <token>`。前缀非空时与 Token 之间自动加入一个空格，配置中无需保留末尾空格。解析后的值分别为 `appEnv.authHeaderName` 和 `appEnv.authTokenPrefix`；所有 `createHttpClient` 实例默认继承这两个值，也可通过实例参数覆盖。
-
-公共 `http` 已绑定 [`src/auth/token.ts`](../src/auth/token.ts) 的 `getToken`，每次发送时读取 `VITE_AUTH_TOKEN_KEY` 指定的缓存。登录成功后调用 `setToken` 保存，退出时调用 `clearToken` 清除；这些操作使用同一个 key。不同 mode 需要独立登录态时，在各自的 `.env.[mode]` 或 `.env.[mode].local` 中配置不同 key。
-
-缓存 key 变更后不会自动迁移旧 Token，需要重新登录。环境变量保存的是鉴权格式与缓存位置，Token 内容由运行时登录结果提供。修改配置后重启当前开发或构建命令。
-
-Mock 命中时不会发送网络请求，可在控制台查看 `[Mock]` 日志；未命中时输出 `[HTTP]` 转发提示，并通过平台网络 API 请求服务。设置 `VITE_MOCK_LOG_ENABLED=false` 可关闭该适配器的日志，不影响请求和页面状态。production 模式不引入 Mock 适配器与日志实现。
-
-客户端使用与接口分层见[请求层与 Mock](../docs/request.md)。
-
-`UNI_` 前缀用于构建配置，通过 `process.env` 读取；需要在业务代码中通过 `import.meta.env` 读取的变量使用 `VITE_` 前缀，其值会进入客户端产物。
+不同 mode 需要独立登录态时，为各自的 `.env.[mode]` 或 `.env.[mode].local` 配置不同的 `VITE_AUTH_TOKEN_KEY`。修改 key 后需重新登录，已有 Token 不会自动迁移。环境变量保存鉴权格式与缓存位置，Token 内容由运行时登录结果提供。
 
 ## 客户端变量与类型
 
-`unh.config.ts` 使用 `env.dts: false`，不自动生成环境变量类型声明，避免把仅供构建使用的 `UNI_` 变量声明为客户端可用变量。
+`UNI_` 前缀用于构建配置，通过 `process.env` 读取；业务变量使用 `VITE_` 前缀，通过 `import.meta.env` 读取并进入客户端产物。`unh.config.ts` 设置 `env.dts: false`，客户端类型由项目显式声明。
 
 业务变量手工声明在 [`src/typings/env.d.ts`](../src/typings/env.d.ts)，Vite 提供的 `MODE`、`DEV`、`PROD` 等内置字段继续使用 `vite/client` 类型。新增业务变量时，同步维护 `.env` 默认值、类型声明与 `src/config/env.ts` 的解析规则；业务代码优先读取 `appEnv`。
 
-`UNI_MP_WEIXIN_APPID` 仅在构建配置中通过 `process.env` 读取，没有通过 Vite 的 `envPrefix` 或 `define` 注入业务 JS。Vite 默认只向客户端暴露 `VITE_` 变量，业务代码不要读取 `import.meta.env.UNI_MP_WEIXIN_APPID`。
-
-微信 AppID 仍会写入小程序项目配置，作为应用标识使用；它不能像 AppSecret 那样依靠客户端保密。AppSecret 等服务端密钥不应进入小程序配置或 `VITE_` 变量。
+`UNI_MP_WEIXIN_APPID` 用于生成小程序项目配置，不通过 `import.meta.env` 提供给业务代码。AppID 是公开的应用标识；AppSecret 等服务端密钥不应进入小程序配置或 `VITE_` 变量。

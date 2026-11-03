@@ -1,58 +1,47 @@
 # uniapp-template
 
-基于 [create-uni](https://uni-helper.js.org/create-uni/core) 脚手架初始模版封装建设。
+基于 [create-uni](https://uni-helper.js.org/create-uni/core) 的 uni-app、Vue 3 与 TypeScript 项目模板，提供分包页面、导航与 TabBar、Pinia 状态管理、请求与 Mock，以及 Wot UI 和 z-paging 示例。
 
-## 开发环境
+## 开始开发
 
-推荐使用 `.nvmrc` 指定的 Node.js 22.22.2。pnpm 版本由 `package.json` 的 `packageManager` 固定为 12.4.1。
-
-首次从旧版 pnpm 切换时，可用 npm 引导，确保 pnpm 12 的原生可执行文件完成安装：
+使用 [.nvmrc](.nvmrc) 指定的 Node.js 22.22.2，pnpm 版本由 `package.json` 固定为 12.4.1。
 
 ```sh
 npm install --global pnpm@12.4.1
-```
-
-日常开发命令：
-
-```sh
 pnpm install --frozen-lockfile
 pnpm dev
-pnpm test
-pnpm type-check
-pnpm lint
-pnpm build
-pnpm build mp-weixin
 ```
 
-平台名是 unh 的位置参数；测试环境构建使用 `pnpm build:test`。
+默认启动 H5，开发端口为 `13000`，实际地址以终端输出为准。平台名作为 unh 的位置参数传入：
 
-微信开发使用 `pnpm dev wx`，编译完成后会自动打开微信开发者工具。请先复制 `envs/.env.local.example` 为 `envs/.env.local`，填写 `UNI_MP_WEIXIN_APPID`，然后启动开发服务。本机环境文件已被 Git 忽略；项目提供 development、test、production 环境模板，变量定义与覆盖方式见 [envs/README.md](envs/README.md)。未配置 AppID 时，产物使用 `touristappid`，当前开发者工具的自动打开流程会报 AppID 不存在。
-
-H5 开发时，UnoCSS Inspector 地址为 <http://localhost:13000/__unocss/>，端口以开发服务实际输出为准。未授权浏览器打开该页面后，在运行 `pnpm dev` 的终端查看 `Devframe` 提示框中的 `auth code`，输入页面完成授权。授权按浏览器保存；已授权浏览器可以直接进入。验证码过期时，点击页面的 `Re-issue one-time code` 按钮，再到终端查看新码。
-
-## 类型检查与测试
-
-`tsconfig.json` 只关联子项目，业务与工具配置分别维护类型环境：
-
-| 配置 | 范围 |
+| 命令 | 用途 |
 | --- | --- |
-| `tsconfig.app.json` | `src` 中的业务代码与 Vue 组件，使用 DOM、uni-app 平台类型和 Volar 插件，排除测试 |
-| `tsconfig.node.json` | 根目录 TypeScript 工具配置、`plugins` 与工具脚本，使用 Node 类型，不引入 DOM |
-| `tsconfig.test.json` | 业务和插件测试、测试运行器配置，组合应用与 Node 环境 |
+| `pnpm dev` | H5 开发 |
+| `pnpm dev wx` | 微信小程序开发，编译后自动打开开发者工具 |
+| `pnpm dev:test` | 使用 test 环境启动 H5 |
+| `pnpm build` | H5 正式构建，产物位于 `dist/build/h5` |
+| `pnpm build mp-weixin` | 微信小程序正式构建 |
+| `pnpm build:test` | H5 测试环境构建，额外复制产物到 `dist/test/h5` |
 
-`pnpm type-check` 依次检查三个子项目；也可通过 `type-check:app`、`type-check:node`、`type-check:test` 单独执行。直接对根配置运行 `tsc --noEmit` 不会递归检查这些引用项目。
+微信开发前，复制本机环境模板并填写 `UNI_MP_WEIXIN_APPID`：
 
-unh 的环境变量类型生成功能已关闭（`env.dts: false`）；构建配置与客户端变量的读取范围见[环境变量说明](envs/README.md#客户端变量与类型)。
+```sh
+cp envs/.env.local.example envs/.env.local
+```
 
-测试运行器位于 `tools/testing` 工作区，使用 Vitest 4.1.11 和 Vite 6.4.3；应用构建继续使用 DCloud 配套的 Vite 5.2.8。`pnpm test` 保持为统一入口，测试文件仍与被测代码放在一起。测试配置中的模块别名与 `tsconfig.test.json` 的路径映射共同保证它们加载同一套测试依赖。
+本机环境文件已被 Git 忽略。未配置 AppID 时，产物使用 `touristappid`，开发者工具的自动打开流程会报 AppID 不存在。
 
-测试使用 DCloud 预处理器执行平台条件编译：H5 项目运行全部用例，微信项目补充运行 TabBar 及页面接入用例。可通过 `pnpm test --project h5` 或 `pnpm test --project mp-weixin` 单独验证；平台专有用例只在对应项目运行。
+## 配置与调试
 
-业务配置未显式加载 Node 类型，但 uni-pages 的声明会间接引入部分 Node 全局；配置拆分不等于禁止传递依赖引入类型。业务代码仍应使用 uni-app 的平台 API。
+环境文件集中在 `envs/`，提供 development、test、production 模板。API 地址、鉴权格式和 Mock 开关通过环境变量配置，业务代码从 `appEnv` 读取解析后的值。development 和 test 默认开启 Mock，未匹配的接口转发真实服务；production 关闭 Mock。文件覆盖顺序与联调方式见[环境变量说明](envs/README.md)。修改环境文件后需重启命令。
 
-## 分包目录
+页面全局配置在 [pages.config.ts](pages.config.ts)，应用与平台配置在 [manifest.config.ts](manifest.config.ts)，主题及底栏模式在 [src/configs/theme.ts](src/configs/theme.ts)。`src/pages.json` 和 `src/manifest.json` 由启动命令生成，配置修改应写入对应源文件。
 
-主包页面放在 `src/pages`，分包将页面、组件、状态、样式和专属资源归集到 `src/packages/<包名>`：
+H5 的 UnoCSS Inspector 位于 <http://localhost:13000/__unocss/>，端口与开发服务一致。未授权浏览器打开后，在终端 `Devframe` 提示框中查看 `auth code` 并输入页面；授权按浏览器保存。验证码过期时点击 `Re-issue one-time code`，再到终端查看新码。
+
+## 页面与分包
+
+主包页面位于 `src/pages`，分包将页面、组件、状态、样式和专属资源归集到各自目录：
 
 ```text
 src/
@@ -65,70 +54,42 @@ src/
         └── static/
 ```
 
-开发与构建启动时自动发现 `src/packages` 下非隐藏的直属目录，只扫描各包的 `pages`。例如 `demo/pages/index.vue` 会生成分包根 `packages/demo` 和页面路径 `pages/index`，完整跳转路径为 `/packages/demo/pages/index`。没有页面的包不会写入分包配置。
+[插件配置](plugins/vite/index.ts) 使用 `src/packages/*/pages` 扫描分包页面，通过 `root` 函数计算分包根，并排除隐藏目录。例如 `src/packages/demo/pages/index.vue` 对应 `/packages/demo/pages/index`；没有页面的包不写入分包配置。
 
-分包扫描在 [plugins/vite/index.ts](plugins/vite/index.ts) 的 `UniPages` 配置中声明，使用 `src/packages/*/pages` 匹配页面目录，再由 `root` 函数计算分包根。
+根组件与分包优化插件在创建时读取 `pages.json`，因此先执行 `await UniPages(...).prepare({ platformSuffix: true })` 生成页面配置和路由类型，再创建这些插件。平台后缀页面用于主包；分包和 TabBar 使用跨平台通用路径。
 
-根组件与分包优化插件在创建时读取 `pages.json`，因此插件列表中通过 `await UniPages(...).prepare({ platformSuffix: true })` 先生成页面配置和路由类型，再创建后续插件。平台后缀页面用于主包；分包和 TabBar 使用跨平台通用路径。
+页面插件监听页面增删、`pages.config.ts` 及其本地依赖，修改主题配置后会重新生成页面产物。新增、删除或重命名整个分包时，应重启开发命令，让分包优化插件重新读取包结构。
 
-页面插件监听 `pages.config.ts` 及其本地依赖；修改 [主题配置](src/configs/theme.ts) 等配置依赖后，会重新生成页面配置和路由类型。
+包内组件与状态使用显式导入，公共组件与逻辑沿用自动导入规则。主 tab 页使用主包薄入口，业务视图放在分包；跨包组件、页面布局和导航的接入约定见[页面容器与导航](docs/page-layouts.md)。
 
-包内组件、composables 等资源使用显式导入；公共组件与公共逻辑继续使用现有自动导入规则。页面插件会自动发现分包新增、删除和重建。由于本项目的分包优化插件在初始化时读取包结构，新增或重命名整个分包后仍需重启开发命令；已有分包内的页面增删继续由页面插件监听。
+## 检查与测试
 
-主 tab 页保留主包薄入口，仅声明路由、布局和跨包组件占位，具体视图由分包提供。主包入口不直接读取包内状态；包内消费者共用同一份状态模块，避免复制状态或引入主包同步依赖。跨包组件使用静态导入与 `componentPlaceholder`，具体约束和产物检查见[分包归属](docs/page-layouts.md#分包归属)。
+```sh
+pnpm type-check
+pnpm lint
+pnpm test
+```
 
-## 页面与导航
+`type-check` 依次检查 `tsconfig.app.json`、`tsconfig.node.json` 和 `tsconfig.test.json`，分别覆盖业务代码、构建工具和测试。可用 `type-check:app`、`type-check:node`、`type-check:test` 单独运行；根 `tsconfig.json` 仅关联子项目。
 
-所属页面与活动页面的区别、原生和自定义导航职责、安全区、滚动区域及测试入口边界见[页面容器与导航约定](docs/page-layouts.md)。
+测试文件与被测代码放在一起，运行器位于 `tools/testing` 工作区，使用 Vitest 4 和 Vite 6；应用构建使用 DCloud 配套的 Vite 5。测试按平台执行条件编译，H5 项目覆盖全部测试文件，微信项目补充 TabBar 与页面接入测试：
 
-测试中心提供 Wot UI v2 交互示例，以及 z-paging 的基础分页、搜索筛选、空态与失败重试场景。组件按需导入、主题配置和示例接入方式见[组件接入与场景示例](docs/component-examples.md)。
+```sh
+pnpm test --project h5
+pnpm test --project mp-weixin
+```
 
-底栏的组件选择、共用参数、受控交互和平台接入见 [TabBar 接入与组件契约](docs/tabbar.md)。图片和图标来源单独记录在[静态资源说明](src/static/README.md)。
+## 部署
 
-## 请求与 Mock
+[GitHub Pages 工作流](.github/workflows/deploy-pages.yml) 在推送到 `main` 或手动触发时执行 H5 构建，将 `dist/build/h5` 部署到 GitHub Pages。
 
-请求层接入 alova v3、官方 uni-app 适配器与 `@alova/mock`，提供类型化 Method、业务响应解包、统一错误、Token 缓存与自动鉴权，以及上传、下载支持。环境变量通过 `appEnv` 统一解析，默认超时 10 秒；鉴权头、Token 前缀与缓存 key 均可配置。
+## 文档
 
-多租户等场景可通过 `getHeaders()` 动态提供公共请求头，单次请求可覆盖或跳过公共头。合并规则与租户 Mock 示例见[公共请求头与租户上下文](docs/request.md#公共请求头与租户上下文)。
-
-development 和 test 模板默认开启 Mock，未匹配接口转发真实服务；production 模式强制关闭 Mock。测试中心提供登录、受保护接口、匿名请求和退出示例，控制台默认输出脱敏后的 Mock 日志，可通过 `VITE_MOCK_LOG_ENABLED` 关闭。接口定义、hooks、错误处理与联调配置见[请求层与 Mock](docs/request.md)。
-
-## TODO
-
-### Basic
-
-- [x] uniapp3 + vue3 + typescript
-- [x] eslint
-- [x] unocss
-
-### 开发优化
-
-- [x] [unplugin-auto-import/vite](https://github.com/antfu/unplugin-auto-import): 按需自动导入API
-- [x] [@uni-helper/unh](https://github.com/uni-helper/unh): uniapp cli 启动命令二次封装，简化运行脚本指令，增强开发体验
-- [x] [@uni-helper/plugin-uni](https://github.com/uni-helper/plugin-uni): uni插件的ESM导出，于 uni-app 构建体系中实现 ESM-First
-- [x] [@uni-helper/vite-plugin-uni-components](https://uni-helper.js.org/vite-plugin-uni-components): 实现组件库的按需引用及类型生成
-- [x] [@uni-helper/vite-plugin-uni-pages](https://github.com/uni-helper/vite-plugin-uni-pages): 实现文件路由
-- [x] [@uni-helper/vite-plugin-uni-layouts](https://github.com/uni-helper/vite-plugin-uni-layouts): 实现 layout 系统
-- [x] [@uni-helper/vite-plugin-uni-manifest](https://github.com/uni-helper/vite-plugin-uni-manifest): 使用 TypeScript 来编写 uni-app 的 manifest.json
-- [x] [@uni-helper/vite-plugin-uni-platform](https://uni-helper.js.org/vite-plugin-uni-platform): 实现文件级别的平台条件编译
-- [x] [@uni-ku/root](https://github.com/uni-ku/root): 实现虚拟根组件
-- [x] [@uni-ku/bundle-optimizer](https://github.com/uni-ku/bundle-optimizer): Uniapp Vue3 版本的分包优化实现
-
-### 实用库
-
-- [x] [Wot UI v2](https://wot-ui.cn/)（`@wot-ui/ui`）: 按需引入组件与官方全局类型，提供表单和交互反馈示例
-- [x] [z-paging](https://z-paging.com/): 列表分页、下拉刷新与加载更多，提供搜索筛选及失败重试示例
-- [x] [uni-echarts](https://github.com/xiaohe0601/uni-echarts): 适用于 uni-app 的 Apache ECharts 组件
-- [x] pinia + [pinia-plugin-persistedstate](https://praz.codeberg.page/pinia-plugin-persistedstate): 全局状态管理及持久化
-- [ ] 路由管理
-- [x] [alova](https://alova.js.org/zh-CN/tutorial/getting-started/introduce) 请求库与官方 uni-app、Mock 适配器
-
-### 业务增强
-
-- [ ] layouts 的建设：自定义 tabbar、navbar，以及实现布局的动态切换
-- [ ] 全局样式、主题的建设
-- [x] 网络请求封装：业务响应、错误分类、认证注入、上传下载与环境配置
-- [ ] 业务模型声明
-- [ ] 可复用组件：echarts 图表的封装；常用组件、具体业务模块的组件封装以及分包优化的考虑
-- [ ] 国际化支持
-- [ ] Webview 模式的支持
+| 文档 | 内容 |
+| --- | --- |
+| [环境变量](envs/README.md) | 环境文件优先级、API 与鉴权配置、Mock 开关、客户端变量类型 |
+| [页面容器与导航](docs/page-layouts.md) | 页面与组件边界、分包归属、导航、安全区和滚动区域 |
+| [TabBar 接入](docs/tabbar.md) | 底栏组件、受控交互、主题配置与平台接入 |
+| [组件生命周期](docs/component-lifecycle.md) | 异步组件、引用就绪与小程序生命周期 |
+| [请求层与 Mock](docs/request.md) | 接口定义、公共请求头、错误处理、登录态与 Mock |
+| [静态资源](src/static/README.md) | 图片和图标来源及使用约定 |

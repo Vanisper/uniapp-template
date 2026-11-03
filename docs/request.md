@@ -15,14 +15,12 @@
 | `src/mock/index.ts` | 创建 Mock 适配器并配置真实请求回退 |
 | `src/mock/demo.ts` | 请求示例的 Mock 分组 |
 | `src/mock/auth.ts` | Mock 登录、受保护接口与匿名接口 |
-| `src/mock/headers.ts` | 从实际请求头回显当前租户 ID |
+| `src/mock/headers.ts` | 回显请求头中的标记值，用于验证公共头注入 |
 | `src/mock/logger.ts` | Mock／真实请求标记及日志脱敏 |
 | `src/packages/demo/api/request.ts` | GET 场景与 POST 回显接口 |
 | `src/packages/demo/api/auth.ts` | 登录、个人信息与匿名接口 |
 
-测试中心的「请求与 Mock」页面位于 `/packages/demo/pages/request`，可操作成功、空态、业务失败、HTTP 失败、取消、提交回显和登录鉴权场景。
-
-默认请求超时为 10 秒，关闭响应缓存和相同请求共享，错误交给调用方展示。Method 保留 alova 的配置能力，可按接口显式启用缓存或其他策略。环境模板、命令和加载优先级见[环境变量说明](../envs/README.md)。
+默认请求超时为 10 秒，关闭响应缓存和相同请求共享，错误交给调用方展示。Method 保留 alova 的配置能力，可按接口显式启用缓存或其他策略。
 
 ## 接口返回 Method
 
@@ -79,7 +77,7 @@ interface ApiResponse<T> {
 }
 ```
 
-成功码默认是数字 `0`，使用严格相等判断；响应 `{ code: 0, message: 'ok', data: value }` 解包为 `value`。`null`、`false`、`0` 和空字符串都原样保留。HTTP 204 返回 `undefined`，成功响应缺少 `data` 或不符合协议时抛出协议错误。
+成功码默认是数字 `0`，使用严格相等判断；响应 `{ code: 0, message: 'ok', data: value }` 解包为 `value`。`null`、`false`、`0` 和空字符串都原样保留。`data`、`body` 模式下 HTTP 204 返回 `undefined`，`raw` 模式和下载请求保留完整响应。默认模式下，其他成功响应缺少 `data` 或不符合协议时抛出协议错误。
 
 | `RequestError.kind` | 含义 |
 | --- | --- |
@@ -105,7 +103,7 @@ catch (error) {
 }
 ```
 
-全局成功拦截器抛出的 HTTP、业务或协议错误不会进入全局 `onError`；它们直接拒绝当前请求。传输错误在 `onError` 中归一化并重新抛出，避免失败被吞掉。[拦截器规则见官方文档](https://alova.js.org/zh-CN/tutorial/getting-started/basic/global-interceptor/)。
+HTTP、业务、协议及传输错误都会拒绝当前请求，由调用方统一处理。
 
 ## 认证与不同响应格式
 
@@ -128,15 +126,7 @@ const accountHttp = createHttpClient({
 accountHttp.Get('/public', { meta: { auth: false } })
 ```
 
-默认鉴权格式为 `Authorization: Bearer <token>`。服务端要求 `X-Token: <token>` 时，在对应的 `envs/.env.[mode].local` 中设置：
-
-```dotenv
-VITE_AUTH_HEADER_NAME=X-Token
-VITE_AUTH_TOKEN_PREFIX=
-VITE_AUTH_TOKEN_KEY=my-project:development:token
-```
-
-请求头名称和前缀都会移除首尾空白；前缀非空时与 Token 之间自动加入一个空格，空字符串表示直接发送 Token。需要对接不同鉴权协议的服务时，可在单个客户端覆盖环境默认值：
+默认鉴权格式为 `Authorization: Bearer <token>`。请求头名称和前缀会移除首尾空白；前缀非空时与 Token 之间自动加入一个空格，空字符串表示直接发送 Token。全局格式与缓存 key 由 `VITE_AUTH_HEADER_NAME`、`VITE_AUTH_TOKEN_PREFIX` 和 `VITE_AUTH_TOKEN_KEY` 配置；单个客户端也可覆盖：
 
 ```ts
 const legacyHttp = createHttpClient({
@@ -149,7 +139,7 @@ const legacyHttp = createHttpClient({
 
 注入 Token 前，仅清理名称与配置相同的旧请求头，比较时忽略大小写；其他请求头保持原样。`getToken` 返回空值时也会清理该目标头，避免退出登录后重复发送旧 Token。`auth: false` 跳过读取与清理，保留调用方主动设置的认证头。
 
-`meta.auth` 只控制自动注入，不会检查登录状态或阻止无 Token 请求。未配置 `getToken` 的独立客户端不会自动读缓存；它默认使用真实 uni 适配器，需要模拟时可通过 `requestAdapter` 显式传入适配器。环境变量加载与优先级见[请求环境配置](../envs/README.md#请求环境配置)。
+`meta.auth` 只控制自动注入，登录状态和权限由业务及服务端判断。独立客户端通过 `getToken` 选择 Token 来源，默认使用真实 uni 适配器；需要模拟时，通过 `requestAdapter` 传入 Mock 适配器。
 
 单个请求可通过 `meta.responseMode` 选择返回层级，三个模式均检查 HTTP 状态：
 
@@ -175,32 +165,24 @@ http.Post<{ url: string }>('/files', {
 http.Get<UniApp.DownloadSuccessData>('/files/report.pdf', { requestType: 'download' })
 ```
 
-## 公共请求头与租户上下文
+## 公共请求头
 
-`createHttpClient` 的 `getHeaders()` 在每次请求前读取当前公共头，适合租户 ID、语言、客户端版本等配置。租户 ID 由业务登录态提供：登录或选择租户后更新，退出时清除；从 Pinia 或 uni 存储读取都可以。公共 `http` 默认未绑定租户来源，实际接入时在 `src/http/index.ts` 的客户端配置中加入自己的 getter。
-
-下面用变量表示当前租户，业务中将它替换为登录状态中的值：
+`createHttpClient` 的 `getHeaders()` 在每次请求前读取当前公共头，适合语言、客户端版本等随调用变化的配置。公共 `http` 默认未配置 getter，实际接入时在 `src/http/index.ts` 的客户端配置中加入自己的 getter。
 
 ```ts
 import { getToken } from '@/auth/token'
 import { appEnv } from '@/config/env'
 import { createHttpClient } from '@/http'
 
-let tenantId: string | undefined
-const tenantHttp = createHttpClient({
+let locale = 'zh-CN'
+const clientHttp = createHttpClient({
   baseURL: appEnv.apiBaseURL,
   getToken,
-  getHeaders: () => ({
-    'X-Tenant-ID': tenantId,
-    'Accept-Language': 'zh-CN',
-  }),
+  getHeaders: () => ({ 'Accept-Language': locale }),
 })
 
-tenantId = 'tenant-a'
-await tenantHttp.Get('/orders')
-tenantId = 'tenant-b'
-await tenantHttp.Get('/orders')
-tenantId = undefined
+locale = 'en-US'
+await clientHttp.Get('/orders')
 ```
 
 请求头按名称忽略大小写合并，顺序为公共头 → 单次 `headers` → Token 注入。普通同名头由单次配置覆盖；公共值为 `null` 或 `undefined` 时省略，单次同名空值也可屏蔽该公共头。`getToken` 仍按既有契约管理认证头，需要手写认证头时设置 `meta.auth: false`。
@@ -208,23 +190,23 @@ tenantId = undefined
 | 配置 | 行为 |
 | --- | --- |
 | 默认 | 注入公共头与 Token |
-| `meta.auth: false` | 跳过 Token，仍可携带租户头，适合需要租户信息的登录接口 |
+| `meta.auth: false` | 跳过 Token，仍发送公共头，适合登录等尚未持有 Token 的接口 |
 | `meta.commonHeaders: false` | 跳过公共头，仍注入 Token |
 | 两者均为 `false` | 跳过两种自动注入，保留手写 `headers` |
 
 ```ts
-tenantHttp.Get('/orders', { headers: { 'x-tenant-id': 'tenant-specific' } })
-tenantHttp.Post('/login', { username: 'demo' }, { meta: { auth: false } })
-tenantHttp.Get('/tenant-options', { meta: { commonHeaders: false } })
+clientHttp.Get('/orders', { headers: { 'accept-language': 'en-US' } })
+clientHttp.Post('/login', { username: 'demo' }, { meta: { auth: false } })
+clientHttp.Get('/options', { meta: { commonHeaders: false } })
 ```
 
-重复发送同一个 Method 会读取最新公共头，不修改原 Method 的配置或 getter 返回对象。getter 抛错时请求直接失败，不发送缺失上下文的网络调用。它读取的是请求拦截器执行时的状态；需要固定目标租户的操作，应在创建 Method 时显式传入租户头。
+重复发送同一个 Method 会读取最新公共头，不修改原 Method 的配置或 getter 返回对象。getter 抛错时请求直接失败，不发送缺失上下文的网络调用。它读取的是请求拦截器执行时的状态；需要固定取值的操作，应在创建 Method 时显式传入请求头。
 
-当前默认关闭缓存与请求共享。若显式开启，动态公共头不会自动进入 alova 的缓存标识；应在 Method 创建时把租户 ID 放入显式 `headers` 或 `params`，切换租户后重新创建 Method。切换租户也不会自动取消旧请求，界面需要取消或隔离旧响应，避免旧租户结果覆盖当前内容。
+当前默认关闭缓存与请求共享。若显式开启，动态公共头不会自动进入 alova 的缓存标识；应在 Method 创建时把变化值放入显式 `headers` 或 `params`，值变化后重新创建 Method，并取消或隔离旧响应，避免旧结果覆盖当前内容。
 
 ## Mock 开关与扩展
 
-`development`、`test` 模板默认开启 Mock；`production` mode 始终关闭。测试构建使用 `build:test`，仍可包含 Mock。生产剔除条件直接使用 `import.meta.env` 编译常量，Mock 数据和适配器都在工厂函数中延迟创建，便于构建器移除整个不可达分支。调整初始化方式后应检查 H5 与小程序生产产物，避免顶层创建 Mock 留下代码。
+`development`、`test` 模板默认开启 Mock；`production` mode 始终关闭，构建时剔除 Mock 数据和适配器。测试构建 `build:test` 保留启用的 Mock。
 
 Mock 使用 `matchMode: 'methodurl'`，路径与 Method 中的 URL 对应，不包含 API 根地址。查询参数通过 `params` 配置传入，回调从 `query` 读取：
 
@@ -234,17 +216,9 @@ http.Get('/demo/request', { params: { scenario: 'empty' } })
 
 现有 GET 示例支持成功、`empty`、`business-error`、`http-error`；POST 示例回显非空 `message`，空消息返回业务失败。取消和超时由适配器根据请求操作与配置处理。
 
-### Mock 鉴权流程
+### Mock 鉴权示例
 
-在测试中心的「请求与 Mock」页面，使用账号 `demo`、密码 `demo123` 体验以下流程；鉴权示例仅在 Mock 开启时允许执行。
-
-1. 未登录时请求个人信息，收到 HTTP 401。
-2. 登录请求设置 `meta.auth: false`，Mock 返回 Token，调用方通过 `setToken` 写入缓存。
-3. 再次请求个人信息，公共 `http` 通过 `getToken` 读取缓存并注入配置的认证头，Mock 校验实际请求头后返回用户信息。
-4. 保持登录态请求匿名接口，`meta.auth: false` 跳过自动注入，响应的 `hasAuthHeader` 为 `false`。
-5. 清除本地 Token 后再次请求个人信息，重新收到 HTTP 401。
-
-下面展示实际调用顺序，界面事件中还应捕获失败结果：
+鉴权示例仅在 Mock 开启时可用，下面是完整的调用顺序，界面事件中还应捕获失败结果：
 
 ```ts
 import { clearToken, setToken } from '@/auth/token'
@@ -261,44 +235,7 @@ await http.Get('/demo/auth/public', { meta: { auth: false } })
 clearToken()
 ```
 
-Mock 使用固定的演示 Token，不读取客户端缓存判断登录态。退出示例只清除本地缓存，不模拟服务端会话吊销。页面退出或清除 Token 时会取消在途操作并隔离旧结果，避免延迟的登录响应重新写入缓存。真实服务应使用自己的登录、过期与退出协议。
-
-### Mock 租户请求头
-
-`GET /demo/headers` 从实际请求头读取 `X-Tenant-ID`，返回 `{ tenantId }`，缺失时返回 `null`。此接口用于观察注入结果，不模拟租户权限校验。下面可在开发示例逻辑中运行，验证登录后设置租户、切换、跳过和清除的行为：
-
-```ts
-import { clearToken, getToken, setToken } from '@/auth/token'
-import { createHttpClient, isMockEnabled } from '@/http'
-import { createMockAdapter } from '@/mock'
-
-if (!isMockEnabled)
-  throw new Error('请开启 Mock 后运行租户示例')
-
-let tenantId: string | undefined
-const tenantHttp = createHttpClient({
-  baseURL: '',
-  getToken,
-  getHeaders: () => ({ 'X-Tenant-ID': tenantId }),
-  requestAdapter: createMockAdapter(),
-})
-const login = await tenantHttp.Post<{ token: string }>('/demo/auth/login', {
-  username: 'demo',
-  password: 'demo123',
-}, { meta: { auth: false, commonHeaders: false } })
-setToken(login.token)
-
-tenantId = 'tenant-a'
-const currentTenant = tenantHttp.Get<{ tenantId: string | null }>('/demo/headers')
-await currentTenant.send() // { tenantId: 'tenant-a' }
-tenantId = 'tenant-b'
-await currentTenant.send() // { tenantId: 'tenant-b' }
-await tenantHttp.Get('/demo/headers', { meta: { auth: false } }) // 仍为 tenant-b
-await tenantHttp.Get('/demo/headers', { meta: { commonHeaders: false } }) // null
-clearToken()
-tenantId = undefined
-await currentTenant.send() // { tenantId: null }
-```
+未登录时请求个人信息会收到 HTTP 401；登录请求通过 `meta.auth: false` 跳过注入，Mock 校验实际请求头中的认证信息后返回 Token。Mock 使用固定的演示 Token，不读取客户端缓存判断登录态；清除 Token 只影响本地缓存，真实服务应使用自己的登录、过期与退出协议。
 
 ### Mock 请求日志
 
@@ -306,7 +243,7 @@ await currentTenant.send() // { tenantId: null }
 
 日志保留请求头与响应头的名称并隐藏全部头值，参数与响应正文中的密码、Token、Cookie 等常见敏感字段也会脱敏，不修改实际请求或响应。`VITE_MOCK_LOG_ENABLED=false` 可关闭这些日志；Mock 关闭时不安装此日志回调。
 
-日志使用官方适配器回调：Mock 回调完成后输出结果，真实请求在转发时输出提示。它不提供完整的耗时、取消或超时追踪，取消或超时的结果仍通过调用方的错误状态处理。
+Mock 日志在回调完成后输出，真实请求在转发时输出提示；取消和超时结果通过调用方的错误状态处理。
 
 ### 新增 Mock 分组
 
@@ -328,4 +265,4 @@ export function createProfileMocks() {
 
 `defineMock` 的第二个参数设为 `false` 可以禁用分组，路径前加 `-` 可以禁用单个接口。禁用或未匹配的请求都会通过 `httpAdapter: uniappRequestAdapter` 请求真实服务，使用前配置 `VITE_API_BASE_URL`。自定义 HTTP 响应时同时提供 `status`、`statusText` 和 `body`，避免被当作普通业务数据。
 
-`onMockResponse: uniappMockResponse` 将模拟结果转换为 uni 格式，无需浏览器 `Response`。当前官方转换器不保留自定义响应头，Mock 也不模拟上传、下载进度。当前 `@alova/mock` 超时会拒绝请求，但不会取消尚未执行的 Mock 回调；回调应以生成数据为主，涉及副作用的场景不能据此推断服务端已取消。[适配源码](https://github.com/alovajs/alova/blob/main/packages/adapter-uniapp/src/mockResponse.ts)、[Mock 请求实现](https://github.com/alovajs/alova/blob/main/packages/adapter-mock/src/MockRequest.ts)。
+Mock 返回结果由 `uniappMockResponse` 转换为 uni 格式。当前适配器不保留自定义响应头，也不模拟上传、下载进度。超时会拒绝请求，但 Mock 回调仍可能执行，因此回调应以生成数据为主，避免依赖取消来控制副作用。[适配器实现](https://github.com/alovajs/alova/blob/main/packages/adapter-uniapp/src/mockResponse.ts)
